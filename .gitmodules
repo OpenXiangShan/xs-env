@@ -1,0 +1,14 @@
+[submodule "XiangShan"]
+	path = XiangShan
+	url = https://github.com/OpenXiangShan/XiangShan
+[submodule "NEMU"]
+	path = NEMU
+	url = https://github.com/OpenXiangShan/NEMU
+	branch = xs
+[submodule "nexus-am"]
+	path = nexus-am
+	url = https://github.com/OpenXiangShan/nexus-am
+[submodule "NutShell"]
+	path = NutShell
+	url = https://github.com/OSCPU/NutShell
+	branch = difftest
