@@ -20,8 +20,8 @@ source env.sh
 export NOOP_HOME=$(pwd)/NutShell
 
 cd ${NEMU_HOME}
-make ISA=riscv64 XIANGSHAN=1 -j
-make ISA=riscv64 SHARE=1 -j
+make defconfig riscv64-xs-ref_defconfig
+make
 
 cd ${AM_HOME}/apps/coremark
 make ARCH=riscv64-xs -k
@@ -34,4 +34,3 @@ make emu # Optional: test if verilator has been installed correctlly
 
 cd ${XS_PROJECT_ROOT}
 export NOOP_HOME=$(pwd)/XiangShan
-echo "XiangShan develop environment has been setup correctly!"
