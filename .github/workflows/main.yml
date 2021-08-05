@@ -1,0 +1,48 @@
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  setup-develop-env:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup XiangShan environment
+        run: |
+            sudo -s ./setup.sh
+            source ./env.sh
+      
+      - name: Sim NutShell using Verilator
+        run: |
+            cd $GITHUB_WORKSPACE
+            source ./env.sh
+            cd $GITHUB_WORKSPACE/NutShell
+            # make emu
+            ./build/emu -b 0 -e 0 -i ./ready-to-run/microbench.bin
+
+      
+# Github hosted CI does not support XiangShan
+
+#       - name: Sim XiangShan using Verilator
+#         run: |
+#             cd $GITHUB_WORKSPACE
+#             source ./env.sh
+#             cd $GITHUB_WORKSPACE/XiangShan
+#             make emu CONFIG=MinimalConfig
+#             ./build/emu -b 0 -e 0 -i ./ready-to-run/linux.bin
