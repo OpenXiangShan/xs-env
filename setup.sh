@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This script will setup XiangShan develop environment automatically
 
 # Init submodules
