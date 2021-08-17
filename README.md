@@ -10,7 +10,7 @@ This script will setup XiangShan develop environment automatically：
 ```sh
 git clone https://github.com/OpenXiangShan/xs-env
 cd xs-env
-sudo -s setup-tools.sh
+sudo -s ./setup-tools.sh
 source setup.sh
 ```
 
