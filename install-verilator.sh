@@ -17,7 +17,7 @@ git checkout v4.204
 
 autoconf        # Create ./configure script
 ./configure     # Configure and create Makefile
-make -j         # Build Verilator itself
+make -j8        # Build Verilator itself
 sudo make install
 
 verilator --version
