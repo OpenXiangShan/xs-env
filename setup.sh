@@ -15,7 +15,7 @@ source env.sh
 export NOOP_HOME=$(pwd)/NutShell
 
 cd ${NEMU_HOME}
-make defconfig riscv64-xs-ref_defconfig
+make riscv64-xs-ref_defconfig
 make
 
 cd ${AM_HOME}/apps/coremark
