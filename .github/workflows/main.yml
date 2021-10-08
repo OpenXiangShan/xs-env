@@ -25,6 +25,8 @@ jobs:
 
       - name: Setup XiangShan environment
         run: |
+            git config --global url."https://github.com/".insteadOf git@github.com:
+            git config --global url."https://".insteadOf git://
             sudo -s ./setup-tools.sh
             source ./setup.sh
       
