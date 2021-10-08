@@ -23,8 +23,18 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: webfactory/ssh-agent
+        # You may pin to the exact commit or the version.
+        # uses: webfactory/ssh-agent@5f066a372ec13036ab7cb9a8adf18c936f8d2043
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          # Private SSH key to register in the SSH agent
+          ssh-private-key: ${{ secrets.CI_PRIVATE_KEY }}
+          # ssh-auth-sock: # optional
+
       - name: Setup XiangShan environment
         run: |
+            ssh -vT git@github.com
             # sudo -s ./setup-tools.sh
             source ./setup.sh
       
