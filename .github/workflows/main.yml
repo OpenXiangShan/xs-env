@@ -22,8 +22,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        with:
-          submodules: recursive
+        # with:
+          # submodules: recursive
 
       # - name: webfactory/ssh-agent
       #   # You may pin to the exact commit or the version.
@@ -36,11 +36,11 @@ jobs:
 
       - name: Setup XiangShan environment
         run: |
-            # git config --global url."https://github.com/".insteadOf git@github.com:
-            # git config --global url."https://".insteadOf git://
+            git config --global url."https://github.com/".insteadOf git@github.com:
+            git config --global url."https://".insteadOf git://
             # ssh -vT git@github.com
-            # sudo -s ./setup-tools.sh
             source ./setup.sh
+            # sudo -s ./setup-tools.sh
       
       - name: Sim NutShell using Verilator
         run: |
