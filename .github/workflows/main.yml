@@ -34,7 +34,7 @@ jobs:
 
       - name: Setup XiangShan environment
         run: |
-            ssh -vT git@github.com
+            # ssh -vT git@github.com
             # sudo -s ./setup-tools.sh
             source ./setup.sh
       
