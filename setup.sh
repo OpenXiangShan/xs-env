@@ -3,6 +3,7 @@
 # This script will setup XiangShan develop environment automatically
 
 # Init submodules
+git config url.https://.insteadOf git://
 git submodule update --init --recursive
 # TODO: rocket submodules are not needed
 

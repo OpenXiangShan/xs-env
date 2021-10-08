@@ -25,7 +25,7 @@ jobs:
 
       - name: Setup XiangShan environment
         run: |
-            sudo -s ./setup-tools.sh
+            # sudo -s ./setup-tools.sh
             source ./setup.sh
       
       - name: Sim NutShell using Verilator
