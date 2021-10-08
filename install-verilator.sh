@@ -1,6 +1,6 @@
 # https://verilator.org/guide/latest/install.html
 
-sudo apt-get install git perl python3 make autoconf g++ flex bison ccache
+sudo apt-get install git perl python3 make autoconf g++ flex bison ccache clang
 sudo apt-get install libgoogle-perftools-dev numactl perl-doc
 sudo apt-get install libfl2  # Ubuntu only (ignore if gives error)
 sudo apt-get install libfl-dev  # Ubuntu only (ignore if gives error)
@@ -22,7 +22,8 @@ git pull        # Make sure git repository is up-to-date
 git checkout v4.204
 
 autoconf        # Create ./configure script
-./configure     # Configure and create Makefile
+# Configure and create Makefile
+./configure CC=clang CXX=clang++ # We use clang as default compiler
 make -j8        # Build Verilator itself
 sudo make install
 
