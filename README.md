@@ -108,9 +108,12 @@ coremark-riscv64-xs.txt  应用程序的反汇编
 
 生成的`coremark-riscv64-xs.bin`可以作为仿真中的程序输入。要使用 AM 生成自定义的 workload，请参考
 #### a. 使用 AM 生成自定义 workload
-[使用 AM 生成自定义 workload.md](https://xiangshan.yuque.com/attachments/yuque/0/2021/md/2550926/1627716003412-6a0ce50e-b365-4be4-b41e-aa4dd124aa53.md?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fxiangshan.yuque.com%2Fattachments%2Fyuque%2F0%2F2021%2Fmd%2F2550926%2F1627716003412-6a0ce50e-b365-4be4-b41e-aa4dd124aa53.md%22%2C%22name%22%3A%22%E4%BD%BF%E7%94%A8+AM+%E7%94%9F%E6%88%90%E8%87%AA%E5%AE%9A%E4%B9%89+workload.md%22%2C%22size%22%3A1079%2C%22type%22%3A%22%22%2C%22ext%22%3A%22md%22%2C%22status%22%3A%22done%22%2C%22taskId%22%3A%22ua6e1d3a6-7ee4-4d15-84cb-382045ba0d8%22%2C%22taskType%22%3A%22upload%22%2C%22id%22%3A%22RtWN3%22%2C%22card%22%3A%22file%22%7D)
-#### b. 生成 Linux Kernel 作为 worload
-[Linux Kernel 的构建.md](https://xiangshan.yuque.com/attachments/yuque/0/2021/md/2550926/1627716003540-f3957cb3-5a07-4d96-ab7f-1ba84b77ec25.md?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fxiangshan.yuque.com%2Fattachments%2Fyuque%2F0%2F2021%2Fmd%2F2550926%2F1627716003540-f3957cb3-5a07-4d96-ab7f-1ba84b77ec25.md%22%2C%22name%22%3A%22Linux+Kernel+%E7%9A%84%E6%9E%84%E5%BB%BA.md%22%2C%22size%22%3A2540%2C%22type%22%3A%22%22%2C%22ext%22%3A%22md%22%2C%22status%22%3A%22done%22%2C%22taskId%22%3A%22u31162b3d-b504-4903-b0f7-0f870f3459a%22%2C%22taskType%22%3A%22upload%22%2C%22id%22%3A%22AWD1d%22%2C%22card%22%3A%22file%22%7D)
+
+[使用 AM 生成自定义 workload](./doc/gen-workload-with-am.md)
+
+#### b. 生成 Linux Kernel 作为 workload
+
+[Linux Kernel 的构建.md](./doc/linux-kernel-for-xs.md)
 
 我们提供的环境中没有默认包含编译 Linux Kernel 相关的仓库，需要用户自行下载。
 
