@@ -72,6 +72,8 @@ source env.sh
 上述命令设置了`NOOP_HOME`，`NEMU_HOME`，`AM_HOME`三个环境变量。您可以将这些环境变量加入到`.bashrc`中，也可以在每次使用香山前重新运行`env.sh`这一脚本配置环境变量（推荐）。
 > 提示：在同时开发多个分支的香山时，推荐在每次运行前用脚本配置环境变量
 
+在后续步骤出现问题时，可以参考 [Troubleshooting-Guide](https://github.com/OpenXiangShan/XiangShan/wiki/Troubleshooting-Guide) 来自行排查。
+
 ## 二、生成香山核的 Verilog 代码
 
 
