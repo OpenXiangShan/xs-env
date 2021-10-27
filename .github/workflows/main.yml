@@ -46,6 +46,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Sim XiangShan using Verilator
         run: |
+            git config --global url."https://github.com/".insteadOf git@github.com:
+            git config --global url."https://".insteadOf git://
             cd $GITHUB_WORKSPACE
             source ./setup.sh
             source ./env.sh
