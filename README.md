@@ -1,6 +1,8 @@
 XiangShan develop environment
 ==================
 
+[![CI](https://github.com/OpenXiangShan/xs-env/actions/workflows/main.yml/badge.svg)](https://github.com/OpenXiangShan/xs-env/actions/workflows/main.yml)
+
 # TLDR
 
 使用以下脚本来一键布署香山开发环境（需要sudo权限）：
