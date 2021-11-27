@@ -43,8 +43,6 @@ jobs:
   sim-xiangshan:
     runs-on: self-hosted
     steps:
-      - name: Clean Workspace
-        uses: AutoModality/action-clean@v1.1.0
       - uses: actions/checkout@v2
       - name: Sim XiangShan using Verilator
         run: |
@@ -54,5 +52,6 @@ jobs:
             source ./setup.sh
             source ./env.sh
             cd $GITHUB_WORKSPACE/XiangShan
+            make clean
             make emu CONFIG=MinimalConfig
             ./build/emu -b 0 -e 0 -i ./ready-to-run/linux.bin
