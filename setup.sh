@@ -25,7 +25,7 @@ make ARCH=riscv64-xs -k
 cd ${NOOP_HOME}
 make init
 make verilog # Optional: test if mill & Chisel has been installed correctlly
-make emu # Optional: test if verilator has been installed correctlly
+make emu EMU_CXX_EXTRA_FLAGS="-DFIRST_INST_ADDRESS=0x80000000" # Optional: test if verilator has been installed correctlly
 
 cd ${XS_PROJECT_ROOT}
 export NOOP_HOME=$(pwd)/XiangShan

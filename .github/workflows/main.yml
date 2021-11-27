@@ -52,5 +52,6 @@ jobs:
             source ./setup.sh
             source ./env.sh
             cd $GITHUB_WORKSPACE/XiangShan
+            make clean
             make emu CONFIG=MinimalConfig
             ./build/emu -b 0 -e 0 -i ./ready-to-run/linux.bin
