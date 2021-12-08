@@ -24,6 +24,7 @@ make ARCH=riscv64-xs -k
 # Compile processor project
 cd ${NOOP_HOME}
 make init
+make clean
 make verilog # Optional: test if mill & Chisel has been installed correctlly
 make emu EMU_CXX_EXTRA_FLAGS="-DFIRST_INST_ADDRESS=0x80000000" # Optional: test if verilator has been installed correctlly
 
