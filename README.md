@@ -43,22 +43,23 @@ CPU：不限，性能将决定编译与生成的速度
 
 ```bash
 git clone https://github.com/OpenXiangShan/xs-env.git
+cd xs-env
 ```
 
-该仓库中包含有一个脚本自动安装香山项目的依赖，并配置环境变量。克隆完成后运行以下命令来运行脚本:
+该仓库中包含有一个脚本自动安装香山项目的依赖，请在运行前按需修改。
 
 ```bash
-cd xs-env
-chmod +x setup.sh
-sudo -s setup.sh
+sudo -s ./setup-tools.sh
+```
+> 提示：这个脚本的执行需要 sudo 权限来安装香山项目依赖的软件包，请阅读理解脚本内容后执行，以防搅乱环境
+
+
+安装完依赖以后执行`make`脚本
+```bash
+./setup.sh
 ```
 
-> 提示：这个脚本的执行需要 sudo 权限来安装香山项目依赖的软件包。如果不需要安装这些软件包，可以在脚本中将对应行删去。
-
-
-
 执行 `ls` 确认其中拥有以下目录：
-
 
 ```
 XiangShan    NEMU    nexus-am
