@@ -27,6 +27,7 @@ jobs:
         run: |
             git config --global url."https://github.com/".insteadOf git@github.com:
             git config --global url."https://".insteadOf git://
+            chmod +x ./install-verilator.sh
             sudo -s ./setup-tools.sh
             source ./setup.sh
       
