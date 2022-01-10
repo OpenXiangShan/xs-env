@@ -154,9 +154,9 @@ make -j
 ### 3. 生成香山核的仿真程序
 我们使用 Verilator 生成香山核的仿真程序，进入 `XiangShan` 目录，运行命令
 ```bash
-make emu CONFIG=MinimalConfig SIM_ARGS=--disable-log EMU_TRACE=1 -j32
+make emu CONFIG=MinimalConfig EMU_TRACE=1 -j32
 ```
-将会生成一个最小配置的香山的仿真程序，这一步时间会比较久，需要耐心等待。生成结束后，可以在 `./build/` 目录下看到一个名为 `emu` 的仿真程序。其中，`CONFIG=MinimalConfig`指定了香山核使用的配置（参见：[https://github.com/OpenXiangShan/XiangShan-doc/blob/main/documentation/0-%E5%8F%82%E6%95%B0%E7%B3%BB%E7%BB%9F.md](https://github.com/OpenXiangShan/XiangShan-doc/blob/main/documentation/0-%E5%8F%82%E6%95%B0%E7%B3%BB%E7%BB%9F.md)），`SIM_ARGS=--disable-log`会关闭用于调试香山的输出，`EMU_TRACE=1`会为仿真程序添加波形输出功能，允许在仿真过程中启用波形输出。
+将会生成一个最小配置的香山的仿真程序，这一步时间会比较久，需要耐心等待。生成结束后，可以在 `./build/` 目录下看到一个名为 `emu` 的仿真程序。其中，`CONFIG=MinimalConfig`指定了香山核使用的配置（参见：[https://github.com/OpenXiangShan/XiangShan-doc/blob/main/documentation/0-%E5%8F%82%E6%95%B0%E7%B3%BB%E7%BB%9F.md](https://github.com/OpenXiangShan/XiangShan-doc/blob/main/documentation/0-%E5%8F%82%E6%95%B0%E7%B3%BB%E7%BB%9F.md)），`EMU_TRACE=1`会为仿真程序添加波形输出功能，允许在仿真过程中启用波形输出。
 
 
 > 更多参数请参考`Makefile`脚本代码。
