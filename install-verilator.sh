@@ -18,8 +18,8 @@ git pull        # Make sure git repository is up-to-date
 #git checkout stable      # Use most recent stable release
 #git checkout v{version}  # Switch to specified release version
 
-# XiangShan uses Verilator v4.204
-git checkout v4.204
+# XiangShan uses Verilator v4.218
+git checkout v4.218
 
 autoconf        # Create ./configure script
 # Configure and create Makefile
