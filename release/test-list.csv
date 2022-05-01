@@ -1,0 +1,15 @@
+S/N,name,make dir,arch,extra args,test type,notes
+1,hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake,,am,
+2,bootrom-hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake-flash,,am,
+3,copyandrun-coremark,$(AM_HOME)/apps/loader,riscv64-xs-southlake-flash,,am,
+4,pma,$(AM_HOME)/apps/hello,riscv64-xs-southlake,,rvtest,TODO
+5,pmp,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=c,am,
+6,mmu,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=s,am,
+7,llc-cache-op,$(AM_HOME)/tests/cacheoptest/llc,riscv64-xs-southlake,,am,
+8,l1i-cache-op,$(AM_HOME)/tests/cacheoptest/icache,riscv64-xs-southlake,,am,
+9,l1d-cache-op,$(AM_HOME)/tests/cacheoptest/dcache,riscv64-xs-southlake,,am,
+10,plic,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=e,am,
+11,clint,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=i,am,
+12,cpu-test,$(AM_HOME)/tests/cputest,riscv64-xs-southlake,,am,
+13,coremark-1,$(AM_HOME)/apps/coremark,riscv64-xs-southlake,,am,iterations=1
+14,dhrystone-2,$(AM_HOME)/apps/dhrystone,riscv64-xs-southlake,,am,NUMBER_OF_RUNS=2
