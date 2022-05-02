@@ -17,7 +17,7 @@ BEGIN {
             TESTSN = $1
             TESTLIST[$1] = "./build/test/" $1 "-" $2
         }
-        if($6 == "am"){ # am build rules
+        if($6 == "am" || $6 == "am-flash"){ # am build rules
             # printf("	$(MAKE) -C $(AM_HOME) clean\n");               // clean am
             printf("	$(MAKE) -C %s clean\n", $3);                   // clean am
             printf("	$(MAKE) -C %s ARCH=%s %s\n", $3, $4, $5);      // make test

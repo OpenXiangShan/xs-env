@@ -1,7 +1,7 @@
 S/N,name,make dir,arch,extra args,test type,notes
 1,hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake,,am,
 2,bootrom-hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake-flash,,am,
-3,copyandrun-coremark,$(AM_HOME)/apps/loader,riscv64-xs-southlake-flash,,am,
+3,copyandrun-coremark,$(AM_HOME)/apps/loader,riscv64-xs-southlake-flash,ELF_PATH=./image/coremark-riscv64-xs-southlake.bin,am,
 4,pma,$(AM_HOME)/apps/hello,riscv64-xs-southlake,,rvtest,TODO
 5,pmp,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=c,am,
 6,mmu,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=s,am,
