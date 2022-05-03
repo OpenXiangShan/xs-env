@@ -24,6 +24,7 @@ BEGIN {
             printf("	cp -r %s/* ./build/test/%s-%s\n", $3, $1, $2); // copy test
         }
         if($6 == "rvtest"){ # rvtest build rules
+            printf("	@echo ./build/test/%s-%s should be manually released\n", $1, $2);
         }
     }
 }

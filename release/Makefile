@@ -3,19 +3,26 @@
 RELEASE_NEMU_CONFIG=riscv64-xs-southlake
 
 RELEASE_PATH=./build
-RELEASE_CODE_PATH=./build/code
+RELEASE_RTL_PATH=./build/rtl
+RELEASE_SIM_RTL_PATH=./build/simrtl
 RELEASE_TEST_PATH=./build/test
 RELEASE_BIN_PATH=./build/bin
 RELEASE_DOC_PATH=./build/doc
 
 # usage: make release
 
-release: release-code release-testcases release-toolchain release-doc
+release: release-sim-rtl release-testcases release-toolchain release-doc
+
+full-release: release
+	$(MAKE) -C $(NOOP_HOME) clean
+	$(MAKE) release-rtl
 
 $(RELEASE_PATH):
 	mkdir -p $(RELEASE_PATH)
-$(RELEASE_CODE_PATH):
-	mkdir -p $(RELEASE_CODE_PATH) 
+$(RELEASE_RTL_PATH):
+	mkdir -p $(RELEASE_RTL_PATH)
+$(RELEASE_SIM_RTL_PATH):
+	mkdir -p $(RELEASE_SIM_RTL_PATH) 
 $(RELEASE_TEST_PATH):
 	mkdir -p $(RELEASE_TEST_PATH) 
 $(RELEASE_BIN_PATH):
@@ -25,11 +32,14 @@ $(RELEASE_DOC_PATH):
 
 # release RTL and core sim model
 
-release-code: $(RELEASE_CODE_PATH) $(RELEASE_BIN_PATH)
-	# $(MAKE) -C $(NOOP_HOME) verilog
-	$(MAKE) -C $(NOOP_HOME) emu RELEASE=1
-	cp $(NOOP_HOME)/build/*.v $(RELEASE_CODE_PATH)   # RTL code
+release-sim-rtl: $(RELEASE_SIM_RTL_PATH) $(RELEASE_BIN_PATH)
+	$(MAKE) -C $(NOOP_HOME) emu RELEASE=1 EMU_THREADS=8 -j16
+	cp $(NOOP_HOME)/build/*.v $(RELEASE_SIM_RTL_PATH)   # RTL code
 	cp $(NOOP_HOME)/build/emu $(RELEASE_BIN_PATH)
+
+release-rtl: $(RELEASE_RTL_PATH)
+	$(MAKE) -C $(NOOP_HOME) verilog
+	cp $(NOOP_HOME)/build/* $(RELEASE_RTL_PATH)
 
 # release REF
 
@@ -92,10 +102,10 @@ release-toolchain: release-nemu
 
 # release document
 
-release-doc: release-code
+release-doc: release-sim-rtl $(RELEASE_DOC_PATH)
 	cp $(NOOP_HOME)/build/*.f $(RELEASE_DOC_PATH)   # RTL filelist
 	cp $(NOOP_HOME)/build/*.dts $(RELEASE_DOC_PATH) # DTS
-	@echo $@ TODO
+
 
 clean:
 	rm -rf $(RELEASE_PATH)
