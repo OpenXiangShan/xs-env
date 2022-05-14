@@ -1,7 +1,9 @@
-# -------------------------------------------------
-# S/N,name,make dir,arch,extra args,test type,notes
-# $1  $2   $3       $4   $5         $6   
-# -------------------------------------------------
+# ----------------------------------------------------------------------
+# S/N,name,make dir,arch,extra build args,test type,extra sim args,notes
+# $1  $2   $3       $4   $5               $6        $7             $8   
+# ----------------------------------------------------------------------
+
+# run this srript after test case gen
 
 BEGIN {
     print ".PHONY: all"
@@ -16,12 +18,23 @@ BEGIN {
             TESTSN = $1
             TESTLIST[$1] = "test-" $1 "-" $2
         }
-        if($6 == "am"){ # am test rules
-            printf("	$(NOOP_HOME)/build/emu -i $(shell find ./build/test/%s-%s/build/*.bin) 2>&1 | grep \"GOOD TRAP\"\n", $1, $2);      // make test
+        if($6 == "am" || $6 == "linux"){ # memory based test rules
+            search_target = "./build/test/" $1 "-" $2 "/build/*.bin"
+            find_cmd = "find " search_target
+            sim_parameter = $7
+            cmd = find_cmd " | awk -f run-mem-test.awk -v SIM_PARAMETER=" sim_parameter " > __awk_temp__"
+            system(cmd)
+            system("cat __awk_temp__")
+            system("rm __awk_temp__")
         }
-        if($6 == "am-flash"){ 
-        }
-        if($6 == "rvtest"){ 
+        if($6 == "am-flash"){ # flash based test rules
+            search_target = "./build/test/" $1 "-" $2 "/build/*.bin"
+            find_cmd = "find " search_target
+            sim_parameter = $7
+            cmd = find_cmd " | awk -f run-flash-test.awk -v SIM_PARAMETER=" sim_parameter " > __awk_temp__"
+            system(cmd)
+            system("cat __awk_temp__")
+            system("rm __awk_temp__")
         }
     }
 }

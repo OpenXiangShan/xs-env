@@ -1,15 +1,16 @@
-S/N,name,make dir,arch,extra args,test type,notes
+S/N,name,make dir,arch,extra build args,test type,extra sim args,notes
 1,hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake,,am,
-2,bootrom-hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake-flash,,am,
-3,copyandrun-coremark,$(AM_HOME)/apps/loader,riscv64-xs-southlake-flash,ELF_PATH=./image/coremark-riscv64-xs-southlake.bin,am,
+2,bootrom-hello,$(AM_HOME)/apps/hello,riscv64-xs-southlake-flash,,am-flash,
+3,copyandrun-coremark,$(AM_HOME)/apps/loader,riscv64-xs-southlake-flash,ELF_PATH=./image/coremark-riscv64-xs-southlake.bin,am-flash,
 4,pmp,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=c,am,
 5,mmu,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=s,am,
-6,llc-cache-op,$(AM_HOME)/tests/cacheoptest/llc,riscv64-xs-southlake,,am,no functional test; datapath test only; use --no-diff
-7,l1i-cache-op,$(AM_HOME)/tests/cacheoptest/icache,riscv64-xs-southlake,,am,use --no-diff
-8,l1d-cache-op,$(AM_HOME)/tests/cacheoptest/dcache,riscv64-xs-southlake,,am,use --no-diff
+6,llc-cache-op,$(AM_HOME)/tests/cacheoptest/llc,riscv64-xs-southlake,,am,--no-diff,difftest not supportted
+7,l1i-cache-op,$(AM_HOME)/tests/cacheoptest/icache,riscv64-xs-southlake,,am,--no-diff,difftest not supportted
+8,l1d-cache-op,$(AM_HOME)/tests/cacheoptest/dcache,riscv64-xs-southlake,,am,--no-diff,difftest not supportted
 9,plic,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=e,am,
 10,clint,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=i,am,
 11,cpu-test,$(AM_HOME)/tests/cputest,riscv64-xs-southlake,,am,
-12,coremark-1,$(AM_HOME)/apps/coremark,riscv64-xs-southlake,,am,iterations=1
-13,dhrystone-2,$(AM_HOME)/apps/dhrystone,riscv64-xs-southlake,,am,NUMBER_OF_RUNS=2
-14,linux-hello,-,riscv64-xs-southlake,,linux,
+12,coremark-1,$(AM_HOME)/apps/coremark,riscv64-xs-southlake,,am,,iterations=1
+13,dhrystone-2,$(AM_HOME)/apps/dhrystone,riscv64-xs-southlake,,am,,NUMBER_OF_RUNS=2
+14,dma,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=x,am,--no-diff,NUMBER_OF_RUNS=2
+15,linux-hello,-,riscv64-xs-southlake,,linux,
