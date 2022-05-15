@@ -6,6 +6,7 @@ RELEASE_PATH=./build
 RELEASE_RTL_PATH=./build/rtl
 RELEASE_SIM_RTL_PATH=./build/simrtl
 RELEASE_TEST_PATH=./build/test
+RELEASE_LINUX_PATH=./build/linux
 RELEASE_BIN_PATH=./build/bin
 RELEASE_DOC_PATH=./build/doc
 
@@ -14,10 +15,11 @@ RELEASE_DOC_PATH=./build/doc
 # release sim rtl, TBs, toolchains
 release: release-sim-rtl release-testcases release-toolchain release-doc
 
-# release sim rtl, TBs, toolchains and release-rtl
+# release sim rtl, TBs, toolchains, linux src and release-rtl
 full-release: release
 	$(MAKE) -C $(NOOP_HOME) clean
 	$(MAKE) release-rtl
+	$(MAKE) release-linux-src
 
 $(RELEASE_PATH):
 	mkdir -p $(RELEASE_PATH)
@@ -27,6 +29,8 @@ $(RELEASE_SIM_RTL_PATH):
 	mkdir -p $(RELEASE_SIM_RTL_PATH) 
 $(RELEASE_TEST_PATH):
 	mkdir -p $(RELEASE_TEST_PATH) 
+$(RELEASE_LINUX_PATH):
+	mkdir -p $(RELEASE_LINUX_PATH) 
 $(RELEASE_BIN_PATH):
 	mkdir -p $(RELEASE_BIN_PATH) 
 $(RELEASE_DOC_PATH):
@@ -41,7 +45,7 @@ release-sim-rtl: $(RELEASE_SIM_RTL_PATH) $(RELEASE_BIN_PATH)
 
 release-rtl: $(RELEASE_RTL_PATH)
 	$(MAKE) -C $(NOOP_HOME) release-verilog
-	cp $(NOOP_HOME)/release-rtl/* $(RELEASE_RTL_PATH)
+	cp -r $(NOOP_HOME)/XSTop-Release*/* $(RELEASE_RTL_PATH)
 
 # release REF
 
@@ -91,13 +95,17 @@ $(RELEASE_PATH)/run-test.mk: test-list.csv $(RELEASE_PATH) release-testcases
 baremetal-testcases: $(RELEASE_PATH)/build-test.mk $(RELEASE_TEST_PATH)
 	@echo AM_HOME=$(AM_HOME)
 	$(MAKE) -C $(AM_HOME) clean
-	$(MAKE) -f $(RELEASE_PATH)/build-test.mk all
+	$(MAKE) -f $(RELEASE_PATH)/build-test.mk all -j1
 	# rvtest cases TODO
 
 gcpt-testcases:
 	@echo $@ TODO
 
 release-testcases: baremetal-testcases gcpt-testcases
+
+release-linux-src:
+	# $(MAKE) -C resources clean # clean linux
+	cp -r ./resources $(RELEASE_LINUX_PATH)
 
 regression: $(RELEASE_PATH)/run-test.mk regression-nemu release-sim-rtl
 	$(MAKE) -f $(RELEASE_PATH)/run-test.mk all
@@ -110,7 +118,7 @@ release-toolchain: release-nemu
 # release document
 
 release-doc: release-sim-rtl $(RELEASE_DOC_PATH)
-	cp $(NOOP_HOME)/build/*.f $(RELEASE_DOC_PATH)   # RTL filelist
+	cp $(NOOP_HOME)/build/*.f $(RELEASE_DOC_PATH)   # SIM RTL filelist
 	cp $(NOOP_HOME)/build/*.dts $(RELEASE_DOC_PATH) # DTS
 
 clean-test:
