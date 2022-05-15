@@ -73,12 +73,17 @@ $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-debug-so: $(RELEASE_BIN_PATH)
 	$(MAKE) -C $(NEMU_HOME) -j
 	cp $(NEMU_HOME)/build/riscv64-nemu-interpreter-so $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-debug-so
 
+regression-nemu:
+	$(MAKE) -C $(NEMU_HOME) clean-all
+	$(MAKE) -C $(NEMU_HOME) $(RELEASE_NEMU_CONFIG)-ref_defconfig
+	$(MAKE) -C $(NEMU_HOME) -j
+
 # release testcases
 
 $(RELEASE_PATH)/build-test.mk: test-list.csv $(RELEASE_PATH)
 	awk -F ',' -f build-test.awk test-list.csv > $(RELEASE_PATH)/build-test.mk
 
-$(RELEASE_PATH)/run-test.mk: test-list.csv release-testcases
+$(RELEASE_PATH)/run-test.mk: test-list.csv $(RELEASE_PATH) release-testcases
 	awk -F ',' -f run-test.awk test-list.csv > $(RELEASE_PATH)/run-test.mk
 
 baremetal-testcases: $(RELEASE_PATH)/build-test.mk $(RELEASE_TEST_PATH)
@@ -92,7 +97,7 @@ gcpt-testcases:
 
 release-testcases: baremetal-testcases gcpt-testcases
 
-regression-testcases: $(RELEASE_PATH)/run-test.mk
+regression: $(RELEASE_PATH)/run-test.mk regression-nemu release-sim-rtl
 	$(MAKE) -f $(RELEASE_PATH)/run-test.mk all
 
 # release toolchain
@@ -106,6 +111,8 @@ release-doc: release-sim-rtl $(RELEASE_DOC_PATH)
 	cp $(NOOP_HOME)/build/*.f $(RELEASE_DOC_PATH)   # RTL filelist
 	cp $(NOOP_HOME)/build/*.dts $(RELEASE_DOC_PATH) # DTS
 
+clean-test:
+	rm -rf $(RELEASE_TEST_PATH)
 
 clean:
 	rm -rf $(RELEASE_PATH)
