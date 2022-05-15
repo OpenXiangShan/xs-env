@@ -11,8 +11,10 @@ RELEASE_DOC_PATH=./build/doc
 
 # usage: make release
 
+# release sim rtl, TBs, toolchains
 release: release-sim-rtl release-testcases release-toolchain release-doc
 
+# release sim rtl, TBs, toolchains and release-rtl
 full-release: release
 	$(MAKE) -C $(NOOP_HOME) clean
 	$(MAKE) release-rtl
@@ -38,16 +40,16 @@ release-sim-rtl: $(RELEASE_SIM_RTL_PATH) $(RELEASE_BIN_PATH)
 	cp $(NOOP_HOME)/build/emu $(RELEASE_BIN_PATH)
 
 release-rtl: $(RELEASE_RTL_PATH)
-	$(MAKE) -C $(NOOP_HOME) verilog
-	cp $(NOOP_HOME)/build/* $(RELEASE_RTL_PATH)
+	$(MAKE) -C $(NOOP_HOME) release-verilog
+	cp $(NOOP_HOME)/release-rtl/* $(RELEASE_RTL_PATH)
 
 # release REF
 
-release-nemu: \
-  $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter \
-  $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-so \
-  $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-debug \
-  $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-debug-so \
+release-nemu:
+	$(MAKE) $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter
+	$(MAKE) $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-so
+	$(MAKE) $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-debug
+	$(MAKE) $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter-debug-so
 
 $(RELEASE_BIN_PATH)/riscv64-nemu-interpreter: $(RELEASE_BIN_PATH)
 	$(MAKE) -C $(NEMU_HOME) clean-all
