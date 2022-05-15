@@ -3,14 +3,11 @@ linux: riscv-linux riscv-pk riscv-rootfs
 	export RISCV_ROOTFS_HOME=$(pwd)/riscv-rootfs; $(MAKE) -C riscv-pk bbl
 
 riscv-linux:
-	git clone https://github.com/OpenXiangShan/riscv-linux
-	cd riscv-linux; git checkout southlake
+	git clone -b southlake --depth=1 https://github.com/OpenXiangShan/riscv-linux
 riscv-pk:
-	git clone https://github.com/OpenXiangShan/riscv-pk
-	cd riscv-pk; git checkout southlake
+	git clone -b southlake --depth=1 https://github.com/OpenXiangShan/riscv-pk
 riscv-rootfs:
-	git clone https://github.com/OpenXiangShan/riscv-rootfs
-	cd riscv-rootfs; git checkout southlake
+	git clone -b southlake --depth=1 https://github.com/OpenXiangShan/riscv-rootfs
 
 clean:
 	$(MAKE) -C riscv-rootfs clean
