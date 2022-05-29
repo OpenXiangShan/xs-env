@@ -165,6 +165,7 @@ regression: $(RELEASE_PATH)/run-test.mk regression-nemu release-sim-rtl
 
 all:
 	$(MAKE) full-release
+	$(MAKE) package
 	$(MAKE) regression
 	$(MAKE) -C $(NOOP_HOME) simv 
 	# vcs regression should be run manually 
