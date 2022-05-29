@@ -167,7 +167,7 @@ all:
 	$(MAKE) full-release
 	$(MAKE) package
 	$(MAKE) regression
-	$(MAKE) -C $(NOOP_HOME) simv 
+	# $(MAKE) -C $(NOOP_HOME) simv 
 	# vcs regression should be run manually 
 
 package:

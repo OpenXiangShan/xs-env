@@ -20,6 +20,6 @@ jobs:
       - name: Release RTL, toolchains, and TBs
         run: |
           git submodule update --init --recursive
-          source ./env.sh; cd release; make release
+          source ./env.sh; cd release; make all
           mkdir /nfs-nvme/home/share/release-cd/${HEAD_SHA} -p
           cp -r ./release/build /nfs-nvme/home/share/release-cd/${HEAD_SHA}

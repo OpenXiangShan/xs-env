@@ -1,5 +1,6 @@
 linux: riscv-linux riscv-pk riscv-rootfs
 	mkdir riscv-pk/build -p
+	export RISCV_ROOTFS_HOME=$(pwd)/riscv-rootfs; $(MAKE) -C riscv-linux ARCH=riscv emu_defconfig
 	export RISCV_ROOTFS_HOME=$(pwd)/riscv-rootfs; $(MAKE) -C riscv-pk bbl
 
 riscv-linux:
