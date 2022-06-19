@@ -33,11 +33,7 @@ jobs:
       - name: Sim NutShell using Verilator
         run: |
             cd $GITHUB_WORKSPACE
-            source ./env.sh
-            cd $GITHUB_WORKSPACE/NutShell
-            # make emu
-            ./build/emu -b 0 -e 0 -i ./ready-to-run/microbench.bin
-
+            source ./env-test.sh
       
 # Github hosted CI does not support XiangShan
   sim-xiangshan:

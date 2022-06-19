@@ -10,23 +10,11 @@ git submodule update --init --recursive
 source env.sh
 # OPTIONAL: export them to .bashrc
 
-# NutShell uses similiar develop environment, we use it to test
-# if develop environment has been setup correctly
-export NOOP_HOME=$(pwd)/NutShell
-
 cd ${NEMU_HOME}
 make riscv64-xs-ref_defconfig
-make
+make -j
 
 cd ${AM_HOME}/apps/coremark
 make ARCH=riscv64-xs -k
 
-# Compile processor project
-cd ${NOOP_HOME}
-make init
-make clean
-make verilog # Optional: test if mill & Chisel has been installed correctlly
-make emu EMU_CXX_EXTRA_FLAGS="-DFIRST_INST_ADDRESS=0x80000000" # Optional: test if verilator has been installed correctlly
-
 cd ${XS_PROJECT_ROOT}
-export NOOP_HOME=$(pwd)/XiangShan
