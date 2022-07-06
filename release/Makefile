@@ -16,6 +16,8 @@ RELEASE_LINUX_PATH=./build/linux
 RELEASE_BIN_PATH=./build/bin
 RELEASE_DOC_PATH=./build/doc
 
+TEMP_PATH=./temp
+
 # RELEASE_DOC_SOURCE=
 
 RELEASE_PACKAGE_NAME=xiangshan-release-$(shell date '+%Y-%m-%d')
@@ -28,7 +30,6 @@ release:
 	$(MAKE) full-release
 	$(MAKE) package
 	$(MAKE) regression
-	# $(MAKE) -C $(NOOP_HOME) simv 
 	# vcs regression should be run manually 
 
 package:
@@ -36,12 +37,8 @@ package:
 	tar -zcf $(RELEASE_PACKAGE_NAME).tar.gz ./build
 
 # release rtl, sim rtl
-rtl-release:
-	$(MAKE) release-rtl
-	$(MAKE) release-doc
-	$(MAKE) -C $(NOOP_HOME) clean
-	$(MAKE) release-simtop
-	$(MAKE) release-emu 
+rtl-release: rtl-release-parallel-rtl rtl-release-parallel-simrtl
+	$(MAKE) build-release-emu
 
 # release TBs, toolchains
 misc-release:
@@ -62,6 +59,8 @@ full-release-step1:
 	$(MAKE) release-difftest
 full-release-step2: misc-release rtl-release
 
+$(TEMP_PATH):
+	mkdir -p $(TEMP_PATH)
 $(RELEASE_PATH):
 	mkdir -p $(RELEASE_PATH)
 $(RELEASE_SRC_PATH):
@@ -86,28 +85,39 @@ $(RELEASE_DOC_PATH):
 # release rtl, simtop and extra files
 # if you have generated $(SIM_TOP_V) without setting RELEASE = 1, make clean first
 release-rtl: $(RELEASE_RTL_PATH)
-	$(MAKE) -C $(NOOP_HOME) verilog RELEASE=1
+	$(MAKE) -C $(NOOP_HOME) verilog-release RELEASE=1
 	cp -r $(NOOP_HOME)/bosc_XSTop-Release*/* $(RELEASE_RTL_PATH)
 
-release-emu: $(RELEASE_BIN_PATH)
+release-simtop: $(RELEASE_SIM_RTL_PATH)
+	$(MAKE) -C $(NOOP_HOME) sim-verilog-release RELEASE=1
+	cp -r $(NOOP_HOME)/SimTop-Release*/* $(RELEASE_SIM_RTL_PATH)
+
+release-legacy-emu: $(RELEASE_BIN_PATH)
 	$(MAKE) -C $(NOOP_HOME) emu RELEASE=1 EMU_THREADS=8 -j16
 	cp $(NOOP_HOME)/build/emu $(RELEASE_BIN_PATH)/emu
 
-build-release-emu:
-	$(MAKE) -C $(NOOP_HOME)/difftest emu RELEASE_DIR=$(abspath $(RELEASE_RTL_PATH)) RELEASE=1 EMU_THREADS=8 -j16
-	cp $(NOOP_HOME)/build/emu $(RELEASE_BIN_PATH)/release-emu
+# use released file and filelist to build emu
+build-release-emu: $(RELEASE_DIFFTEST_PATH)
+	$(MAKE) -C $(RELEASE_DIFFTEST_PATH) emu USE_RELEASE="-F $(abspath $(RELEASE_RTL_PATH)/bosc_XSTop.f) -F $(abspath $(RELEASE_SIM_RTL_PATH)/SimTop.f)" RELEASE=1
+	cp $(RELEASE_DIFFTEST_PATH)/../build/emu $(RELEASE_BIN_PATH)
 
+# use released file and filelist to build simv
 build-release-simv:
-	$(MAKE) -C $(NOOP_HOME)/difftest simv RELEASE_DIR=$(abspath $(RELEASE_RTL_PATH)) RELEASE=1
+	$(MAKE) -C $(RELEASE_DIFFTEST_PATH) simv USE_RELEASE="-F $(abspath $(RELEASE_RTL_PATH)/bosc_XSTop.f) -F $(abspath $(RELEASE_SIM_RTL_PATH)/SimTop.f)" RELEASE=1
 
 # release-sim-rtl: $(RELEASE_SIM_RTL_PATH) $(RELEASE_BIN_PATH)
 # 	$(MAKE) -C $(NOOP_HOME) emu RELEASE=1 EMU_THREADS=8 -j16
 # 	cp $(NOOP_HOME)/build/*.v $(RELEASE_SIM_RTL_PATH)   # RTL code
 # 	cp $(NOOP_HOME)/build/emu $(RELEASE_BIN_PATH)
 
-release-simtop: $(RELEASE_SIM_RTL_PATH)
-	$(MAKE) -C $(NOOP_HOME) sim-verilog-release RELEASE=1
-	cp -r $(NOOP_HOME)/SimTop-Release*/* $(RELEASE_SIM_RTL_PATH)
+rtl-release-parallel-rtl: $(TEMP_PATH) $(RELEASE_RTL_PATH)
+	cp -r $(NOOP_HOME) $(TEMP_PATH)/_rtl_build
+	$(MAKE) release-rtl NOOP_HOME=$(abspath $(TEMP_PATH)/_rtl_build)
+
+rtl-release-parallel-simrtl: $(TEMP_PATH)
+	cp -r $(NOOP_HOME) $(TEMP_PATH)/_simrtl_build
+	$(MAKE) release-simtop NOOP_HOME=$(abspath $(TEMP_PATH)/_simrtl_build)
+	$(MAKE) release-legacy-emu NOOP_HOME=$(abspath $(TEMP_PATH)/_simrtl_build)
 
 # ------------------------------------------------------------------------------
 # release REF model
@@ -206,24 +216,29 @@ release-toolchain: release-nemu
 # ------------------------------------------------------------------------------
 
 # just copy difftest top
-release-difftest: $(RELEASE_SRC_PATH)/XiangShan/difftest
-	ln -r -s $(RELEASE_SRC_PATH)/XiangShan/difftest $(RELEASE_DIFFTEST_PATH)
+release-difftest: $(RELEASE_DIFFTEST_PATH)
+
+$(RELEASE_DIFFTEST_PATH):
+	cp -r $(NOOP_HOME)/difftest $(RELEASE_DIFFTEST_PATH)
 
 # ------------------------------------------------------------------------------
 # release document
 # ------------------------------------------------------------------------------
 
-release-doc: release-emu $(RELEASE_DOC_PATH)
-	cp $(NOOP_HOME)/build/*.dts $(RELEASE_DOC_PATH) # DTS
-	cp $(NOOP_HOME)/build/*.csv $(RELEASE_DOC_PATH) # MBIST list
+release-doc: $(RELEASE_DOC_PATH)
+	# cp $(NOOP_HOME)/build/*.dts $(RELEASE_DOC_PATH) # DTS
+	# cp $(NOOP_HOME)/build/*.csv $(RELEASE_DOC_PATH) # MBIST list
 
 # ------------------------------------------------------------------------------
 # regression
 # ------------------------------------------------------------------------------
 
-regression: $(RELEASE_PATH)/run-test.mk regression-nemu release-emu
-	$(MAKE) -f $(RELEASE_PATH)/run-test.mk all
+regression: $(RELEASE_PATH)/run-test.mk regression-nemu $(RELEASE_BIN_PATH)/emu
+	$(MAKE) -f $(RELEASE_PATH)/run-test.mk all RELEASE_BIN_PATH=$(RELEASE_BIN_PATH)
 	# $(MAKE) build-release-emu # test if splited rtl and simtop can generate emu
+
+$(RELEASE_BIN_PATH)/emu:
+	build-release-emu
 
 # TODO: support vcs regression
 
@@ -241,8 +256,9 @@ clean-submodule:
 	$(MAKE) -C $(AM_HOME) clean
 	rm -rf $(NOOP_HOME)/out
 
-clean:
+clean: $(RELEASE_PATH) $(TEMP_PATH)
 	rm -rf $(RELEASE_PATH)
+	rm -rf $(TEMP_PATH)
 
 .PHONY: clean release
 .DEFAULT: release

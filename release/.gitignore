@@ -1,1 +1,7 @@
-build
+*
+./*
+!resources/
+!Makefile
+!*.csv
+!*.awk
+!*.md

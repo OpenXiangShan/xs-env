@@ -15,4 +15,5 @@ S/N,name,make dir,arch,extra build args,test type,extra sim args,notes
 14,dma,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=x,am,--no-diff,NUMBER_OF_RUNS=2
 15,memscan,$(AM_HOME)/tests/memscantest,riscv64-xs-southlake,,am,--no-diff,difftest not supportted
 16,rtc-freq,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=r,am,--no-diff,
-17,linux-hello,-,riscv64-xs-southlake,,linux,,
+17,latency-throughput,$(AM_HOME)/apps/maprobe,riscv64-xs-southlake,,am,,
+18,linux-hello,-,riscv64-xs-southlake,,linux,,
