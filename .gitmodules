@@ -4,11 +4,10 @@
 [submodule "NEMU"]
 	path = NEMU
 	url = https://github.com/OpenXiangShan/NEMU
-	branch = xs
 [submodule "nexus-am"]
 	path = nexus-am
 	url = https://github.com/OpenXiangShan/nexus-am
-[submodule "NutShell"]
-	path = NutShell
-	url = https://github.com/OSCPU/NutShell
-	branch = difftest
+[submodule "DRAMsim3"]
+	path = DRAMsim3
+	url = https://github.com/OpenXiangShan/DRAMsim3.git
+

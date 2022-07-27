@@ -1,4 +1,3 @@
 init:
-	git submodule update --init
-	$(MAKE) -C XiangShan init
+	git submodule update --init --recursive
 
