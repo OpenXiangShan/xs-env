@@ -10,5 +10,5 @@ cd ../..
 
 # Build XiangShan
 cd XiangShan
-make emu WITH_DRAMSIM3=1 EMU_THREADS=8 -j10 SIM_ARGS=--disable-log
+make emu WITH_DRAMSIM3=1 EMU_THREADS=8 -j10
 
