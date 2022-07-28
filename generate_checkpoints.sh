@@ -1,3 +1,9 @@
+cp riscv64-xs-cpt_defconfig NEMU/configs
+
+make -C NEMU clean
+make -C NEMU riscv64-xs-cpt_defconfig
+make -C NEMU -j16
+
 make -C NEMU/resource/gcpt_restore
 
 ./NEMU/build/riscv64-nemu-interpreter            \
