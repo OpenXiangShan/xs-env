@@ -2,7 +2,7 @@
 cd XiangShan && make clean
 
 # Build MinimalConfig XiangShan
-make emu CONFIG=MinimalConfig -j16 EMU_TRACE=1
+proxychains make emu CONFIG=MinimalConfig -j16 EMU_TRACE=1
 
 # Simulate XiangShan with a checkpoint
 ./build/emu -I 10000                                  \
