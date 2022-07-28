@@ -1,14 +1,21 @@
 set -x
 set -e
 
-# Build DRAMsim3
-cd DRAMsim3
-mkdir -p build && cd build
-cmake .. -DCOSIM=1
-make -j10
-cd ../..
-
 # Build XiangShan
 cd XiangShan
-make emu WITH_DRAMSIM3=1 EMU_THREADS=8 -j10
+rm -rf build
+make verilog
+
+# Build FPGA
+cp -r ~/resource/scripts_v2 .
+cd scripts_v2
+make update_core_flist CORE_DIR=$NOOP_HOME/build
+make nanhu CORE_DIR=$NOOP_HOME/build
+make bitstream CORE_DIR=$NOOP_HOME/build
+
+echo ""
+echo "Please wait for xs_nanhu/xs_nanhu.runs/impl_1/runme.log"
+echo "MUST check whether it says write_bitstream completed successfully"
+echo "Then the bit is generated correctly."
+echo "This step may take more than 15 hours."
 
