@@ -5,10 +5,13 @@ set -e
 cd XiangShan
 rm -rf build
 make verilog
+rm -f build/tsmc28_sram.v.conf
+rm -f build/tsmc28_sram.v
 cd ..
 
 # Build FPGA
 cp -r ~/resource/scripts_v2 .
+cp ~/XSTop_wrapper.v scripts_v2/src/rtl/XSTop_wrapper.v
 cd scripts_v2
 make update_core_flist CORE_DIR=$NOOP_HOME/build
 make nanhu CORE_DIR=$NOOP_HOME/build
