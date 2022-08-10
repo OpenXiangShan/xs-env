@@ -5,6 +5,7 @@ set -e
 cd XiangShan
 rm -rf build
 make verilog
+cd ..
 
 # Build FPGA
 cp -r ~/resource/scripts_v2 .
