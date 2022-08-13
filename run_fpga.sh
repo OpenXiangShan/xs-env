@@ -17,5 +17,5 @@ cp scripts_v2/xs_nanhu/xs_nanhu.runs/impl_1/xs_fpga_top_debug.bit my_bitstream/
 
 echo "Download bitstream to FPGA..."
 echo "This may take more than 10 minutes..."
-vivado -mode batch -source ~/resource/runfpga.tcl -tclargs my_bitstream/ ~/resource/gcc_166.txt
+vivado -mode batch -source ~/resource/runfpga.tcl -tclargs my_bitstream/ ~/resource/gcc_166_yqh.txt
 
