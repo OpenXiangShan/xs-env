@@ -59,6 +59,12 @@ full-release-step1:
 	$(MAKE) release-difftest
 full-release-step2: misc-release rtl-release
 
+# release source code, TBs, toolchains, and linux src
+# will not build rtl, sim rtl and emu
+env-release:
+	$(MAKE) full-release-step1
+	$(MAKE) misc-release
+
 $(TEMP_PATH):
 	mkdir -p $(TEMP_PATH)
 $(RELEASE_PATH):

@@ -17,3 +17,4 @@ S/N,name,make dir,arch,extra build args,test type,extra sim args,notes
 16,rtc-freq,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=r,am,--no-diff,
 17,latency-throughput,$(AM_HOME)/apps/maprobe,riscv64-xs-southlake,,am,,
 18,linux-hello,-,riscv64-xs-southlake,,linux,,
+19,beu,$(AM_HOME)/tests/amtest,riscv64-xs-southlake,mainargs=u,am,--no-diff -C1,disabled by default
