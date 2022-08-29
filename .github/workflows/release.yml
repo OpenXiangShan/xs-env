@@ -1,25 +1,26 @@
-# name: Release
+name: Release
 
-# # Controls when the workflow will run
-# on:
-#   # Triggers the workflow on push or pull request events but only for the master branch
-#   push:
-#     branches: [ release ]
-#   pull_request:
-#     branches: [ release ]
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ release ]
+  pull_request:
+    branches: [ release ]
 
-#   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
-# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-# jobs:
-#   release-all:
-#     runs-on: self-hosted
-#     steps:
-#       - uses: actions/checkout@v2
-#       - name: Release RTL, toolchains, and TBs
-#         run: |
-#           git submodule update --init --recursive
-#           source ./env.sh; cd release; make all
-#           mkdir /nfs-nvme/home/share/release-cd/${HEAD_SHA} -p
-#           cp -r ./release/build /nfs-nvme/home/share/release-cd/${HEAD_SHA}
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  release-all:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Release RTL, toolchains, and TBs
+        run: |
+          git submodule update --init --recursive
+          cd $GITHUB_WORKSPACE; source ./env.sh; cd release/resources; make clean-repo; 
+          cd $GITHUB_WORKSPACE; source ./env.sh; cd release; make full-release; make package;
+          mkdir /nfs-nvme/home/share/release-cd/${HEAD_SHA} -p
+          cp -r ./release/build /nfs-nvme/home/share/release-cd/${HEAD_SHA}

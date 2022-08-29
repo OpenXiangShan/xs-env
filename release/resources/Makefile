@@ -14,3 +14,8 @@ clean:
 	$(MAKE) -C riscv-rootfs clean
 	$(MAKE) -C riscv-linux clean
 	$(MAKE) -C riscv-pk clean
+
+clean-repo:
+	rm -rf riscv-rootfs
+	rm -rf riscv-linux
+	rm -rf riscv-pk
