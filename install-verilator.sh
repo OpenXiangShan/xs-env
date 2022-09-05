@@ -1,6 +1,6 @@
 # https://verilator.org/guide/latest/install.html
 
-sudo apt-get install git perl python3 make autoconf g++ flex bison ccache clang
+sudo apt-get install git perl python3 make autoconf g++ flex bison clang
 sudo apt-get install libgoogle-perftools-dev numactl perl-doc
 sudo apt-get install libfl2  # Ubuntu only (ignore if gives error)
 sudo apt-get install libfl-dev  # Ubuntu only (ignore if gives error)
