@@ -38,7 +38,7 @@ package:
 
 # release rtl, sim rtl
 rtl-release: rtl-release-parallel-rtl rtl-release-parallel-simrtl
-	$(MAKE) build-release-emu
+	# $(MAKE) build-release-emu
 
 # release TBs, toolchains
 misc-release:
@@ -46,7 +46,8 @@ misc-release:
 	$(MAKE) baremetal-testcases-print
 	$(MAKE) baremetal-testcases-noprint
 	$(MAKE) release-toolchain
-	$(MAKE) release-testcases
+	rm -rf $(RELEASE_TEST_PATH)
+	ln -s $(RELEASE_TEST_PATH)-print $(RELEASE_TEST_PATH)
 
 # release source code, release-rtl, sim rtl, TBs, toolchains, and linux src
 # will rebuild emu, which may take a long period of time
@@ -177,7 +178,7 @@ $(RELEASE_PATH)/run-test.mk: test-list.csv $(RELEASE_PATH) release-testcases
 baremetal-testcases: $(RELEASE_PATH)/build-test.mk $(RELEASE_TEST_PATH)
 	@echo AM_HOME=$(AM_HOME)
 	$(MAKE) -C $(AM_HOME) clean
-	$(MAKE) -f $(RELEASE_PATH)/build-test.mk all -j1
+	$(MAKE) -f $(RELEASE_PATH)/build-test.mk all
 
 baremetal-testcases-print:
 	rm -rf $(RELEASE_TEST_PATH)

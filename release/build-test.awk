@@ -12,7 +12,7 @@ BEGIN {
 {
     if(NR>1){
         if(TESTSN != $1){
-            printf("./build/test/%s-%s:\n", $1, $2)
+            printf("build/test/%s-%s:\n", $1, $2)
             printf("	mkdir -p ./build/test/%s-%s\n", $1, $2); // mkdir
             TESTSN = $1
             TESTLIST[$1] = "./build/test/" $1 "-" $2
@@ -38,9 +38,9 @@ BEGIN {
 }
 
 END {
-    printf("all: \\\n");
+    printf("all: \n");
     for(i = 1; i < NR; i++){
-        printf("  %s\\\n", TESTLIST[i]);
+        printf("	$(MAKE) -f ./build/build-test.mk %s\n", TESTLIST[i]);
     }
     printf("\n");
 }
