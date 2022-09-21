@@ -11,7 +11,6 @@ git clone https://github.com/verilator/verilator
 # Every time you need to build:
 unset VERILATOR_ROOT  # For bash
 cd verilator
-git pull        # Make sure git repository is up-to-date
 
 # XiangShan uses Verilator v4.218
 git checkout v4.218
