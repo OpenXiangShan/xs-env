@@ -10,6 +10,11 @@ git submodule update --init --recursive
 source env.sh
 # OPTIONAL: export them to .bashrc
 
+echo XS_PROJECT_ROOT: ${XS_PROJECT_ROOT}
+echo NEMU_HOME: ${NEMU_HOME}
+echo AM_HOME: ${AM_HOME}
+echo NOOP_HOME: ${NOOP_HOME}
+
 cd ${NEMU_HOME}
 make riscv64-xs-ref_defconfig
 make -j
