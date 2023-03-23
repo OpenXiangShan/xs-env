@@ -1,0 +1,2 @@
+cd ${NOOP_HOME}
+make emu CONFIG=TutorialConfig EMU_THREADS=1 EMU_TRACE=1 WITH_CONSTANTIN=1 -j8
