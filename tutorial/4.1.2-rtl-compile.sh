@@ -1,0 +1,2 @@
+export NOOP_HOME=/PATH/TO/XiangShan/
+make emu EMU_THREADS=16 EMU_TRACE=1 WITH_LIGHTQS=1 CONFIG=MinimalConfig  -j64
