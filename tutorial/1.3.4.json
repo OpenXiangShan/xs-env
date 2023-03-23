@@ -1,0 +1,44 @@
+{
+    "constants": [
+        {
+            "name": "block_cycles_cache_0",
+            "width": 7,
+            "guide": 30,
+            "init": 11
+        },
+        {
+            "name": "block_cycles_cache_1",
+            "width": 7,
+            "init": 18
+        },
+        {
+            "name": "block_cycles_cache_2",
+            "width": 7,
+            "init": 127
+        },
+        {
+            "name": "block_cycles_cache_3",
+            "width": 7,
+            "init": 17
+        }
+    ],
+    "opt_target": [
+        {"successfully_forward_channel_D": {"policy" :"max", "baseline" :200} },
+        {"successfully_forward_mshr": {"policy" :"max", "baseline" :3000} },
+        {"dcache.missQueue.entries_0: load_miss_penalty_to_use,": {"policy" :"min", "baseline" :250396} },
+        {"dcache.missQueue.entries_1: load_miss_penalty_to_use,": {"policy" :"min", "baseline" :5634} },
+        {"dcache.missQueue.entries_2: load_miss_penalty_to_use,": {"policy" :"min", "baseline" :4599} },
+        {"dcache.missQueue.entries_3: load_miss_penalty_to_use,": {"policy" :"min", "baseline" :4146} }
+    ],
+    
+    "population_num": 8,
+    "iteration_num": 2,
+    "crossover_rate": 50,
+    "mutation_rate": 50,
+
+    "emu_threads": 16,
+    "concurrent_emu": 4,
+    "max_instr": 1000000,
+    "seed": 3888,
+    "work_load": "${XS_PROJECT_ROOT}/tutorial/maprobe-riscv64-xs.bin"
+}
