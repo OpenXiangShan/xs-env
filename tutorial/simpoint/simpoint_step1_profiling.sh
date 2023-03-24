@@ -9,4 +9,4 @@ rm -rf tutorial_simpoint
     -w stream \
     --simpoint-profile \
     --interval 50000000 \
-    ../tutorial/bin/stream-0xa0000.bin
+    $XS_PROJECT_ROOT/tutorial/bin/stream-0xa0000.bin
