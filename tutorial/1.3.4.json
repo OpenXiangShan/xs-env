@@ -36,8 +36,8 @@
     "crossover_rate": 50,
     "mutation_rate": 50,
 
-    "emu_threads": 16,
-    "concurrent_emu": 4,
+    "emu_threads": 1,
+    "concurrent_emu": 8,
     "max_instr": 1000000,
     "seed": 3888,
     "work_load": "${XS_PROJECT_ROOT}/tutorial/maprobe-riscv64-xs.bin"
