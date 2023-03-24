@@ -1,6 +1,9 @@
 [submodule "XiangShan"]
 	path = XiangShan
 	url = https://github.com/OpenXiangShan/XiangShan
+[submodule "XiangShan-Oracle"]
+	path = XiangShan-Oracle
+	url = https://github.com/OpenXiangShan/XiangShan
 [submodule "NEMU"]
 	path = NEMU
 	url = https://github.com/OpenXiangShan/NEMU
