@@ -1,8 +1,8 @@
 export AHEAD_HOME=${XS_PROJECT_ROOT}/NEMU-ahead
 cd ${NOOP_HOME}
-./build/emu -i /nfs-nvme/home/share/checkpoints_profiles/spec06_rv64gcb_o2_20m/take_cpt/omnetpp_492740000000_0.497511/0/_492740000000_.gz -I 1000000  --force-dump-result 2> debug.log
+./build/emu -i ${XS_PROJECT_ROOT}/tutorial/_492740000000_.gz -I 1000000  --force-dump-result 2> debug.log
 
-${XS_PROJECT_ROOT}/tutorial/emu-oracle-base -i /nfs-nvme/home/share/checkpoints_profiles/spec06_rv64gcb_o2_20m/take_cpt/omnetpp_492740000000_0.497511/0/_492740000000_.gz -I 1000000  --force-dump-result 2> debug-base.log
+${XS_PROJECT_ROOT}/tutorial/emu-oracle-base -i ${XS_PROJECT_ROOT}/tutorial/_492740000000_.gz -I 1000000  --force-dump-result 2> debug-base.log
 echo "Bp Oracle"
 cat debug.log| grep Bp
 echo "Bp Base"
