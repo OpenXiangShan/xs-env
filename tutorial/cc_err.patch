@@ -1,0 +1,13 @@
+diff --git a/src/main/scala/huancun/noninclusive/MSHR.scala b/src/main/scala/huancun/noninclusive/MSHR.scala
+index b89eff4..3065592 100644
+--- a/src/main/scala/huancun/noninclusive/MSHR.scala
++++ b/src/main/scala/huancun/noninclusive/MSHR.scala
+@@ -244,7 +244,7 @@ class MSHR()(implicit p: Parameters) extends BaseMSHR[DirResult, SelfDirWrite, S
+ 
+   def onCReq(): Unit = {
+     // Release / ReleaseData
+-    new_self_meta.dirty := self_meta.hit && self_meta.dirty || req.dirty && isParamFromT(req.param)
++    new_self_meta.dirty := self_meta.hit && self_meta.dirty
+     new_self_meta.state := MuxLookup(
+       req.param,
+       self_meta.state,
