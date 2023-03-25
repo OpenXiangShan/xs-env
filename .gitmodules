@@ -15,9 +15,6 @@
 	path = NutShell
 	url = https://github.com/OSCPU/NutShell
 	branch = difftest
-[submodule "DRAMsim3"]
-	path = DRAMsim3
-	url = https://github.com/OpenXiangShan/DRAMsim3.git
 [submodule "NEMU-ahead"]
 	path = NEMU-ahead
 	url = https://github.com/OpenXiangShan/NEMU
