@@ -23,10 +23,6 @@ index d3f732d..aadcbb1 100644
 @@ -193,4 +193,4 @@ object Constantin extends ConstantinParams {
      FileRegisters.add(s"${objectName}.txt", getTXT)
    }
- 
--}
-\ No newline at end of file
-+}
 -- 
 2.35.1
 
