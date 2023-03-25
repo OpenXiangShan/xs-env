@@ -1,13 +1,13 @@
-diff --git a/src/main/scala/huancun/noninclusive/MSHR.scala b/src/main/scala/huancun/noninclusive/MSHR.scala
-index b89eff4..3065592 100644
---- a/src/main/scala/huancun/noninclusive/MSHR.scala
-+++ b/src/main/scala/huancun/noninclusive/MSHR.scala
-@@ -244,7 +244,7 @@ class MSHR()(implicit p: Parameters) extends BaseMSHR[DirResult, SelfDirWrite, S
- 
-   def onCReq(): Unit = {
-     // Release / ReleaseData
--    new_self_meta.dirty := self_meta.hit && self_meta.dirty || req.dirty && isParamFromT(req.param)
-+    new_self_meta.dirty := self_meta.hit && self_meta.dirty
-     new_self_meta.state := MuxLookup(
-       req.param,
-       self_meta.state,
+diff --git a/src/main/scala/huancun/noninclusive/SinkC.scala b/src/main/scala/huancun/noninclusive/SinkC.scala
+index e2b3a17..7bcc7f7 100644
+--- a/src/main/scala/huancun/noninclusive/SinkC.scala
++++ b/src/main/scala/huancun/noninclusive/SinkC.scala
+@@ -93,7 +93,7 @@ class SinkC(implicit p: Parameters) extends BaseSinkC {
+   // buffer write
+   when(c.fire() && hasData) {
+     when(first) {
+-      buffer(insertIdx)(count) := c.bits.data
++      buffer(insertIdx)(count) := 0xABCDEF.U
+       beatValsSave(insertIdx)(count) := true.B
+       beatValsThrough(insertIdx)(count) := true.B
+       beatValsTimer(insertIdx) := 1.U
