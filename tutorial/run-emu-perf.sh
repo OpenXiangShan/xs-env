@@ -1,3 +1,3 @@
 set -v
 
-./emu -i hello.bin --diff $NEMU_HOME/build/riscv64-nemu-interpreter-so 2>perf.err
+./emu -i hello.bin --diff $NOOP_HOME/ready-to-run/riscv64-nemu-interpreter-so 2>perf.err
