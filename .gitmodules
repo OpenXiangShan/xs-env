@@ -18,3 +18,6 @@
 [submodule "NEMU-ahead"]
 	path = NEMU-ahead
 	url = https://github.com/OpenXiangShan/NEMU
+[submodule "env-scripts"]
+	path = env-scripts
+	url = https://github.com/OpenXiangShan/env-scripts.git
