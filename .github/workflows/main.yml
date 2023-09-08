@@ -45,6 +45,7 @@ jobs:
             git config --global url."https://github.com/".insteadOf git@github.com:
             git config --global url."https://".insteadOf git://
             cd $GITHUB_WORKSPACE
+            make -C nexus-am clean
             source ./setup.sh
             source ./env.sh
             cd $GITHUB_WORKSPACE/XiangShan
