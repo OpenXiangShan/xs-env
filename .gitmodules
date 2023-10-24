@@ -1,9 +1,6 @@
 [submodule "XiangShan"]
 	path = XiangShan
 	url = https://github.com/OpenXiangShan/XiangShan
-[submodule "XiangShan-Oracle"]
-	path = XiangShan-Oracle
-	url = https://github.com/OpenXiangShan/XiangShan
 [submodule "NEMU"]
 	path = NEMU
 	url = https://github.com/OpenXiangShan/NEMU
@@ -15,9 +12,6 @@
 	path = NutShell
 	url = https://github.com/OSCPU/NutShell
 	branch = difftest
-[submodule "NEMU-ahead"]
-	path = NEMU-ahead
-	url = https://github.com/OpenXiangShan/NEMU
 [submodule "env-scripts"]
 	path = env-scripts
 	url = https://github.com/OpenXiangShan/env-scripts.git
