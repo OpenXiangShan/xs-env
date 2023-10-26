@@ -1,14 +1,5 @@
-From 58486e9c9b6611b3ce8a2c803d50a137bb4f651b Mon Sep 17 00:00:00 2001
-From: Guokai Chen <chenguokai17@mails.ucas.ac.cn>
-Date: Wed, 22 Mar 2023 14:13:49 +0800
-Subject: [PATCH] utility constantin patch
-
----
- src/main/scala/utility/Constantin.scala | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
 diff --git a/src/main/scala/utility/Constantin.scala b/src/main/scala/utility/Constantin.scala
-index d3f732d..aadcbb1 100644
+index 5a30c94..d31cf15 100644
 --- a/src/main/scala/utility/Constantin.scala
 +++ b/src/main/scala/utility/Constantin.scala
 @@ -21,7 +21,7 @@ import chisel3.util._
@@ -20,9 +11,3 @@ index d3f732d..aadcbb1 100644
    def getdpicFunc(constName: String) = {
      s"${constName}_constantin_read"
    }
-@@ -193,4 +193,4 @@ object Constantin extends ConstantinParams {
-     FileRegisters.add(s"${objectName}.txt", getTXT)
-   }
--- 
-2.35.1
-
