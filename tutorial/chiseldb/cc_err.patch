@@ -1,13 +1,13 @@
-diff --git a/src/main/scala/huancun/noninclusive/SinkC.scala b/src/main/scala/huancun/noninclusive/SinkC.scala
-index e2b3a17..7bcc7f7 100644
---- a/src/main/scala/huancun/noninclusive/SinkC.scala
-+++ b/src/main/scala/huancun/noninclusive/SinkC.scala
-@@ -96,7 +96,7 @@ class SinkC(implicit p: Parameters) extends BaseSinkC {
-   // buffer write
-   when(c.fire && hasData) {
-     when(first) {
--      buffer(insertIdx)(count) := c.bits.data
-+      buffer(insertIdx)(count) := 0xABCDEF.U
-       beatValsSave(insertIdx)(count) := true.B
-       beatValsThrough(insertIdx)(count) := true.B
-       beatValsTimer(insertIdx) := 1.U
+diff --git a/src/main/scala/coupledL2/SinkC.scala b/src/main/scala/coupledL2/SinkC.scala
+index 217587a..a8035bd 100644
+--- a/src/main/scala/coupledL2/SinkC.scala
++++ b/src/main/scala/coupledL2/SinkC.scala
+@@ -105,7 +105,7 @@ class SinkC(implicit p: Parameters) extends L2Module {
+   when (io.c.fire && isRelease) {
+     when (hasData) {
+       when (first) {
+-        dataBuf(nextPtr)(beat) := io.c.bits.data
++        dataBuf(nextPtr)(beat) := 0xABCDEF.U
+         beatValids(nextPtr)(beat) := true.B
+       }.otherwise {
+         assert(last)
