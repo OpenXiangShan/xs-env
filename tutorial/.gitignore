@@ -1,0 +1,11 @@
+emu
+emu-minimal
+emu-bug
+emu-cc-err
+emu-constantin
+bin/
+
+perf.out
+lightsss.err
+constantin/constantin.err
+checkpoint/simpoint.err

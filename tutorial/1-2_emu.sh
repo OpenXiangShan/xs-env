@@ -1,1 +1,0 @@
-make emu EMU_THREADS=8 EMU_TRACE=1 WITH_DRAMSIM=1 WITH_CHISELDB=1 -j16 | tee compile.log
