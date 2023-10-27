@@ -5,7 +5,7 @@ emu-cc-err
 emu-constantin
 bin/
 
-perf.out
+perf.err
 lightsss.err
 constantin/constantin.err
 checkpoint/simpoint.err
