@@ -15,6 +15,6 @@ make clean
 # test if mill & Chisel has been installed correctlly
 make verilog 
 # test if verilator has been installed correctlly
-make emu EMU_CXX_EXTRA_FLAGS="-DFIRST_INST_ADDRESS=0x80000000" WITH_CHISELDB=0 
+make emu
 # test verilator simulation
 ./build/emu -b 0 -e 0 -i ./ready-to-run/microbench.bin
