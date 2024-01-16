@@ -8,6 +8,10 @@ source env.sh
 # if develop environment has been setup correctly
 export NOOP_HOME=$(pwd)/NutShell
 
+cd ${NEMU_HOME}
+make riscv64-nutshell-ref_defconfig
+make
+
 # Compile processor project
 cd ${NOOP_HOME}
 make init

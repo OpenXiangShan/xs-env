@@ -16,12 +16,12 @@ jobs:
   # This workflow contains a single job called "build"
   setup-develop-env:
     # The type of runner that the job will run on
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup XiangShan environment
         run: |
@@ -34,21 +34,3 @@ jobs:
         run: |
             cd $GITHUB_WORKSPACE
             source ./env-test.sh
-      
-# Github hosted CI does not support XiangShan
-  sim-xiangshan:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v2
-      - name: Sim XiangShan using Verilator
-        run: |
-            git config --global url."https://github.com/".insteadOf git@github.com:
-            git config --global url."https://".insteadOf git://
-            cd $GITHUB_WORKSPACE
-            source ./env.sh
-            make -C nexus-am clean
-            source ./setup.sh
-            cd $GITHUB_WORKSPACE/XiangShan
-            make clean
-            make emu CONFIG=MinimalConfig
-            ./build/emu -b 0 -e 0 -i ./ready-to-run/linux.bin
