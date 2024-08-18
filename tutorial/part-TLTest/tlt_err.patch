@@ -1,0 +1,5 @@
+--- a/tl-test-new/dut/CoupledL2/src/main/scala/coupledL2/GrantBuffer.scala
++++ b/tl-test-new/dut/CoupledL2/src/main/scala/coupledL2/GrantBuffer.scala
+@@ -87,7 +87,7 @@ class GrantBuffer(implicit p: Parameters) extends LazyModule {
+-      d.data := data
++      d.data := data << 8

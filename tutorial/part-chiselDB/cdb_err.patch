@@ -1,0 +1,5 @@
+--- a/$NOOP_HOME/huancun/src/main/scala/huancun/noninclusive/SinkC.scala
++++ b/$NOOP_HOME/huancun/src/main/scala/huancun/noninclusive/SinkC.scala
+@@ -99,7 +99,7 @@ class SinkC(implicit p: Parameters) extends BaseSinkC {
+-      buffer(insertIdx)(count) := c.bits.data
++      buffer(insertIdx)(count) := 0xABCDEF.U
