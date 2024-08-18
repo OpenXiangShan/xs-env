@@ -1,0 +1,3 @@
+Depends on the environment variables XS_PROJECT_ROOT, NEMU_HOME, NOOP_HOME
+run "bash xxx.sh"
+run "bash clean.sh" before compiling.
