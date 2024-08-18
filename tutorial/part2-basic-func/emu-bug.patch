@@ -1,0 +1,13 @@
+diff --git a/src/main/scala/xiangshan/backend/fu/Alu.scala b/src/main/scala/xiangshan/backend/fu/Alu.scala
+index b5ac11039..99a8e6376 100644
+--- a/src/main/scala/xiangshan/backend/fu/Alu.scala
++++ b/src/main/scala/xiangshan/backend/fu/Alu.scala
+@@ -62,7 +62,7 @@ class LeftShiftWordModule(implicit p: Parameters) extends XSModule {
+     val sllw = Output(UInt((XLEN/2).W))
+     val revSllw = Output(UInt((XLEN/2).W))
+   })
+-  io.sllw := io.sllSrc << io.shamt
++  io.sllw := io.sllSrc >> io.shamt
+   io.revSllw := io.sllSrc << io.revShamt
+ }
+
