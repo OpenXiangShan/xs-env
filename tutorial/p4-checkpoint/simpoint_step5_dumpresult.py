@@ -140,7 +140,7 @@ def dump_result(base_path, spec_app_list, times, ids):
 
 
 spec_list=["stream"]
-base_path = os.path.join(os.getenv("XS_PROJECT_ROOT"), "tutorial/part5-checkpoint/simpoint_result")
+base_path = os.path.join(os.getenv("XS_PROJECT_ROOT"), "tutorial/p4-checkpoint/simpoint_result")
 times = [1, 1, 1]
 ids = [0, 0, 0]
 

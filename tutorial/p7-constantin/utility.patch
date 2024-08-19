@@ -1,0 +1,13 @@
+diff --git a/src/main/scala/utility/Constantin.scala b/src/main/scala/utility/Constantin.scala
+index 53f5617..c570e6f 100644
+--- a/src/main/scala/utility/Constantin.scala
++++ b/src/main/scala/utility/Constantin.scala
+@@ -21,7 +21,7 @@ import chisel3.util._
+ 
+ trait ConstantinParams {
+   def UIntWidth = 64
+-  def AutoSolving = false
++  def AutoSolving = true
+   def getdpicFunc(constName: String) = {
+     s"${constName}_constantin_read"
+   }
