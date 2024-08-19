@@ -1,0 +1,11 @@
+--- a/tl-test-new/dut/CoupledL2/src/main/scala/coupledL2/GrantBuffer.scala
++++ b/tl-test-new/dut/CoupledL2/src/main/scala/coupledL2/GrantBuffer.scala
+@@ -84,7 +84,7 @@
+     d.source := task.sourceId
+     d.sink := grant_id
+     d.denied := false.B
+-    d.data := data
++    d.data := data << 8
+     d.corrupt := false.B
+     d.echo.lift(IsKeywordKey).foreach(_ := false.B)
+     d
