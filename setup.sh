@@ -3,7 +3,7 @@
 # This script will setup XiangShan develop environment automatically
 
 # Init submodules
-git submodule update --init --recursive DRAMsim3 NEMU NutShell nexus-am
+git submodule update --init --recursive DRAMsim3 NEMU NutShell nexus-am tl-test-new
 git submodule update --init XiangShan && make -C XiangShan init;
 
 # Setup XiangShan environment variables
