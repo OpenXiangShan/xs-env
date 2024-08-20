@@ -19,3 +19,6 @@
 	path = tl-test-new
 	url = https://github.com/OpenXiangShan/tl-test-new.git
 	branch = tutorial-2024
+[submodule "gem5"]
+	path = gem5
+	url = https://github.com/OpenXiangShan/GEM5.git

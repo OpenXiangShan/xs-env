@@ -3,6 +3,7 @@
 
 apt update
 apt install proxychains4 shadowsocks-libev vim wget git tmux make gcc clang llvm time curl libreadline6-dev libsdl2-dev gcc-riscv64-linux-gnu openjdk-11-jre zlib1g-dev device-tree-compiler flex autoconf bison sqlite3 libsqlite3-dev zstd libzstd-dev
+apt install build-essential git m4 scons zlib1g zlib1g-dev libprotobuf-dev protobuf-compiler libprotoc-dev libgoogle-perftools-dev python3-dev libboost-all-dev pkg-config libsqlite3-dev zstd libzstd-dev cmake
 sh -c "curl -L https://github.com/com-lihaoyi/mill/releases/download/0.11.6/0.11.6 > /usr/local/bin/mill && chmod +x /usr/local/bin/mill"
 
 # We need to use Verilator 4.204+, so we install Verilator manually
