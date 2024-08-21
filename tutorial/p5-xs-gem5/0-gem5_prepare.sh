@@ -33,16 +33,17 @@ build_nemu_diff() {
     git submodule update --init $NEMU_HOME && \
     pushd $NEMU_HOME && \
     ( (stat build/riscv64-nemu-interpreter-so && \
-       mv build/riscv64-nemu-interpreter-so build/riscv64-nemu-interpreter-so.bak) \
+       mv build/riscv64-nemu-interpreter-so riscv64-nemu-interpreter-so.bak) \
        || true) && \
     ( (stat .config && \
        mv .config .config.bak) \
        || true) && \
+    make clean && \
     make riscv64-gem5-ref_defconfig && \
     make -j `nproc` && \
     mv build/riscv64-nemu-interpreter-so build/riscv64-nemu-gem5-ref-so && \
-    ( (stat build/riscv64-nemu-interpreter-so.bak && \
-       mv build/riscv64-nemu-interpreter-so.bak build/riscv64-nemu-interpreter-so) \
+    ( (stat riscv64-nemu-interpreter-so.bak && \
+       mv riscv64-nemu-interpreter-so.bak build/riscv64-nemu-interpreter-so) \
        || true) && \
     ( (stat .config.bak && \
        mv .config.bak .config) \
