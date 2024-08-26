@@ -12,8 +12,8 @@ git clone https://github.com/verilator/verilator
 unset VERILATOR_ROOT  # For bash
 cd verilator
 
-# XiangShan uses Verilator v5.020
-git checkout v5.020
+# XiangShan uses Verilator v5.028
+git checkout v5.028
 
 autoconf        # Create ./configure script
 # Configure and create Makefile
