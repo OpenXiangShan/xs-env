@@ -1,4 +1,5 @@
 set -v -e
+dir="p5-xs-perf"
 
 # cd ${NOOP_HOME}
 # make clean
@@ -8,4 +9,4 @@ set -v -e
 # ./build/emu -i ./ready-to-run/coremark-2-iteration.bin \
 #     --diff ./ready-to-run/riscv64-nemu-interpreter-so --dump-db
 # cp `find $NOOP_HOME/build/ -type f -name "*.db" | tail -1` \
-#     ${XS_PROJECT_ROOT}/tutorial/p6-xs-perf/xs-perf-rolling.db
+#     ${XS_PROJECT_ROOT}/tutorial/${dir}/xs-perf-rolling.db

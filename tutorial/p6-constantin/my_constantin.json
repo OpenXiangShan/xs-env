@@ -27,5 +27,5 @@
     "concurrent_emu": 4,
     "max_instr": 100000,
     "seed": 3888,
-    "work_load": "${XS_PROJECT_ROOT}/tutorial/p7-constantin/maprobe-riscv64-xs.bin"
+    "work_load": "${XS_PROJECT_ROOT}/tutorial/p6-constantin/maprobe-riscv64-xs.bin"
 }

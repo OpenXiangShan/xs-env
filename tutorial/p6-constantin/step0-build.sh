@@ -1,5 +1,5 @@
 set -v -e
-dir="p7-constantin"
+dir="p6-constantin"
 
 # cd ${NOOP_HOME}/utility
 # git apply ${XS_PROJECT_ROOT}/tutorial/${dir}/utility.patch

@@ -1,5 +1,5 @@
 set -v -e
-dir="p7-constantin"
+dir="p6-constantin"
 
 wld=${XS_PROJECT_ROOT}/tutorial/${dir}/maprobe-riscv64-xs.bin
 cst=${XS_PROJECT_ROOT}/tutorial/${dir}/my_constantin.txt
