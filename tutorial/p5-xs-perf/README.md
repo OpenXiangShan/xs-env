@@ -1,8 +1,9 @@
+Perf
+
 ```bash
 ./
-├── perf.png # running result
+├── *.png # running result
 ├── README
-├── result.png # running result
 ├── rtl-top-down.sh
 ├── xs-perf-log.sh
 ├── xs-perf-prepare.sh
