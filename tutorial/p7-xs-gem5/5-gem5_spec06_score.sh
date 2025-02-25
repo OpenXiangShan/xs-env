@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pushd ../../ >/dev/null && source env.sh >/dev/null && popd >/dev/null
+# pushd ../../ >/dev/null && source env.sh >/dev/null && popd >/dev/null
 
 pushd gem5_data_proc && \
 mkdir -p results && \

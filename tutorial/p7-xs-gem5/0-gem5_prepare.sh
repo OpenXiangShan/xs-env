@@ -30,7 +30,6 @@ build_gem5() {
 
 build_nemu_diff() {
     # Used for difftest and GCPT restorer 
-    git submodule update --init $NEMU_HOME && \
     pushd $NEMU_HOME && \
     ( (stat build/riscv64-nemu-interpreter-so && \
        mv build/riscv64-nemu-interpreter-so riscv64-nemu-interpreter-so.bak) \
@@ -38,6 +37,8 @@ build_nemu_diff() {
     ( (stat .config && \
        mv .config .config.bak) \
        || true) && \
+    # Validated commit for tutorial: 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4
+    git checkout 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4 && \
     make clean && \
     make riscv64-gem5-ref_defconfig && \
     make -j `nproc` && \
@@ -52,9 +53,10 @@ build_nemu_diff() {
 }
 
 prepare_data_proc() {
-    # Validated commit: 4000c092b8bde21fd4aa493f9907fa100dbcb3fc
+    # Validated commit for tutorial: 4000c092b8bde21fd4aa493f9907fa100dbcb3fc
     (stat gem5_data_proc || git clone https://github.com/shinezyy/gem5_data_proc.git) && \
     pushd gem5_data_proc && \
+    git reset --hard 4000c092b8bde21fd4aa493f9907fa100dbcb3fc && \
     pip3 install -r requirements.txt && \
     popd
 }
