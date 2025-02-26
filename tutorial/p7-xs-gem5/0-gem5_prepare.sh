@@ -49,6 +49,8 @@ build_nemu_diff() {
     ( (stat .config.bak && \
        mv .config.bak .config) \
        || true) && \
+    # Revert to the original commit
+    git submodule update --init $NEMU_HOME && \
     popd
 }
 

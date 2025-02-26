@@ -1,13 +1,13 @@
 {
     "constants": [
         {
-            "name": "DelayQueueLatencyvbop",
+            "name": "vbop_delayQueueLatency",
             "width": 8,
             "guide": 256,
             "init": 177
         },
         {
-            "name": "DelayQueueLatencypbop",
+            "name": "pbop_delayQueueLatency",
             "width": 8,
             "guide": 256,
             "init": 242
