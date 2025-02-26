@@ -38,7 +38,7 @@ build_nemu_diff() {
        mv .config .config.bak) \
        || true) && \
     # Validated commit for tutorial: 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4
-    git checkout 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4 && \
+    git reset --hard 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4 && \
     make clean && \
     make riscv64-gem5-ref_defconfig && \
     make -j `nproc` && \
