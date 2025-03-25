@@ -7,10 +7,6 @@ check_env() {
         echo "Error: No gem5_home found" 1>&2
         return 1
     fi
-    if [[ -z "${NEMU_HOME}" ]]; then
-        echo "Error: No NEMU_HOME found" 1>&2
-        return 1
-    fi
 }
 
 prepare_gem5() {
@@ -29,28 +25,18 @@ build_gem5() {
 }
 
 build_nemu_diff() {
-    # Used for difftest and GCPT restorer 
-    pushd $NEMU_HOME && \
-    ( (stat build/riscv64-nemu-interpreter-so && \
-       mv build/riscv64-nemu-interpreter-so riscv64-nemu-interpreter-so.bak) \
-       || true) && \
-    ( (stat .config && \
-       mv .config .config.bak) \
-       || true) && \
-    # Validated commit for tutorial: 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4
-    git reset --hard 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4 && \
-    make clean && \
-    make riscv64-gem5-ref_defconfig && \
-    make -j `nproc` && \
-    mv build/riscv64-nemu-interpreter-so build/riscv64-nemu-gem5-ref-so && \
-    ( (stat riscv64-nemu-interpreter-so.bak && \
-       mv riscv64-nemu-interpreter-so.bak build/riscv64-nemu-interpreter-so) \
-       || true) && \
-    ( (stat .config.bak && \
-       mv .config.bak .config) \
-       || true) && \
-    # Revert to the original commit
-    git submodule update --init $NEMU_HOME && \
+    # Used for difftest and GCPT restorer
+    # Validated NEMU commit for tutorial: 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4
+    pushd $gem5_home && \
+    cd ext && \
+    (stat NEMU || (git clone https://github.com/OpenXiangShan/NEMU.git && \
+        pushd NEMU && \
+        git checkout 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4 && \
+        git submodule update --init && popd)) && \
+    pushd $gem5_home/ext/NEMU && \
+    NEMU_HOME=$gem5_home/ext/NEMU make clean && \
+    NEMU_HOME=$gem5_home/ext/NEMU make riscv64-gem5-ref_defconfig CROSS_COMPILE=riscv64-linux-gnu- && \
+    NEMU_HOME=$gem5_home/ext/NEMU make -j `nproc` && \
     popd
 }
 
