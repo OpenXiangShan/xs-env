@@ -11,4 +11,6 @@ COPY install-verilator.sh /tmp/install-verilator.sh
 COPY setup-tools.sh /tmp/setup-tools.sh
 RUN cd /tmp && bash ./setup-tools.sh
 
+ENV PATH="/root/.cargo/bin:${PATH}"
+
 CMD [ "/bin/bash" ]
