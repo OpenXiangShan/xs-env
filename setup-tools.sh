@@ -36,7 +36,3 @@ sh -c "curl -L https://github.com/com-lihaoyi/mill/releases/download/0.12.5/0.12
 
 # We need to use Verilator 4.204+, so we install Verilator manually
 source ./install-verilator.sh
-
-# Install Rust (stable) using rustup
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source $HOME/.cargo/env
