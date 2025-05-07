@@ -9,6 +9,7 @@ COPY setup-tools.sh /tmp/setup-tools.sh
 WORKDIR /tmp
 RUN apt-get update && apt-get install sudo -y \
     && bash /tmp/setup-tools.sh \
+    && cp /tmp/verilator/ci/docker/run/verilator-wrap.sh /usr/local/bin/ \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/verilator
