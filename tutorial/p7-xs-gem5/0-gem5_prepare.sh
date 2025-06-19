@@ -32,7 +32,7 @@ build_nemu_diff() {
     (stat NEMU || (git clone https://github.com/OpenXiangShan/NEMU.git && \
         pushd NEMU && \
         git checkout 5a4f6fea209f4c5f02c978f9d81ad6a7749ebea4 && \
-        git submodule update --init && popd)) && \
+        git submodule update --init && popd)) && popd && \
     pushd $gem5_home/ext/NEMU && \
     NEMU_HOME=$gem5_home/ext/NEMU make clean && \
     NEMU_HOME=$gem5_home/ext/NEMU make riscv64-gem5-ref_defconfig CROSS_COMPILE=riscv64-linux-gnu- && \
