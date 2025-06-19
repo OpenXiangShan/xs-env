@@ -3,6 +3,7 @@
 pushd ../../ && source env.sh && popd
 
 pushd $gem5_home && \
+export LD_LIBRARY_PATH=$gem5_home/ext/dramsim3/DRAMsim3:$LD_LIBRARY_PATH && \
 export GCBV_REF_SO=$gem5_home/ext/NEMU/build/riscv64-nemu-interpreter-so && \
 mkdir -p util/xs_scripts/coremark && \
 cd util/xs_scripts/coremark && \
