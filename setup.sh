@@ -5,7 +5,8 @@
 # Init submodules
 git submodule update --init --recursive DRAMsim3 NEMU NutShell nexus-am
 git submodule update --init tl-test-new # no recursive for tutorial
-git submodule update --init XiangShan && make -C XiangShan init;
+git submodule update --init XiangShan && make -C XiangShan init
+git submodule update --init gem5
 
 # Setup XiangShan environment variables
 source env.sh
