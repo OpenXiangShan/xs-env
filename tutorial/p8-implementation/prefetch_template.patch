@@ -1,0 +1,272 @@
+Submodule coupledL2 d0f0bd6da..7698b8ce1:
+diff --git a/coupledL2/src/main/scala/coupledL2/CoupledL2.scala b/coupledL2/src/main/scala/coupledL2/CoupledL2.scala
+index a2e0487..8ef52a1 100644
+--- a/coupledL2/src/main/scala/coupledL2/CoupledL2.scala
++++ b/coupledL2/src/main/scala/coupledL2/CoupledL2.scala
+@@ -341,7 +341,8 @@ abstract class CoupledL2Base(implicit p: Parameters) extends LazyModule with Has
+     val sizeBytes = cacheParams.toCacheParams.capacity.toDouble
+     val sizeStr = sizeBytesToStr(sizeBytes)
+     println(s"====== Inclusive TL-${if (enableCHI) "CHI" else "TL"} ${cacheParams.name} ($sizeStr * $banks-bank)  ======")
+-    println(s"prefetch: ${cacheParams.prefetch}")
++    println(s"prefetch (sort by priority): ")
++    prefetchers.zipWithIndex.foreach { case (pft, i) => println(s"${i+1}. $pft") }
+     println(s"bankBits: ${bankBits}")
+     println(s"replacement: ${cacheParams.replacement}")
+     println(s"replace policy: ${cacheParams.releaseData}")
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/BestOffsetPrefetch.scala b/coupledL2/src/main/scala/coupledL2/prefetch/BestOffsetPrefetch.scala
+index 6bec783..d98e19f 100644
+--- a/coupledL2/src/main/scala/coupledL2/prefetch/BestOffsetPrefetch.scala
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/BestOffsetPrefetch.scala
+@@ -68,6 +68,13 @@ case class BOPParameters(
+   override val hasPrefetchBit:  Boolean = true
+   override val hasPrefetchSrc:  Boolean = true
+   override val inflightEntries: Int = 16
++  override def toString: String = {
++    // val fields = productIterator.zip(productElementNames).map {
++    //   case (value, name) => s"$name = $value"
++    // }.mkString("\n\t")
++    // s"Best-offset prefetch (hybrid vbop and pbop)\n\t$fields"
++    s"Best-offset prefetch (hybrid vbop and pbop)"
++  }
+ }
+ 
+ trait HasBOPParams extends HasPrefetcherHelper {
+@@ -667,23 +674,17 @@ class DelayQueue(name: String = "")(implicit p: Parameters) extends  BOPModule{
+ }
+ 
+ class VBestOffsetPrefetch(implicit p: Parameters) extends BOPModule {
+-  val io = IO(new Bundle() {
+-    val enable = Input(Bool())
+-    val train = Flipped(DecoupledIO(new PrefetchTrain))
+-    val pbopCrossPage = Input(Bool())
+-    val tlb_req = new L2ToL1TlbIO(nRespDups= 1)
+-    val req = DecoupledIO(new PrefetchReq)
+-    val resp = Flipped(DecoupledIO(new PrefetchResp))
+-  })
++  val io_enable = IO(Input(Bool()))
++  val io = IO(new L2PrefetchIO())
+   // 0 / 1: whether to enable
+   private val cstEnable = Constantin.createRecord("vbop_enable"+cacheParams.hartId.toString, initValue = 1)
+-  val enable = io.enable && cstEnable.orR
++  val enable = io_enable && cstEnable.orR
+ 
+   val delayQueue = Module(new DelayQueue("vbop"))
+   val rrTable = Module(new RecentRequestTable("vbop"))
+   val scoreTable = Module(new OffsetScoreTable("vbop"))
+ 
+-  val s0_fire = scoreTable.io.req.fire && io.pbopCrossPage
++  val s0_fire = scoreTable.io.req.fire
+   val s1_fire = WireInit(false.B)
+   val s0_ready, s1_ready = WireInit(false.B)
+ 
+@@ -795,17 +796,12 @@ class VBestOffsetPrefetch(implicit p: Parameters) extends BOPModule {
+ }
+ 
+ class PBestOffsetPrefetch(implicit p: Parameters) extends BOPModule {
+-  val io = IO(new Bundle() {
+-    val enable = Input(Bool())
+-    val train = Flipped(DecoupledIO(new PrefetchTrain))
+-    val pbopCrossPage = Output(Bool())
+-    val req = DecoupledIO(new PrefetchReq)
+-    val resp = Flipped(DecoupledIO(new PrefetchResp))
+-  })
++  val io_enable = IO(Input(Bool()))
++  val io = IO(new L2PrefetchIO())
+ 
+   // 0 / 1: whether to enable
+   private val cstEnable = Constantin.createRecord("pbop_enable"+cacheParams.hartId.toString, initValue = 1)
+-  val enable = io.enable && cstEnable.orR
++  val enable = io_enable && cstEnable.orR
+ 
+   val delayQueue = Module(new DelayQueue("pbop"))
+   val rrTable = Module(new RecentRequestTable("pbop"))
+@@ -838,12 +834,12 @@ class PBestOffsetPrefetch(implicit p: Parameters) extends BOPModule {
+     req_valid := !crossPage && !prefetchDisable // stop prefetch when prefetch req crosses pages
+   }
+ 
+-  io.pbopCrossPage := crossPage
+   io.req.valid := enable && req_valid
+   io.req.bits := req
+   io.req.bits.pfSource := MemReqSource.Prefetch2L2PBOP.id.U
+   io.train.ready := delayQueue.io.in.ready && scoreTable.io.req.ready && (!req_valid || io.req.ready)
+   io.resp.ready := rrTable.io.w.ready
++  io.tlb_req <> DontCare
+ 
+   for (off <- offsetList) {
+     if (off < 0) {
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchReceiver.scala b/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchReceiver.scala
+index aea1a80..49ef9ba 100644
+--- a/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchReceiver.scala
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchReceiver.scala
+@@ -31,6 +31,7 @@ case class PrefetchReceiverParams(n: Int = 32) extends PrefetchParameters {
+   override val hasPrefetchBit:  Boolean = true
+   override val hasPrefetchSrc:  Boolean = true
+   override val inflightEntries: Int = n
++  override def toString: String = s"Receiver for prefetches from L1"
+ }
+ 
+ class PrefetchReceiver()(implicit p: Parameters) extends PrefetchModule {
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala b/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala
+new file mode 100644
+index 0000000..f06b4fb
+--- /dev/null
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala
+@@ -0,0 +1,48 @@
++/** *************************************************************************************
++ * Copyright (c) 2020-2021 Institute of Computing Technology, Chinese Academy of Sciences
++ * Copyright (c) 2020-2021 Peng Cheng Laboratory
++ *
++ * XiangShan is licensed under Mulan PSL v2.
++ * You can use this software according to the terms and conditions of the Mulan PSL v2.
++ * You may obtain a copy of Mulan PSL v2 at:
++ * http://license.coscl.org.cn/MulanPSL2
++ *
++ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
++ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
++ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
++ *
++ * See the Mulan PSL v2 for more details.
++ * *************************************************************************************
++ */
++
++package coupledL2.prefetch
++
++import chisel3._
++import chisel3.util._
++import org.chipsalliance.cde.config.Parameters
++
++case class MyPrefetchParameters(
++  // TODO
++) extends PrefetchParameters {
++  override val hasPrefetchBit: Boolean = true
++  override val hasPrefetchSrc: Boolean = true
++  override val inflightEntries: Int = 16 // TODO
++  override def toString: String = s"My prefetch :)"
++}
++
++trait HasMyPrefetchParams extends HasPrefetcherHelper {
++  def params = prefetchers.find {
++    case p: MyPrefetchParameters => true
++    case _ => false
++  }.get.asInstanceOf[MyPrefetchParameters]
++  // TODO
++}
++
++abstract class MyPrefetchModule(implicit val p: Parameters) extends Module with HasMyPrefetchParams
++
++class MyPrefetch(implicit p: Parameters) extends MyPrefetchModule {
++  val io = IO(new L2PrefetchIO())
++
++  // TODO
++  io <> DontCare
++}
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala b/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala
+index f6d1595..ef25947 100644
+--- a/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala
+@@ -164,11 +164,14 @@ class PrefetchTrain(implicit p: Parameters) extends PrefetchBundle {
+   def addr: UInt = Cat(tag, set, 0.U(offsetBits.W))
+ }
+ 
+-class PrefetchIO(implicit p: Parameters) extends PrefetchBundle {
++class L2PrefetchIO(implicit p: Parameters) extends PrefetchBundle {
+   val train = Flipped(DecoupledIO(new PrefetchTrain))
+   val tlb_req = new L2ToL1TlbIO(nRespDups= 1)
+   val req = DecoupledIO(new PrefetchReq)
+   val resp = Flipped(DecoupledIO(new PrefetchResp))
++}
++
++class PrefetchIO(implicit p: Parameters) extends L2PrefetchIO {
+   val recv_addr = Flipped(ValidIO(new Bundle() {
+     val addr = UInt(64.W)
+     val pfSource = UInt(MemReqSource.reqSourceBits.W)
+@@ -292,16 +295,15 @@ class Prefetcher(implicit p: Parameters) extends PrefetchModule {
+   // =================== Connection for each Prefetcher =====================
+   // Rcv > VBOP > PBOP > TP
+   if (hasBOP) {
+-    vbop.get.io.enable := vbop_en
++    vbop.get.io_enable := vbop_en
+     vbop.get.io.req.ready :=  (if(hasReceiver) !pfRcv.get.io.req.valid else true.B)
+     vbop.get.io.train <> io.train
+     vbop.get.io.train.valid := io.train.valid && (io.train.bits.reqsource =/= MemReqSource.L1DataPrefetch.id.U)
+     vbop.get.io.resp <> io.resp
+     vbop.get.io.resp.valid := io.resp.valid && io.resp.bits.isBOP
+     vbop.get.io.tlb_req <> io.tlb_req
+-    vbop.get.io.pbopCrossPage := true.B // pbop.io.pbopCrossPage // let vbop have noting to do with pbop
+ 
+-    pbop.get.io.enable := pbop_en
++    pbop.get.io_enable := pbop_en
+     pbop.get.io.req.ready :=
+       (if(hasReceiver) !pfRcv.get.io.req.valid else true.B) &&
+       (if(hasBOP) !vbop.get.io.req.valid else true.B)
+@@ -309,6 +311,7 @@ class Prefetcher(implicit p: Parameters) extends PrefetchModule {
+     pbop.get.io.train.valid := io.train.valid && (io.train.bits.reqsource =/= MemReqSource.L1DataPrefetch.id.U)
+     pbop.get.io.resp <> io.resp
+     pbop.get.io.resp.valid := io.resp.valid && io.resp.bits.isPBOP
++    pbop.get.io.tlb_req <> DontCare
+   }
+   if (hasReceiver) {
+     pfRcv.get.io_enable := pfRcv_en
+@@ -346,16 +349,17 @@ class Prefetcher(implicit p: Parameters) extends PrefetchModule {
+   val pftQueue = Module(new PrefetchQueue)
+   val pipe = Module(new Pipeline(io.req.bits.cloneType, 1))
+ 
+-  pftQueue.io.enq.valid :=
+-    (if (hasReceiver)     pfRcv.get.io.req.valid                         else false.B) ||
+-    (if (hasBOP)          vbop.get.io.req.valid || pbop.get.io.req.valid else false.B) ||
+-    (if (hasTPPrefetcher) tp.get.io.req.valid                            else false.B)
+-  pftQueue.io.enq.bits := ParallelPriorityMux(Seq(
+-    if (hasReceiver)     pfRcv.get.io.req.valid -> pfRcv.get.io.req.bits else false.B -> 0.U.asTypeOf(io.req.bits),
+-    if (hasBOP)          vbop.get.io.req.valid -> vbop.get.io.req.bits   else false.B -> 0.U.asTypeOf(io.req.bits),
+-    if (hasBOP)          pbop.get.io.req.valid -> pbop.get.io.req.bits   else false.B -> 0.U.asTypeOf(io.req.bits),
+-    if (hasTPPrefetcher) tp.get.io.req.valid -> tp.get.io.req.bits       else false.B -> 0.U.asTypeOf(io.req.bits)
+-  ))
++  val bopReq = Wire(DecoupledIO(new PrefetchReq()))
++  if (hasBOP) { arb(Seq(vbop.get.io.req, pbop.get.io.req), bopReq) }
++  arb(
++    in = prefetchers.map {
++      case _: PrefetchReceiverParams => pfRcv.get.io.req
++      case _: BOPParameters          => bopReq
++      case _: TPParameters           => tp.get.io.req
++    },
++    out = pftQueue.io.enq,
++    name = Some("pftQueue")
++  )
+ 
+   pipe.io.in <> pftQueue.io.deq
+   io.req <> pipe.io.out
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/TemporalPrefetch.scala b/coupledL2/src/main/scala/coupledL2/prefetch/TemporalPrefetch.scala
+index 53efe30..ed11cf6 100644
+--- a/coupledL2/src/main/scala/coupledL2/prefetch/TemporalPrefetch.scala
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/TemporalPrefetch.scala
+@@ -52,6 +52,12 @@ case class TPParameters(
+   override val hasPrefetchBit: Boolean = true
+   override val hasPrefetchSrc: Boolean = true
+   override val inflightEntries: Int = 16 // changed in sv48
++  override def toString: String = {
++    val fields = productIterator.zip(productElementNames).map {
++      case (value, name) => s"$name = $value"
++    }.mkString("\n\t")
++    s"Temporal prefetch\n\t$fields"
++  }
+ }
+ 
+ trait HasTPParams extends HasCoupledL2Parameters {
+diff --git a/src/main/scala/top/Configs.scala b/src/main/scala/top/Configs.scala
+index 0bb999d8b..4689dc83b 100644
+--- a/src/main/scala/top/Configs.scala
++++ b/src/main/scala/top/Configs.scala
+@@ -316,9 +316,10 @@ case class L2CacheConfig
+         enableDataECC = true,
+         dataCheck = Some("oddparity"),
+         enablePoison = true,
+-        prefetch = Seq(BOPParameters()) ++
+-          (if (tp) Seq(TPParameters()) else Nil) ++
+-          (if (p.prefetcher.nonEmpty) Seq(PrefetchReceiverParams()) else Nil),
++        // NOTICE: the prefetchers are sorted by priority
++        prefetch = (if (p.prefetcher.nonEmpty) Seq(PrefetchReceiverParams()) else Nil) ++
++          Seq(BOPParameters()) ++
++          (if (tp) Seq(TPParameters()) else Nil),
+         enableL2Flush = enableFlush,
+         enablePerf = !site(DebugOptionsKey).FPGAPlatform && site(DebugOptionsKey).EnablePerfDebug,
+         enableRollingDB = site(DebugOptionsKey).EnableRollingDB,

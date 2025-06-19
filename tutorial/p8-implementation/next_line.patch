@@ -1,0 +1,64 @@
+Submodule coupledL2 7698b8ce1..3169e1558:
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala b/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala
+index f06b4fb..46449fc 100644
+--- a/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/PrefetchTemplate.scala
+@@ -43,6 +43,11 @@ abstract class MyPrefetchModule(implicit val p: Parameters) extends Module with
+ class MyPrefetch(implicit p: Parameters) extends MyPrefetchModule {
+   val io = IO(new L2PrefetchIO())
+ 
+-  // TODO
++  val addr = io.train.bits.addr + (1 << offsetBits).U
++
+   io <> DontCare
++  io.req.valid := io.train.valid
++  io.req.bits.tag := parseFullAddress(addr)._1
++  io.req.bits.set := parseFullAddress(addr)._2
++  io.train.ready := true.B
+ }
+diff --git a/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala b/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala
+index ef25947..adb60b1 100644
+--- a/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala
++++ b/coupledL2/src/main/scala/coupledL2/prefetch/Prefetcher.scala
+@@ -291,6 +291,8 @@ class Prefetcher(implicit p: Parameters) extends PrefetchModule {
+   val tp = if (hasTPPrefetcher) Some(Module(new TemporalPrefetch())) else None
+   // prefetch from upper level
+   val pfRcv = if (hasReceiver) Some(Module(new PrefetchReceiver())) else None
++  val hasMyPrefetch = prefetchers.exists(_.isInstanceOf[MyPrefetchParameters])
++  val myPrefetch = if (hasMyPrefetch) Some(Module(new MyPrefetch())) else None
+ 
+   // =================== Connection for each Prefetcher =====================
+   // Rcv > VBOP > PBOP > TP
+@@ -341,6 +343,10 @@ class Prefetcher(implicit p: Parameters) extends PrefetchModule {
+ 
+     tp.get.io.tpmeta_port <> tpio.tpmeta_port.get
+   }
++  if (hasMyPrefetch) {
++    myPrefetch.get.io <> DontCare
++    myPrefetch.get.io.train <> io.train
++  }
+   private val mbistPl = MbistPipeline.PlaceMbistPipeline(2, "MbistPipeL2Prefetcher", cacheParams.hasMbist && (hasBOP || hasTPPrefetcher))
+ 
+   // =================== Connection of all Prefetchers =====================
+@@ -356,6 +362,7 @@ class Prefetcher(implicit p: Parameters) extends PrefetchModule {
+       case _: PrefetchReceiverParams => pfRcv.get.io.req
+       case _: BOPParameters          => bopReq
+       case _: TPParameters           => tp.get.io.req
++      case _: MyPrefetchParameters   => myPrefetch.get.io.req
+     },
+     out = pftQueue.io.enq,
+     name = Some("pftQueue")
+diff --git a/src/main/scala/top/Configs.scala b/src/main/scala/top/Configs.scala
+index 4689dc83b..f4af31c96 100644
+--- a/src/main/scala/top/Configs.scala
++++ b/src/main/scala/top/Configs.scala
+@@ -319,7 +319,8 @@ case class L2CacheConfig
+         // NOTICE: the prefetchers are sorted by priority
+         prefetch = (if (p.prefetcher.nonEmpty) Seq(PrefetchReceiverParams()) else Nil) ++
+           Seq(BOPParameters()) ++
+-          (if (tp) Seq(TPParameters()) else Nil),
++          (if (tp) Seq(TPParameters()) else Nil) ++
++          Seq(MyPrefetchParameters()),
+         enableL2Flush = enableFlush,
+         enablePerf = !site(DebugOptionsKey).FPGAPlatform && site(DebugOptionsKey).EnablePerfDebug,
+         enableRollingDB = site(DebugOptionsKey).EnableRollingDB,
