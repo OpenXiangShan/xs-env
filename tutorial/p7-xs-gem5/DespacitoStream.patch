@@ -1,0 +1,493 @@
+From 4822e840ebbf1711155190347437601ed642f13e Mon Sep 17 00:00:00 2001
+From: zephyrols <81078107+zephyrols@users.noreply.github.com>
+Date: Tue, 3 Jun 2025 14:23:04 +0800
+Subject: [PATCH] mem: add DespacitoStreamPrefetcher and integration. (#399)
+
+A specialized prefetcher for tracking memory access patterns with multiple interleaved data streams.
+The DespacitoStreamPrefetcher targets memory access patterns where a single instruction
+accesses multiple data streams in a short time period, with the next element of each stream
+typically accessed by other instructions much later. From a data stream perspective, these
+accesses exhibit next-line patterns, but from an instruction perspective, they appear random.
+
+This prefetcher addresses cases where:
+
+Traditional stride/BOP prefetchers fail because they cannot establish stable PC-localized offsets
+Conventional stream prefetchers cannot maintain state for the large number of interleaved streams
+The implementation uses a sampling approach to identify potential stream patterns and tracks
+confidence in detected patterns to generate prefetches.
+Key components:
+
+Sampler: Samples recent memory accesses to detect instructions that access two consecutive
+memory blocks within a specified time window
+Pattern table: Records identified instruction PCs that exhibit the target access pattern
+along with their confidence levels
+LRU filter: Prevents redundant prefetches
+
+* mem: add DespacitoStreamPrefetcher and integration.
+
+Change-Id: Idc279658ec8263cfdc0b23d6d5217348851b8d07
+
+* mem: fix max_distance parameter in ruby cache
+
+Change-Id: I492dcfb42816fac25f3cc3211640adbc1facdc74
+
+* mem: DespacitoStream remove unnecessary dependency
+
+Co-authored-by: Copilot <175728472+Copilot@users.noreply.github.com>
+
+* mem: add DespacitoStream Prefetcher comment [skip ci]
+
+Change-Id: I8e31011bc5baa7e63ae5a8efca7052e304b7e112
+
+---------
+
+Co-authored-by: Copilot <175728472+Copilot@users.noreply.github.com>
+---
+ configs/common/PrefetcherConfig.py            |   1 +
+ src/mem/cache/prefetch/Prefetcher.py          |  54 ++++++++
+ src/mem/cache/prefetch/SConscript             |   4 +-
+ src/mem/cache/prefetch/despacito_stream.cc    | 118 ++++++++++++++++++
+ src/mem/cache/prefetch/despacito_stream.hh    | 106 ++++++++++++++++
+ .../prefetch/l2_composite_with_worker.cc      |   9 +-
+ .../prefetch/l2_composite_with_worker.hh      |   5 +-
+ src/mem/request.hh                            |   1 +
+ 8 files changed, 295 insertions(+), 3 deletions(-)
+ create mode 100644 src/mem/cache/prefetch/despacito_stream.cc
+ create mode 100644 src/mem/cache/prefetch/despacito_stream.hh
+
+diff --git a/configs/common/PrefetcherConfig.py b/configs/common/PrefetcherConfig.py
+index 9467763251..20d873d3da 100644
+--- a/configs/common/PrefetcherConfig.py
++++ b/configs/common/PrefetcherConfig.py
+@@ -65,6 +65,7 @@ def create_prefetcher(cpu, cache_level, options):
+             prefetcher.enable_cmc = False
+             prefetcher.enable_bop = True
+             prefetcher.enable_cdp = False
++            prefetcher.enable_despacito_stream = False
+             prefetcher.bop_large = XSVirtualLargeBOP(is_sub_prefetcher=True)
+             prefetcher.bop_small = XSPhysicalSmallBOP(is_sub_prefetcher=True)
+         if options.l1_to_l2_pf_hint:
+diff --git a/src/mem/cache/prefetch/Prefetcher.py b/src/mem/cache/prefetch/Prefetcher.py
+index d2cce7eb4d..a566c2a648 100644
+--- a/src/mem/cache/prefetch/Prefetcher.py
++++ b/src/mem/cache/prefetch/Prefetcher.py
+@@ -929,6 +929,57 @@ class CMCPrefetcher(QueuedPrefetcher):
+         "Enable prefetch database"
+     )
+ 
++
++class DespacitoStreamPrefetcher(QueuedPrefetcher):
++    type = "DespacitoStreamPrefetcher"
++    cxx_class = "gem5::prefetch::DespacitoStreamPrefetcher"
++    cxx_header = "mem/cache/prefetch/despacito_stream.hh"
++
++    use_virtual_addresses = False
++    prefetch_on_pf_hit = False
++    on_read = True
++    on_write = False
++    on_data  = True
++    on_inst  = False
++
++    sample_rate = Param.Int(256, "Sample rate")
++    min_distance = Param.Int(4, "Minimum distance")
++    max_distance = Param.Int(8192, "Maximum distance")
++
++    sampler_entries = Param.MemorySize(
++        "32",
++        "num of pattern history table entries"
++    )
++    sampler_assoc = Param.Int(4, "Associativity of the pattern history table")
++    sampler_indexing_policy = Param.BaseIndexingPolicy(
++        SetAssociative(
++            entry_size=1,
++            assoc=Parent.sampler_assoc,
++            size=Parent.sampler_entries),
++        "Indexing policy of pattern history table"
++    )
++    sampler_replacement_policy = Param.BaseReplacementPolicy(
++        LRURP(),
++        "Replacement policy of pattern history table"
++    )
++
++    patterns_entries = Param.MemorySize(
++        "64",
++        "num of pattern history table entries"
++    )
++    patterns_indexing_policy = Param.BaseIndexingPolicy(
++        SetAssociative(
++            entry_size=1,
++            assoc=Parent.patterns_entries,
++            size=Parent.patterns_entries),
++        "Indexing policy of pattern history table"
++    )
++    patterns_replacement_policy = Param.BaseReplacementPolicy(
++        LRURP(),
++        "Replacement policy of pattern history table"
++    )
++
++
+ class XSCompositePrefetcher(QueuedPrefetcher):
+     type = "XSCompositePrefetcher"
+     cxx_class = 'gem5::prefetch::XSCompositePrefetcher'
+@@ -1108,9 +1159,12 @@ class L2CompositeWithWorkerPrefetcher(CompositeWithWorkerPrefetcher):
+                                      "Large BOP used in composite prefetcher ")
+     bop_small = Param.BOPPrefetcher(SmallBOPPrefetcher(is_sub_prefetcher=True),
+                                      "Small BOP used in composite prefetcher ")
++    despacito_stream = Param.DespacitoStreamPrefetcher(DespacitoStreamPrefetcher(is_sub_prefetcher=True),
++                                                       "DespacitoStream used in composite prefetcher")
+     enable_bop = Param.Bool(False, "Enable BOP")
+     enable_cdp = Param.Bool(True, "Enable CDP")
+     enable_cmc = Param.Bool(False, "Enable CMC")
++    enable_despacito_stream = Param.Bool(True, "Enable despacito stream")
+ 
+ class L3CompositeWithWorkerPrefetcher(CompositeWithWorkerPrefetcher):
+     type = 'L3CompositeWithWorkerPrefetcher'
+diff --git a/src/mem/cache/prefetch/SConscript b/src/mem/cache/prefetch/SConscript
+index c77c5494ad..61756a1bf6 100644
+--- a/src/mem/cache/prefetch/SConscript
++++ b/src/mem/cache/prefetch/SConscript
+@@ -37,7 +37,7 @@ SimObject('Prefetcher.py', sim_objects=[
+     'SignaturePathPrefetcherV2', 'AccessMapPatternMatching', 'AMPMPrefetcher',
+     'DeltaCorrelatingPredictionTables', 'DCPTPrefetcher',
+     'IrregularStreamBufferPrefetcher', 'SlimAMPMPrefetcher',
+-    'WorkerPrefetcher',
++    'WorkerPrefetcher', 'DespacitoStreamPrefetcher',
+     'BOPPrefetcher', 'SBOOEPrefetcher', 'STeMSPrefetcher', 'PIFPrefetcher', 'IPCPrefetcher',
+     'CompositeWithWorkerPrefetcher', 'L2CompositeWithWorkerPrefetcher'])
+ 
+@@ -58,6 +58,7 @@ DebugFlag('CDPHotVpns')
+ DebugFlag('CDPdebug')
+ DebugFlag('CDPdepth')
+ DebugFlag('CMCPrefetcher')
++DebugFlag('DespacitoStreamPrefetcher')
+ 
+ Source('access_map_pattern_matching.cc')
+ Source('base.cc')
+@@ -86,4 +87,5 @@ Source('worker.cc')
+ Source('cmc.cc')
+ Source('composite_with_worker.cc')
+ Source('l2_composite_with_worker.cc')
++Source('despacito_stream.cc')
+ 
+diff --git a/src/mem/cache/prefetch/despacito_stream.cc b/src/mem/cache/prefetch/despacito_stream.cc
+new file mode 100644
+index 0000000000..2dec778ff9
+--- /dev/null
++++ b/src/mem/cache/prefetch/despacito_stream.cc
+@@ -0,0 +1,118 @@
++#include "mem/cache/prefetch/despacito_stream.hh"
++
++#include "base/output.hh"
++#include "debug/DespacitoStreamPrefetcher.hh"
++#include "mem/cache/base.hh"
++#include "mem/cache/prefetch/associative_set_impl.hh"
++
++namespace gem5
++{
++namespace prefetch
++{
++
++DespacitoStreamPrefetcher::DespacitoStreamPrefetcher(const DespacitoStreamPrefetcherParams &p)
++    : Queued(p),
++      sampleRate(p.sample_rate),
++      minDistance(p.min_distance),
++      maxDistance(p.max_distance),
++      sampler(p.sampler_assoc, p.sampler_entries, p.sampler_indexing_policy, p.sampler_replacement_policy,
++              SamplerEntry()),
++      patterns(p.patterns_entries, p.patterns_entries, p.patterns_indexing_policy, p.patterns_replacement_policy,
++               PatternEntry(SatCounter8(2, 1))),
++      timestamp(0)
++{
++}
++
++void
++DespacitoStreamPrefetcher::updateSampler(const PrefetchInfo &pfi)
++{
++    Addr block_index = blockIndex(pfi.getAddr());
++
++    SamplerEntry *sampler_entry = sampler.findEntry(block_index - 1, false);
++
++    if (sampler_entry) {
++        if (timestamp > sampler_entry->timestamp + minDistance &&
++            timestamp <= sampler_entry->timestamp + maxDistance) {
++            sampler_entry->touched = true;
++        }
++        sampler.accessEntry(sampler_entry);
++    }
++
++    if (timestamp % sampleRate == 0) {
++        SamplerEntry *evict_sampler_entry = sampler.findVictim(block_index);
++        updatePatternTable(evict_sampler_entry);
++        evict_sampler_entry->timestamp = timestamp;
++        evict_sampler_entry->address = block_index;
++        evict_sampler_entry->pc = pfi.getPC();
++        evict_sampler_entry->touched = false;
++        sampler.insertEntry(block_index, false, evict_sampler_entry);
++    }
++
++    timestamp++;
++}
++
++void
++DespacitoStreamPrefetcher::updatePatternTable(SamplerEntry *sampler_entry)
++{
++    if (sampler_entry->pc) {
++        PatternEntry *pattern_entry = patterns.findEntry(sampler_entry->pc, false);
++        if (pattern_entry) {
++            patterns.accessEntry(pattern_entry);
++            if (sampler_entry->touched) {
++                pattern_entry->conf++;
++            } else {
++                pattern_entry->conf--;
++            }
++        } else {
++            if (sampler_entry->touched) {
++                pattern_entry = patterns.findVictim(sampler_entry->pc);
++                pattern_entry->conf.reset();
++                patterns.insertEntry(sampler_entry->pc, false, pattern_entry);
++            }
++        }
++    }
++}
++
++void
++DespacitoStreamPrefetcher::calculatePrefetch(const PrefetchInfo &pfi, std::vector<AddrPriority> &addresses, bool late)
++{
++    if (!pfi.hasPC()) {
++        return;
++    }
++
++    Addr pc = pfi.getPC();
++
++    Addr block_addr = blockAddress(pfi.getAddr());
++
++    PatternEntry *pattern_entry = patterns.findEntry(pc, false);
++
++    if (pattern_entry && pattern_entry->conf.isSaturated()) {
++        Addr pf_addr = block_addr + blkSize;
++        sendPFWithFilter(pfi, pf_addr, addresses, 32, PrefetchSourceType::DespacitoStream);
++    }
++
++    updateSampler(pfi);
++
++    return;
++}
++
++bool
++DespacitoStreamPrefetcher::sendPFWithFilter(const PrefetchInfo &pfi, Addr addr, std::vector<AddrPriority> &addresses,
++                                            int prio, PrefetchSourceType src)
++{
++    if (archDBer && cache->level() == 1) {
++        archDBer->l1PFTraceWrite(curTick(), pfi.getPC(), pfi.getAddr(), addr, src);
++    }
++    if (filter->contains(addr)) {
++        DPRINTF(DespacitoStreamPrefetcher, "Skip recently prefetched: %lx\n", addr);
++        return false;
++    } else {
++        DPRINTF(DespacitoStreamPrefetcher, "Send pf: %lx\n", addr);
++        filter->insert(addr, 0);
++        addresses.push_back(AddrPriority(addr, prio, src));
++        return true;
++    }
++}
++
++}
++}
+diff --git a/src/mem/cache/prefetch/despacito_stream.hh b/src/mem/cache/prefetch/despacito_stream.hh
+new file mode 100644
+index 0000000000..2e6fd2c4bb
+--- /dev/null
++++ b/src/mem/cache/prefetch/despacito_stream.hh
+@@ -0,0 +1,106 @@
++#ifndef __MEM_CACHE_PREFETCH_DESPACITO_STREAM_HH__
++#define __MEM_CACHE_PREFETCH_DESPACITO_STREAM_HH__
++
++#include <vector>
++
++#include <boost/compute/detail/lru_cache.hpp>
++
++#include "base/sat_counter.hh"
++#include "base/statistics.hh"
++#include "base/types.hh"
++#include "debug/DespacitoStreamPrefetcher.hh"
++#include "mem/cache/prefetch/associative_set.hh"
++#include "mem/cache/prefetch/queued.hh"
++#include "mem/packet.hh"
++#include "params/DespacitoStreamPrefetcher.hh"
++
++namespace gem5
++{
++
++struct DespacitoStreamPrefetcherParams;
++
++GEM5_DEPRECATED_NAMESPACE(Prefetcher, prefetch);
++
++namespace prefetch
++{
++
++/**
++ * @brief A specialized prefetcher for tracking memory access patterns with multiple interleaved data streams.
++ *
++ * @details The DespacitoStreamPrefetcher targets memory access patterns where a single instruction
++ * accesses multiple data streams in a short time period, with the next element of each stream
++ * typically accessed by other instructions much later. From a data stream perspective, these
++ * accesses exhibit next-line patterns, but from an instruction perspective, they appear random.
++ *
++ * This prefetcher addresses cases where:
++ * - Traditional stride/BOP prefetchers fail because they cannot establish stable PC-localized offsets
++ * - Conventional stream prefetchers cannot maintain state for the large number of interleaved streams
++ *
++ * The implementation uses a sampling approach to identify potential stream patterns and tracks
++ * confidence in detected patterns to generate prefetches.
++ *
++ * Key components:
++ * - Sampler: Samples recent memory accesses to detect instructions that access two consecutive
++ *   memory blocks within a specified time window
++ * - Pattern table: Records identified instruction PCs that exhibit the target access pattern
++ *   along with their confidence levels
++ * - LRU filter: Prevents redundant prefetches
++ */
++class DespacitoStreamPrefetcher : public Queued
++{
++  protected:
++    struct SamplerEntry : TaggedEntry
++    {
++        uint64_t timestamp;
++        Addr address;
++        Addr pc;
++        bool touched;
++        SamplerEntry() : TaggedEntry(), timestamp(0), address(0), pc(0), touched(false) {}
++    };
++
++    struct PatternEntry : TaggedEntry
++    {
++        SatCounter8 conf;
++        PatternEntry(SatCounter8 cnt) : TaggedEntry(), conf(cnt) {}
++    };
++
++    const uint64_t sampleRate;
++    const uint64_t minDistance;
++    const uint64_t maxDistance;
++
++    AssociativeSet<SamplerEntry> sampler;
++    AssociativeSet<PatternEntry> patterns;
++    uint64_t timestamp;
++
++    void updateSampler(const PrefetchInfo &pfi);
++
++    void updatePatternTable(SamplerEntry *sampler_entry);
++
++  public:
++    boost::compute::detail::lru_cache<Addr, Addr> *filter;
++
++    DespacitoStreamPrefetcher(const DespacitoStreamPrefetcherParams &p);
++
++    void calculatePrefetch(const PrefetchInfo &pfi, std::vector<AddrPriority> &addresses) override
++    {
++        panic("not implemented");
++    };
++
++    void calculatePrefetch(const PrefetchInfo &pfi, std::vector<AddrPriority> &addresses, bool late,
++                           PrefetchSourceType pf_source, bool miss_repeat) override
++    {
++        panic("not implemented");
++    };
++
++    void calculatePrefetch(const PrefetchInfo &pfi, std::vector<AddrPriority> &addresses, bool late);
++
++    bool sendPFWithFilter(const PrefetchInfo &pfi, Addr addr, std::vector<AddrPriority> &addresses, int prio,
++                          PrefetchSourceType src);
++};
++
++}
++
++}
++
++
++#endif
+diff --git a/src/mem/cache/prefetch/l2_composite_with_worker.cc b/src/mem/cache/prefetch/l2_composite_with_worker.cc
+index 31ba47bf01..b7ede79a17 100644
+--- a/src/mem/cache/prefetch/l2_composite_with_worker.cc
++++ b/src/mem/cache/prefetch/l2_composite_with_worker.cc
+@@ -16,14 +16,17 @@ L2CompositeWithWorkerPrefetcher::L2CompositeWithWorkerPrefetcher(const L2Composi
+       largeBOP(p.bop_large),
+       smallBOP(p.bop_small),
+       cmc(p.cmc),
++      despacitoStream(p.despacito_stream),
+       enableBOP(p.enable_bop),
+       enableCDP(p.enable_cdp),
+-      enableCMC(p.enable_cmc)
++      enableCMC(p.enable_cmc),
++      enableDespacitoStream(p.enable_despacito_stream)
+ {
+     cdp->pfLRUFilter = &pfLRUFilter;
+     largeBOP->filter = &pfLRUFilter;
+     smallBOP->filter = &pfLRUFilter;
+     cmc->filter = &pfLRUFilter;
++    despacitoStream->filter = &pfLRUFilter;
+     cdp->parentRid = p.sys->getRequestorId(this);
+ }
+ 
+@@ -65,6 +68,9 @@ L2CompositeWithWorkerPrefetcher::calculatePrefetch(const PrefetchInfo &pfi, std:
+         largeBOP->calculatePrefetch(pfi, addresses, late && pf_source == PrefetchSourceType::HWP_BOP);
+         smallBOP->calculatePrefetch(pfi, addresses, late && pf_source == PrefetchSourceType::HWP_BOP);
+     }
++    if (enableDespacitoStream) {
++        despacitoStream->calculatePrefetch(pfi, addresses, late && pf_source == PrefetchSourceType::DespacitoStream);
++    }
+ }
+ 
+ void
+@@ -121,6 +127,7 @@ L2CompositeWithWorkerPrefetcher::setParentInfo(System *sys, ProbeManager *pm, Ca
+     largeBOP->setParentInfo(sys, pm, _cache, blk_size);
+     smallBOP->setParentInfo(sys, pm, _cache, blk_size);
+     cmc->setParentInfo(sys, pm, _cache, blk_size);
++    despacitoStream->setParentInfo(sys, pm, _cache, blk_size);
+     CompositeWithWorkerPrefetcher::setParentInfo(sys, pm, _cache, blk_size);
+ }
+ 
+diff --git a/src/mem/cache/prefetch/l2_composite_with_worker.hh b/src/mem/cache/prefetch/l2_composite_with_worker.hh
+index 7804e2e430..e6e450b7c5 100644
+--- a/src/mem/cache/prefetch/l2_composite_with_worker.hh
++++ b/src/mem/cache/prefetch/l2_composite_with_worker.hh
+@@ -7,6 +7,7 @@
+ #include "mem/cache/prefetch/cdp.hh"
+ #include "mem/cache/prefetch/cmc.hh"
+ #include "mem/cache/prefetch/composite_with_worker.hh"
++#include "mem/cache/prefetch/despacito_stream.hh"
+ #include "params/L2CompositeWithWorkerPrefetcher.hh"
+ 
+ namespace gem5
+@@ -48,14 +49,16 @@ class L2CompositeWithWorkerPrefetcher : public CompositeWithWorkerPrefetcher
+     void notifyIns(int ins_num) override { cdp->notifyIns(ins_num); }
+ 
+   private:
+-    CDP *cdp;
++    CDP* cdp;
+     BOP* largeBOP;
+     BOP* smallBOP;
+     CMCPrefetcher* cmc;
++    DespacitoStreamPrefetcher* despacitoStream;
+ 
+     const bool enableBOP;
+     const bool enableCDP;
+     const bool enableCMC;
++    const bool enableDespacitoStream;
+ 
+     bool offloadLowAccuracy = true;
+ };
+diff --git a/src/mem/request.hh b/src/mem/request.hh
+index 068a551baf..e2b66fc378 100644
+--- a/src/mem/request.hh
++++ b/src/mem/request.hh
+@@ -84,6 +84,7 @@ enum PrefetchSourceType
+     StoreStream,
+     CDP,
+     SOpt,
++    DespacitoStream,
+     NUM_PF_SOURCES
+ };
+ 
+-- 
+2.34.1
+
