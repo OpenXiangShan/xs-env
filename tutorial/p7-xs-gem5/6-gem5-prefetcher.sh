@@ -45,6 +45,9 @@ function diff_result() {
 }
 
 function self_build_baseline() {
+    if [ -f "$gem5_home/../tutorial/p7-xs-gem5/data/gem5.opt" ]; then
+        return
+    fi
     pushd $gem5_home && \
     cd .. && git submodule update --init gem5 && cd gem5 && \
     scons build/RISCV/gem5.opt --linker=mold -j `nproc` && \
@@ -53,6 +56,9 @@ function self_build_baseline() {
 }
 
 function self_build_despacito_stream() {
+    if [ -f "$gem5_home/../tutorial/p7-xs-gem5/data/gem5.opt.despacito_stream" ]; then
+        return
+    fi
     pushd $gem5_home && \
     cd .. && git submodule update --init gem5 && cd gem5 && \
     (git branch -D add_a_new_prefetcher >/dev/null 2>&1 || true) && \
@@ -63,7 +69,7 @@ function self_build_despacito_stream() {
     popd
 }
 
-#self_build_baseline && self_build_despacito_stream && \
+self_build_baseline && self_build_despacito_stream && \
 run_baseline `realpath data/gem5.opt` && \
 run_with_despacito_stream `realpath data/gem5.opt.despacito_stream` && \
 diff_result
