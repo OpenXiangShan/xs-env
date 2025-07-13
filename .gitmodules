@@ -15,10 +15,9 @@
 [submodule "DRAMsim3"]
 	path = DRAMsim3
 	url = https://github.com/OpenXiangShan/DRAMsim3.git
-[submodule "tl-test-new"]
-	path = tl-test-new
-	url = https://github.com/OpenXiangShan/tl-test-new.git
-	branch = tutorial-2024
 [submodule "gem5"]
 	path = gem5
 	url = https://github.com/OpenXiangShan/GEM5.git
+[submodule "XiangShan-Design-Doc"]
+	path = XiangShan-Design-Doc
+	url = https://github.com/OpenXiangShan/XiangShan-Design-Doc
