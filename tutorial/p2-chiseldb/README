@@ -1,5 +1,0 @@
-config: MinimalConfig
-	L1D: way/2; set/2
-	L2: way/2; set/2
-
-maybe need re compile, since EMU_THREADS=16 -j64
