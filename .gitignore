@@ -1,23 +1,2 @@
 .metals
 .vscode
-
-# attachments
-tutorial/p1-basic-func/emu
-tutorial/p1-basic-func/emu-bug
-tutorial/p1-basic-func/hello.bin
-tutorial/p2-chiseldb/emu-cdb-err
-tutorial/p4-checkpoint/emu
-tutorial/p4-checkpoint/bin/stream_100000.bin
-tutorial/p6-constantin/emu
-tutorial/p7-xs-gem5/data
-
-# running results
-tutorial/p1-basic-func/coremark-riscv64-xs.bin
-tutorial/p1-basic-func/hello.bin
-tutorial/p4-checkpoint/gcpt
-tutorial/p4-checkpoint/simpoint_result
-tutorial/p4-checkpoint/*.err
-tutorial/p5-xs-perf/*.png
-tutorial/p6-constantin/constantin.err
-tutorial/p6-constantin/constantin_*
-tutorial/p7-xs-gem5/gem5_data_proc

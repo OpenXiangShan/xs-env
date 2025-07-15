@@ -11,8 +11,9 @@ Reference:
 参考命令：
 
 ```bash
-$ wget https://github.com/OpenXiangShan/xs-env/releases/download/rvsc2025-tutorial/ready-to-run.tar.gz
-$ tar -xvf ready-to-run.tar.gz
+$ cd xs-env/tutorial/ready-to-run
+$ wget https://github.com/OpenXiangShan/xs-env/releases/download/rvsc2025-tutorial/ready-to-run.tar.zst
+$ tar -xvf ready-to-run.tar.zst
 ```
 
 Make sure the file structure is like:
