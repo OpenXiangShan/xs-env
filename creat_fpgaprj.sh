@@ -2,7 +2,7 @@ XS_PROJECT_HOME=$(pwd)
 
 cd XiangShan
 export NOOP_HOME=$(pwd)
-make verilog CONFIG=FpgaDiffMinimalConfig PLDM=1 PLDM_ARGS="--difftest-config H"
+make verilog CONFIG=FpgaDiffMinimalConfig PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H"
 
 cd difftest
 export NOOP_HOME=$(pwd)
