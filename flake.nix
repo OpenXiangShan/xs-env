@@ -72,6 +72,8 @@
         echo "- $(riscv64-unknown-linux-gnu-gcc --version | head -n 1)"
         echo "- $(java -version 2>&1 | head -n 1)"
         echo "You can press Ctrl + D to exit devshell."
+        export LD_LIBRARY_PATH="${pkgs.zlib}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH"
+        source $(pwd)/env.sh
       '';
     };
   };
