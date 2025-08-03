@@ -21,9 +21,10 @@ DIFF_HOME = $(DUT_HOME)/difftest
 FPGA_HOME = =$(XS_PROJECT_ROOT)/env-scripts/xs_kmh_fpga_diff
 FPGA_PRJ_HOME = $(FPGA_HOME)/xs_kmh
 FPGA_PRJ = $(FPGA_PRJ_HOME)/xs_kmh.xpr
+FPGA_WORKLOAD_HOME = $(XS_PROJECT_ROOT)/reference/fpga-workload
+
 export NEMU_HOME=$(XS_PROJECT_ROOT)/NEMU
 export NOOP_HOME=$(DUT_HOME)
-
 init:
 	git lfs pull
 	git submodule update --init --recursive NEMU NutShell
@@ -41,6 +42,7 @@ endif
 	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
 	cp -r $(DIFF_HOME)/build $(DUT_HOME)
 
+
 NUM_CORES ?= 1
 sim-rtl:
 ifeq ($(DUT), XiangShan)
@@ -51,6 +53,9 @@ ifeq ($(DUT), NutShell)
 endif
 
 ## Build for Palladium
+fpga-host:
+	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) FPGA=1 USE_THREAD_MEMPOOL=1 DIFFTEST_PERFCNT=1
+
 pldm-build:
 	$(MAKE) -C $(DUT_HOME) pldm-build DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
 
@@ -61,7 +66,7 @@ simv-build:
 ## Run co-simulation for FPGA/Palladium/Verilator
 WORKLOAD ?= # linux or microbench
 fpga-run:
-	$(DUT_HOME)/build/fpga-host --diff $(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so -i $(DUT_HOME)/ready-to-run/$(WORKLOAD).bin
+	$(DIFF_HOME)/build/fpga-host --diff $(FPGA_WORKLOAD_HOME)/riscv64-nemu-interpreter-so -i $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).bin
 
 pldm-run:
 	$(MAKE) -C $(DUT_HOME) pldm-run PLDM_EXTRA_ARGS="+diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin"
@@ -74,6 +79,9 @@ vivado: clean-vivado
 	$(MAKE) -C $(FPGA_HOME) update_core_flist
 	$(MAKE) -C $(FPGA_HOME) kmh
 	vivado $(FPGA_PRJ)
+
+write_ddr:
+	vivado -mode tcl -source jtag_write_ddr.tcl -tclargs $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).txt
 
 clean-dut:
 	$(MAKE) -C $(DUT_HOME) clean

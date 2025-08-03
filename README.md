@@ -30,15 +30,16 @@ make vivado
 
 Step 4: Write Bitstream to FPGA.
 ```shell
-Step1: Tasks > Open Hardware Manager > select 'xcvu19p_0'
-Step2: Write bitstream to FPGA
-Step3: Write workload to DDR via tcl
-Step4: Reset FPGA and run
+# Step1: Write bitstream to FPGA
+> Tasks > Open Hardware Manager > select 'xcvu19p_0'
+# Step2: Write workload to DDR via tcl
+make write_ddr WORKLOAD=microbench
+# Step3: Reset FPGA and run
 ```
 
 Step 5: Run XiangShan Co-simulation
 ```shell
-make fpga-run DUT=XiangShan
+make fpga-run DUT=XiangShan WORKLOAD=microbench
 ```
 
 ### Exp2. (Optional) Palladium-based Optimization Breakdown with XiangShan/NutShell
