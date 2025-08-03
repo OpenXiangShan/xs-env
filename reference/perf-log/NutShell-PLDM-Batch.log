@@ -1,0 +1,190 @@
+### xeDebug started on node011.bosccluster.com, 06/19/2025 13:24:12.
+
+#source /nfs/home/youkunlin/workspace/micro/nut-ebi/NutShell/difftest/scripts/palladium/run.tcl
+XE> debug .
+debug .
+XE> host $env(PLDM_HOST)
+host $env(PLDM_HOST)
+INFO (legacy-0): Opening Reduced PDB...
+INFO (legacy-39111): Opening PDB hdldb xcva_top (of=8).
+INFO (legacy-0): 141837 critical net names have been restored: elapsed time 0 sec
+INFO (legacy-0): strtab(segs and data) has been restored: elapsed time 1 sec
+INFO (legacy-0): sigmap has been restored: elapsed time 0 sec
+INFO (legacy-51751): Setting emulator to bjos_emu from host command. DBEngine host is node011.
+INFO (legacy-51832): An InfiniBand connection was verified from host node011 to bjos_emu.
+INFO (legacy-0): 1470 cells have been restored: elapsed time 1 sec
+INFO (legacy-0): 1 smTrPrims have been restored: elapsed time 0 sec
+INFO (legacy-0): 1875539 smTrNets have been restored: elapsed time 0 sec
+INFO (legacy-0): flat-conns have been restored: elapsed time 0 sec
+INFO (legacy-0): 3700421 synonyms have been setup: elapsed time 0 sec
+WARNING (legacy-52793): Can't check compatibility for configmgr 'V21.02.201.s005' with xeDebug '23.03.131.s001'.
+INFO (legacy-131313): checkCfigmgrVersion: configmgr version='V21.02.201.s005' rel=21  major=2  minor=201
+INFO (legacy-0): smNetIDs have been setup: elapsed time 0 sec
+xrun -R -disxedebug -64bit +xcprof -profile -PROFTHREAD -sv_lib /nfs/home/youkunlin/workspace/micro/nut-ebi/NutShell/build/pldm-compile/libdpi_emu.so +diff=../../ready-to-run/riscv64-nemu-interpreter-so +workload=../../ready-to-run/microbench.bin -f tmp/sim.args 
+INFO (legacy-0): CRT-FULL has been restored: elapsed time 0 sec
+INFO (legacy-51578): Opened xeConnect port 38559 on host node011 (172.18.20.11) for xeDebug process 3799845.
+DBEngine - 23H1_VXE, V23.03.131.s001            
+
+INFO (legacy-50842): Found engineering version: et6api is 2 days old.  It will expire in 82 days.
+INFO (legacy-47055): Running in design directory: '/nfs/home/youkunlin/workspace/micro/nut-ebi/NutShell/build/pldm-compile'
+TOOL:	xrun(64)	22.09-s009: Started on Jun 19, 2025 at 13:24:15 CST
+xrun(64): 22.09-s009: (c) Copyright 1995-2023 Cadence Design Systems, Inc.
+Loading snapshot xc_ncwork.PTEHelper:module .................... Done
+*Verdi* Loading libsscore_xcelium171.so
+Log started on host: node011.bosccluster.com pid: 3800657 at: Thu Jun 19 13:24:16 2025
+
+libxcrt IXCOM, V22.04.225.s003             
+xcelium> source /nfs/tools/Cadence/IXCOM22.04.s003/tools.lnx86/etc/ixcom/xc.tcl
+xcelium> source /nfs/tools/Cadence/VXE23.03.s001/tools.lnx86/etc/qel/xmrun.qel
+
+XEsim> xc on -zt0 -xt0 -tbrun
+xc on -zt0 -xt0 -tbrun
+INFO (legacy-44626): PXP_Z1: Acquired 'Palladium_Z1_Domain' license, version '23.0'.
+INFO (legacy-50779): Download Info: boards 4.4-4.7 
+INFO: Configmgr IP Address 172.18.68.189 found on Network Interface eno8303
+Configuring UA
+--- HW execs config in 11.48 sec
+XEin> date
+date
+Thu Jun 19 13:24:29 CST 2025
+XEin> run -swap
+run -swap
+ram image:../../ready-to-run/microbench.bin
+diff-test ref so:../../ready-to-run/riscv64-nemu-interpreter-so
+Starting swap into the emulator.
+Finished swap into the emulator.
+--- Using XCELIUM SIGPROF CallBack for profiling ----
+--- HW execs swapin in 1.61 sec
+--- xc tbrun: current sim time = 0 FS
+Memory Usage - Current physical: 886.4M, Current virtual: 5465.7M
+CPU Usage - 0.4s system + 0.3s user = 0.7s total (4.3% cpu)
+Simulation stopped via $stop(2) at time 0 FS + 24
+XErun> run
+run
+simv compiled at Jun 19 2025, 13:20:53
+Using simulated 8192MB RAM
+The image is ../../ready-to-run/microbench.bin
+Using simulated 32768B flash
+The reference model is ../../ready-to-run/riscv64-nemu-interpreter-so
+The first instruction of core 0 has commited. Difftest enabled. 
+nemu does not enable flash fetch!
+======= Running MicroBench [input *test*] =======
+[qsort] Quick sort: * Passed.
+[queen] Queen placement: * Passed.
+[bf] Brainf**k interpreter: * Passed.
+[fib] Fibonacci number: * Passed.
+[sieve] Eratosthenes sieve: * Passed.
+[15pz] A* 15-puzzle search: * Passed.
+[dinic] Dinic's maxflow algorithm: * Passed.
+[lzip] Lzip compression: * Passed.
+[ssort] Suffix sort: * Passed.
+[md5] MD5 digest: * Passed.
+==================================================
+MicroBench PASS
+Total time: 0 ms
+Core 0: [32mHIT GOOD TRAP at pc = 0x80004638
+[0m[35mCore-0 instrCnt = 783387, cycleCnt = 1512377, IPC = 0.517984
+[0m==================== Difftest PerfCnt ====================
+Run time: 14 s 879 ms
+Simulation speed: 101.65 KHz
+                     DPIC_FUNC      DPIC_CALLS      DPIC_CALLS/s       DPIC_BYTES       DPIC_BYTES/s
+>>> DiffState Func
+              v_difftest_Batch           68121            4578/s       544968000B        36626655B/s
+         Batch_ArchIntRegState          783391           52650/s       201331487B        13531251B/s
+                Batch_CSRState          783391           52650/s       113591695B         7634363B/s
+               Batch_ArchEvent               0               0/s               0B               0B/s
+               Batch_TrapEvent          783392           52650/s        27418720B         1842779B/s
+             Batch_InstrCommit          783392           52650/s        36819424B         2474589B/s
+              Batch_CommitData          783391           52650/s       108891349B         7318458B/s
+                 DIFFSTATE_SUM         3916957          263254/s       488052675B        32801443B/s
+>>> Other Difftest Func
+                difftest_nstep           68121            4578/s           68121B            4578B/s
+             difftest_ram_read           11776             791/s           94208B            6331B/s
+            difftest_ram_write               0               0/s               0B               0B/s
+                    flash_read               0               0/s               0B               0B/s
+                   sd_set_addr               0               0/s               0B               0B/s
+                       sd_read               0               0/s               0B               0B/s
+                     jtag_tick               0               0/s               0B               0B/s
+                     put_pixel               0               0/s               0B               0B/s
+                     vmem_sync               0               0/s               0B               0B/s
+                    pte_helper               0               0/s               0B               0B/s
+                    amo_helper               0               0/s               0B               0B/s
+======== PerfCnt =========
+             1512377 <- Mcycle
+              783387 <- Minstret
+                   0 <- MultiCommit
+               68335 <- MimemStall
+              422261 <- MaluInstr
+              186744 <- MbruInstr
+              171382 <- MlsuInstr
+                3001 <- MmduInstr
+                   0 <- McsrInstr
+              121535 <- MloadInstr
+                   0 <- MmmioInstr
+                2277 <- MmulInstr
+               29880 <- MifuFlush
+              122913 <- MbpBRight
+                5853 <- MbpBWrong
+               21061 <- MbpJRight
+                 349 <- MbpJWrong
+                8770 <- MbpIRight
+               23480 <- MbpIWrong
+                4120 <- MbpRRight
+                 198 <- MbpRWrong
+                   0 <- Custom1
+                2478 <- Custom2
+                   0 <- Custom3
+                   0 <- Custom4
+                   0 <- Custom5
+                3375 <- Custom6
+                   0 <- Custom7
+                   0 <- Custom8
+                2050 <- MrawStall
+              513693 <- MexuBusy
+              250079 <- MloadStall
+              147153 <- MstoreStall
+              840543 <- ISUIssue
+======== PerfCntCSV =========
+
+Mcycle, Minstret, MultiCommit, MimemStall, MaluInstr, MbruInstr, MlsuInstr, MmduInstr, McsrInstr, MloadInstr, MmmioInstr, MmulInstr, MifuFlush, MbpBRight, MbpBWrong, MbpJRight, MbpJWrong, MbpIRight, MbpIWrong, MbpRRight, MbpRWrong, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7, Custom8, MrawStall, MexuBusy, MloadStall, MstoreStall, ISUIssue, 
+
+
+             1512377,               783387,                    0,                68335,               422261,               186744,               171382,                 3001,                    0,               121535,                    0,                 2277,                29880,               122913,                 5853,                21061,                  349,                 8770,                23480,                 4120,                  198,                    0,                 2478,                    0,                    0,                    0,                 3375,                    0,                    0,                 2050,               513693,               250079,               147153,               840543, 
+
+
+DIFFTEST WORKLOAD DONE at cycle              1512387
+--- HW execs 79963 tbcall syncs
+--- HW execs 79899 memory read 11777 write
+--- HW execs 3024977 evals 0 bevals 3264868 cfclks 79963 tbsyncs 39251831 fclks in 15.05 sec (4.97 us/eval; 201060.82 eval/sec; 14.70 CPU sec)
+--- HW execs emulator busy 1.24 sec (8.25%)
+--- HW execs 591 gfifo-wait evals (0 gbfull, 0 lbfull, 591 gftbsync) in 0.00 sec (0.00% total, 0.02% emu)
+--- HW execs 79963 output events
+--- HW execs emulator command line session time 15.21 sec (14.70 CPU sec)
+--- xc Profile: (%)
+	    51.54          SW-SIM (Elapsed: 7.75 sec)
+	                    |---- GFIFO (0.03 %, 0.00 sec)
+	                             |-- GFIFO-USER-CODE (100.00 %, 0.00 sec)
+	                    |----  MARG (94.82 %, 7.35 sec)
+
+	    47.65    HW-EMU-TBRUN (Elapsed: 7.17 sec)
+
+	     0.71         XCRT-OH (Elapsed: 0.11 sec)
+
+	     0.09          DECODE (Elapsed: 0.01 sec)
+
+
+Log end: Thu Jun 19 13:24:46 2025
+
+--- HW execs Memory read with Infiniband 851712 times, transferred 563602640 bytes in 11.1897 sec (50.368 MB/sec)
+--- HW execs Memory write with Infiniband 11790 times, transferred 879072 bytes in 0.0674 sec (13.044 MB/sec)
+--- HW execs Memory read with DBEngine 0 times
+--- HW execs Memory write with DBEngine 0 times
+--- HW execs Memory access during Swap-In 12 times, transferred 690588 bytes in 0.0010 sec (663.389 MB/sec)
+--- HW execs Memory access during Swap-Out 0 times
+Simulation complete via $finish(1) at time 3024977 NS + 1
+./xc_work/v/174n.sv:284  $finish;
+XErun> exit
+exit
+TOOL:	xrun(64)	22.09-s009: Exiting on Jun 19, 2025 at 13:24:46 CST  (total: 00:00:31)
+INFO (legacy-44635): Checking in all checked-out licenses.
+INFO (legacy-44635): PXP_Z1: Checking in 'Palladium_Z1_Domain' license.

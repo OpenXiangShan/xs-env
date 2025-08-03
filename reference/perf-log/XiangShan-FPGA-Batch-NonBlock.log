@@ -1,0 +1,40 @@
+fpga init
+start channel 0
+The first instruction of core 0 has commited. Difftest enabled.
+Core 0: HIT GOOD TRAP at pc = 0x80003856
+Core-0 instrCnt = 1731543237, cycleCnt = 1434192280, IPC = 1.207330
+==================== Difftest PerfCnt ====================
+Run time: 652 s 499 ms
+Simulation speed: 2198.00 KHz
+                     DPIC_FUNC      DPIC_CALLS      DPIC_CALLS/s       DPIC_BYTES       DPIC_BYTES/s
+>>> DiffState Func
+              v_difftest_Batch       518458640          794573/s   1036917280000B      1589147692B/s
+             Batch_InstrCommit      1261534361         1933388/s     37846030830B        58001668B/s
+               Batch_TrapEvent      1434192590         2197999/s     50196740650B        76929988B/s
+         Batch_ArchIntRegState       549936931          842816/s    141333791267B       216603843B/s
+          Batch_ArchFpRegState       549936931          842816/s    141333791267B       216603843B/s
+               Batch_ArchEvent               0               0/s               0B               0B/s
+      Batch_CriticalErrorEvent               0               0/s               0B               0B/s
+                Batch_CSRState       549936931          842816/s     79740854995B        122208394B/s
+               Batch_DebugMode      1434192590         2197999/s     48762548060B        74731988B/s
+         Batch_TriggerCSRState       549936931          842816/s     13748423275B        21070412B/s
+              Batch_FpCSRState       549936931          842816/s      4949432379B         7585348B/s
+               Batch_HCSRState       549936931          842816/s     75341359547B        7585348B/s
+Batch_NonRegInterruptPendingEvent               0               0/s               0B               0B/s
+  Batch_MhpmeventOverflowEvent               0               0/s               0B               0B/s
+               Batch_LrScEvent               0               0/s               0B               0B/s
+              Batch_CommitData      1261534361         1123762/s     13876258572B        21267278B/s
+                 DIFFSTATE_SUM      8691075488         7742638/s    607095893969B       930468629B/s
+>>> Other Difftest Func
+                difftest_nstep       518458636          704532/s       518458636B          704532B/s
+             difftest_ram_read               0               0/s               0B               0B/s
+            difftest_ram_write               0               0/s               0B               0B/s
+                    flash_read               0               0/s               0B               0B/s
+                   sd_set_addr               0               0/s               0B               0B/s
+                       sd_read               0               0/s               0B               0B/s
+                     jtag_tick               0               0/s               0B               0B/s
+                     put_pixel               0               0/s               0B               0B/s
+                     vmem_sync               0               0/s               0B               0B/s
+                    pte_helper               0               0/s               0B               0B/s
+                    amo_helper               0               0/s               0B               0B/s
+difftest releases the fpga device and exits

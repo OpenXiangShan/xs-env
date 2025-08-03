@@ -1,0 +1,229 @@
+### xeDebug started on node011.bosccluster.com, 03/07/2025 00:11:53.
+
+#source /nfs/home/youkunlin/workspace/micro/EBINSD-dual/XiangShan/difftest/scripts/palladium/run.tcl
+XE> debug .
+debug .
+XE> host $env(PLDM_HOST)
+host $env(PLDM_HOST)
+INFO (legacy-0): Opening Reduced PDB...
+INFO (legacy-39111): Opening PDB hdldb xcva_top (of=8).
+INFO (legacy-51751): Setting emulator to bjos_emu from host command. DBEngine host is node011.
+INFO (legacy-51832): An InfiniBand connection was verified from host node011 to bjos_emu.
+INFO (legacy-0): 532310 critical net names have been restored: elapsed time 3 sec
+WARNING (legacy-52793): Can't check compatibility for configmgr 'V21.02.201.s005' with xeDebug '23.03.131.s001'.
+INFO (legacy-131313): checkCfigmgrVersion: configmgr version='V21.02.201.s005' rel=21  major=2  minor=201
+xrun -R -disxedebug -64bit +xcprof -profile -PROFTHREAD -sv_lib /nfs/home/youkunlin/workspace/micro/EBINSD-dual/XiangShan/build/pldm-compile/libdpi_emu.so +no-diff +workload=/nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin -f tmp/sim.args 
+INFO (legacy-51578): Opened xeConnect port 41411 on host node011 (172.18.20.11) for xeDebug process 1733754.
+DBEngine - 23H1_VXE, V23.03.131.s001            
+
+INFO (legacy-50842): Found engineering version: et6api is 10 days old.  It will expire in 74 days.
+INFO (legacy-47055): Running in design directory: '/nfs/home/youkunlin/workspace/micro/EBINSD-dual/XiangShan/build/pldm-compile'
+TOOL:	xrun(64)	22.09-s009: Started on Mar 07, 2025 at 00:11:58 CST
+xrun(64): 22.09-s009: (c) Copyright 1995-2023 Cadence Design Systems, Inc.
+Loading snapshot xc_ncwork.tb_top:module .................... Done
+INFO (legacy-0): strtab(segs and data) has been restored: elapsed time 7 sec
+*Verdi* Loading libsscore_xcelium171.so
+Log started on host: node011.bosccluster.com pid: 1734548 at: Fri Mar  7 00:12:01 2025
+
+libxcrt IXCOM, V22.04.225.s003             
+INFO (legacy-0): sigmap has been restored: elapsed time 2 sec
+xcelium> source /nfs/tools/Cadence/IXCOM22.04.s003/tools.lnx86/etc/ixcom/xc.tcl
+xcelium> source /nfs/tools/Cadence/VXE23.03.s001/tools.lnx86/etc/qel/xmrun.qel
+
+INFO (legacy-0): 3593 cells have been restored: elapsed time 21 sec
+INFO (legacy-0): 1 smTrPrims have been restored: elapsed time 0 sec
+INFO (legacy-0): 48059255 smTrNets have been restored: elapsed time 1 sec
+INFO (legacy-0): flat-conns have been restored: elapsed time 0 sec
+INFO (legacy-0): 92337330 synonyms have been setup: elapsed time 0 sec
+INFO (legacy-0): smNetIDs have been setup: elapsed time 3 sec
+INFO (legacy-0): CRT-FULL has been restored: elapsed time 0 sec
+XEsim> xc on -zt0 -xt0 -tbrun
+xc on -zt0 -xt0 -tbrun
+INFO (legacy-44626): PXP_Z1: Acquired 'Palladium_Z1_Domain' license, version '23.0'.
+INFO (legacy-50779): Download Info: boards 0.0-0.3+1-4 
+REPORT: Loading side file ucdbInfoFile total time 0.51 real, 1.61 cpu(1.19u+0.42s), 316%, memory 0M.
+INFO: Configmgr IP Address 172.18.68.189 found on Network Interface eno8303
+Configuring UA
+--- HW execs config in 22.37 sec
+XEin> date
+date
+Fri Mar  7 00:12:49 CST 2025
+XEin> run -swap
+run -swap
+ram image:/nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin
+disable diff-test
+tb_top.sim.memory.ram.rdata_mem.helper_0: load     3327060 bytes from /nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin.
+tb_top.sim.memory.ram.rdata_mem.helper_1: load     3327060 bytes from /nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin.
+tb_top.sim.memory.ram.rdata_mem.helper_2: load     3327060 bytes from /nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin.
+tb_top.sim.memory.ram.rdata_mem.helper_3: load     3327060 bytes from /nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin.
+Starting swap into the emulator.
+Finished swap into the emulator.
+--- Using XCELIUM SIGPROF CallBack for profiling ----
+--- HW execs swapin in 15.31 sec
+--- xc tbrun: current sim time = 0 FS
+Memory Usage - Current physical: 11323.4M, Current virtual: 25699.5M
+CPU Usage - 5.3s system + 12.8s user = 18.1s total (27.1% cpu)
+Simulation stopped via $stop(2) at time 0 FS + 71
+XErun> run
+run
+simv compiled at Mar  6 2025, 19:28:42
+Using simulated 8386560MB RAM
+The image is /nfs/home/youkunlin/workspace/micro/workload/linux-dual.bin
+Using simulated 32768B flash
+              vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                  vvvvvvvvvvvvvvvvvvvvvvvvvvvv
+rrrrrrrrrrrrr       vvvvvvvvvvvvvvvvvvvvvvvvvv
+rrrrrrrrrrrrrrrr      vvvvvvvvvvvvvvvvvvvvvvvv
+rrrrrrrrrrrrrrrrrr    vvvvvvvvvvvvvvvvvvvvvvvv
+rrrrrrrrrrrrrrrrrr    vvvvvvvvvvvvvvvvvvvvvvvv
+rrrrrrrrrrrrrrrrrr    vvvvvvvvvvvvvvvvvvvvvvvv
+rrrrrrrrrrrrrrrr      vvvvvvvvvvvvvvvvvvvvvv  
+rrrrrrrrrrrrr       vvvvvvvvvvvvvvvvvvvvvv    
+rr                vvvvvvvvvvvvvvvvvvvvvv      
+rr            vvvvvvvvvvvvvvvvvvvvvvvv      rr
+rrrr      vvvvvvvvvvvvvvvvvvvvvvvvvv      rrrr
+rrrrrr      vvvvvvvvvvvvvvvvvvvvvv      rrrrrr
+rrrrrrrr      vvvvvvvvvvvvvvvvvv      rrrrrrrr
+rrrrrrrrrr      vvvvvvvvvvvvvv      rrrrrrrrrr
+rrrrrrrrrrrr      vvvvvvvvvv      rrrrrrrrrrrr
+rrrrrrrrrrrrrr      vvvvvv      rrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrr      vv      rrrrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrrrr          rrrrrrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrrrrrr      rrrrrrrrrrrrrrrrrrrr
+rrrrrrrrrrrrrrrrrrrrrr  rrrrrrrrrrrrrrrrrrrrrr
+
+       INSTRUCTION SETS WANT TO BE FREE
+[    0.000000] OF: fdt: Ignoring memory range 0x80000000 - 0x80200000
+[    0.000000] Linux version 4.18.0 (tanghaojin@open21) (gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04)) #1 SMP Fri Jun 7 15:27:59 CST 2024
+[    0.000000] bootconsole [early0] enabled
+[    0.000000] Initial ramdisk at: 0x(____ptrval____) (1024 bytes)
+[    0.000000] Zone ranges:
+[    0.000000]   DMA32    empty
+[    0.000000]   Normal   [mem 0x0000000080200000-0x0000000081ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000080200000-0x0000000081ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000080200000-0x0000000081ffffff]
+[    0.000000] Cannot allocate SWIOTLB buffer
+[    0.000000] elf_hwcap is 0x112d
+[    0.000000] percpu: Embedded 11 pages/cpu @(____ptrval____) s15072 r0 d29984 u45056
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 7575
+[    0.000000] Kernel command line: console=hvc0 earlycon=sbi
+[    0.000000] Dentry cache hash table entries: 4096 (order: 3, 32768 bytes)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 2, 16384 bytes)
+[    0.000000] Sorting __ex_table...
+[    0.000000] Memory: 28920K/30720K available (827K kernel code, 76K rwdata, 108K rodata, 82K init, 100K bss, 1800K reserved, 0K cma-reserved)
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000] Hierarchical RCU implementation.
+[    0.000000] NR_IRQS: 0, nr_irqs: 0, preallocated irqs: 0
+[    0.000000] plic: mapped 64 interrupts to 2 (out of 4) handlers.
+[    0.000000] clocksource: riscv_clocksource: mask: 0xffffffffffffffff max_cycles: 0x1d854df40, max_idle_ns: 3526361616960 ns
+[    0.000000] console [hvc0] enabled
+[    0.000000] console [hvc0] enabled
+[    0.000000] bootconsole [early0] disabled
+[    0.000000] bootconsole [early0] disabled
+[    0.000000] Calibrating delay loop (skipped), value calculated using timer frequency.. 2.00 BogoMIPS (lpj=10000)
+[    0.000000] pid_max: default: 4096 minimum: 301
+[    0.000000] Mount-cache hash table entries: 512 (order: 0, 4096 bytes)
+[    0.000000] Mountpoint-cache hash table entries: 512 (order: 0, 4096 bytes)
+[    0.000000] Hierarchical SRCU implementation.
+[    0.000000] smp: Bringing up secondary CPUs ...
+[    0.000000] smp: Brought up 1 node, 2 CPUs
+[    0.000000] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.000000] futex hash table entries: 16 (order: -2, 1024 bytes)
+[    0.000000] clocksource: Switched to clocksource riscv_clocksource
+[    0.000000] Unpacking initramfs...
+[    0.000000] workingset: timestamp_bits=62 max_order=13 bucket_order=0
+[    0.000000] random: get_random_bytes called from 0xffffffff80018d24 with crng_init=0
+Core 0: [32mHIT GOOD TRAP at pc = 0xffffffff8002f784
+[0m[35mCore-0 instrCnt = 5381729, cycleCnt = 6238748, IPC = 0.862630
+[0mCore 1: [32mHIT GOOD TRAP at pc = 0x100a0
+[0m[35mCore-1 instrCnt = 14440078, cycleCnt = 6238748, IPC = 2.314579
+[0m==================== Difftest PerfCnt ====================
+Run time: 13 s 896 ms
+Simulation speed: 448.96 KHz
+                     DPIC_FUNC      DPIC_CALLS      DPIC_CALLS/s       DPIC_BYTES       DPIC_BYTES/s
+>>> DiffState Func
+              v_difftest_Batch          157653           11345/s       630612000B        45380829B/s
+             Batch_RefillEvent         1002458           72140/s        76186808B         5482643B/s
+              Batch_L1TLBEvent          495567           35662/s        21804948B         1569152B/s
+             Batch_InstrCommit         1209168           87015/s        36275040B         2610466B/s
+               Batch_TrapEvent         2474702          178087/s        86614570B         6233057B/s
+               Batch_ArchEvent            3061             220/s           73464B            5286B/s
+      Batch_CriticalErrorEvent               0               0/s               0B               0B/s
+Batch_NonRegInterruptPendingEvent              64               4/s             768B              55B/s
+  Batch_MhpmeventOverflowEvent               0               0/s               0B               0B/s
+            Batch_SyncAIAEvent               0               0/s               0B               0B/s
+Batch_SyncCustomMflushpwrEvent               0               0/s               0B               0B/s
+              Batch_L2TLBEvent              24               1/s            3360B             241B/s
+             Batch_AtomicEvent            7715             555/s          470615B           33866B/s
+               Batch_LrScEvent             768              55/s            2304B             165B/s
+           Batch_CMOInvalEvent               0               0/s               0B               0B/s
+            Batch_SbufferEvent          116437            8379/s         9664271B          695471B/s
+              Batch_CommitData         1016802           73172/s        11184822B          804895B/s
+               Batch_LoadEvent        10488944          754817/s       283201488B        20380072B/s
+              Batch_StoreEvent          729149           52471/s        23332768B         1679099B/s
+     Batch_ArchIntRegStateElem          656028           47209/s         6560280B          472098B/s
+      Batch_ArchFpRegStateElem              64               4/s             640B              46B/s
+     Batch_ArchVecRegStateElem             128               9/s            1280B              92B/s
+            Batch_CSRStateElem           33630            2420/s          336300B           24201B/s
+           Batch_DebugModeElem               6               0/s              60B               4B/s
+     Batch_TriggerCSRStateElem               4               0/s              40B               2B/s
+         Batch_VecCSRStateElem               6               0/s              60B               4B/s
+          Batch_FpCSRStateElem               0               0/s               0B               0B/s
+           Batch_HCSRStateElem               6               0/s              60B               4B/s
+                 DIFFSTATE_SUM        18234731         1312228/s       555713946B        39990928B/s
+>>> Other Difftest Func
+             difftest_ram_read               0               0/s               0B               0B/s
+            difftest_ram_write               0               0/s               0B               0B/s
+                    flash_read               0               0/s               0B               0B/s
+                   sd_set_addr               0               0/s               0B               0B/s
+                       sd_read               0               0/s               0B               0B/s
+                     jtag_tick               0               0/s               0B               0B/s
+                     put_pixel               0               0/s               0B               0B/s
+                     vmem_sync               0               0/s               0B               0B/s
+                    pte_helper               0               0/s               0B               0B/s
+                    amo_helper               0               0/s               0B               0B/s
+[    0.000000] Freeing unused kernel memory: 80K
+[    0.000000] This architecture does not have kernel memory protection.
+Hello, XiangShan!
+DIFFTEST WORKLOAD DONE at cycle              6239143
+--- HW execs 4096 tbcall syncs
+--- HW execs 1 memory read 1 write
+--- HW execs 12478489 evals 0 bevals 13956416 cfclks 4096 tbsyncs 16482518 fclks in 14.91 sec (1.19 us/eval; 836906.89 eval/sec; 14.46 CPU sec)
+--- HW execs emulator busy 11.80 sec (79.15%)
+--- HW execs 1557693 gfifo-wait evals (0 gbfull, 1465639 lbfull, 92054 gftbsync) in 1.32 sec (8.83% total, 11.16% emu)
+--- HW execs 4096 output events
+--- HW execs emulator command line session time 15.28 sec (14.46 CPU sec)
+--- xc Profile: (%)
+	    81.15    HW-EMU-TBRUN (Elapsed: 12.10 sec)
+	                    |---- GFIFO (29.05 %, 3.52 sec)
+	                             |-- GFIFO-DXFR (83.36 %, 2.93 sec)
+	                             |-- GFIFO-USER-CODE (15.77 %, 0.55 sec)
+
+	    12.65          SW-SIM (Elapsed: 1.89 sec)
+	                    |---- GFIFO (2.36 %, 0.04 sec)
+	                             |-- GFIFO-DXFR (77.27 %, 0.03 sec)
+	                             |-- GFIFO-USER-CODE (9.09 %, 0.00 sec)
+
+	     6.19         XCRT-OH (Elapsed: 0.92 sec)
+
+	     0.01          DECODE (Elapsed: 0.00 sec)
+
+
+Log end: Fri Mar  7 00:13:20 2025
+
+--- HW execs Memory read with Infiniband 1832348 times, transferred 676437456 bytes in 10.0542 sec (67.279 MB/sec)
+--- HW execs Memory write with Infiniband 9308 times, transferred 41053720 bytes in 5.3942 sec (7.611 MB/sec)
+--- HW execs Memory read with DBEngine 0 times
+--- HW execs Memory write with DBEngine 0 times
+--- HW execs Memory access during Swap-In 641 times, transferred 40984332 bytes in 5.3476 sec (7.664 MB/sec)
+--- HW execs Memory access during Swap-Out 0 times
+Simulation complete via $finish(1) at time 12478489 NS + 1
+./xc_work/v/1892n.sv:281  $finish;
+XErun> exit
+exit
+TOOL:	xrun(64)	22.09-s009: Exiting on Mar 07, 2025 at 00:13:21 CST  (total: 00:01:23)
+INFO (legacy-44635): Checking in all checked-out licenses.
+INFO (legacy-44635): PXP_Z1: Checking in 'Palladium_Z1_Domain' license.
+WARNING (legacy-54241): The workstation was running low on memory (free memory dropped to 101 GB), therefore the performance might be impacted.
