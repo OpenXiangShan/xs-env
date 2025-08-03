@@ -25,6 +25,7 @@ export NEMU_HOME=$(XS_PROJECT_ROOT)/NEMU
 export NOOP_HOME=$(DUT_HOME)
 
 init:
+	git lfs pull
 	git submodule update --init --recursive NEMU NutShell
 	git submodule update --init XiangShan && make -C XiangShan init
 
@@ -49,21 +50,26 @@ ifeq ($(DUT), NutShell)
 	$(MAKE) -C $(DUT_HOME) sim-verilog MILL_ARGS="--difftest-config $(DIFF_CONFIG)"
 endif
 
-## Build and run for Palladium
+## Build for Palladium
 pldm-build:
 	$(MAKE) -C $(DUT_HOME) pldm-build DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
 
-WORKLOAD ?= # linux or microbench
-pldm-run:
-	$(MAKE) -C $(DUT_HOME) pldm-run PLDM_EXTRA_ARGS="+diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin"
-
 ## Simulate same Palladium/FPGA framework with Verilator
 simv-build:
-	$(MAKE) -C $(DUT_HOME) simv VCS=verilator WITH_CHISELDB=0 WITH_CONSTANTIN=0 DIFFTEST_PERFCNT=1
+	$(MAKE) -C $(DUT_HOME) simv VCS=verilator DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
+
+## Run co-simulation for FPGA/Palladium/Verilator
+WORKLOAD ?= # linux or microbench
+fpga-run:
+	$(DUT_HOME)/build/fpga-host --diff $(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so -i $(DUT_HOME)/ready-to-run/$(WORKLOAD).bin
+
+pldm-run:
+	$(MAKE) -C $(DUT_HOME) pldm-run PLDM_EXTRA_ARGS="+diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin"
 
 simv-run:
 	$(DUT_HOME)/build/simv +diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin +e=0
 
+## Setup Vivado project
 vivado: clean-vivado
 	$(MAKE) -C $(FPGA_HOME) update_core_flist
 	$(MAKE) -C $(FPGA_HOME) kmh
