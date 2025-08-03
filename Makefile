@@ -16,9 +16,10 @@
 
 ## Environments.
 XS_PROJECT_ROOT = $(abspath .)
-DUT_HOME = $(XS_PROJECT_ROOT)/$(DUT) # DUT should be XiangShan or NutShell
+# DUT should be XiangShan or NutShell
+DUT_HOME = $(XS_PROJECT_ROOT)/$(DUT)
 DIFF_HOME = $(DUT_HOME)/difftest
-FPGA_HOME = =$(XS_PROJECT_ROOT)/env-scripts/xs_kmh_fpga_diff
+FPGA_HOME = $(XS_PROJECT_ROOT)/env-scripts/xs_kmh_fpga_diff
 FPGA_PRJ_HOME = $(FPGA_HOME)/xs_kmh
 FPGA_PRJ = $(FPGA_PRJ_HOME)/xs_kmh.xpr
 FPGA_WORKLOAD_HOME = $(XS_PROJECT_ROOT)/reference/fpga-workload
@@ -27,7 +28,7 @@ export NEMU_HOME=$(XS_PROJECT_ROOT)/NEMU
 export NOOP_HOME=$(DUT_HOME)
 init:
 	git lfs pull
-	git submodule update --init --recursive NEMU NutShell
+	git submodule update --init --recursive NEMU NutShell env-scripts
 	git submodule update --init XiangShan && make -C XiangShan init
 
 ## Generate RTL from Chisel
@@ -54,7 +55,7 @@ endif
 
 ## Build for Palladium
 fpga-host:
-	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) FPGA=1 USE_THREAD_MEMPOOL=1 DIFFTEST_PERFCNT=1
+	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) fpga-host FPGA=1 DIFFTEST_PERFCNT=1
 
 pldm-build:
 	$(MAKE) -C $(DUT_HOME) pldm-build DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
@@ -75,7 +76,7 @@ simv-run:
 	$(DUT_HOME)/build/simv +diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin +e=0
 
 ## Setup Vivado project
-vivado: clean-vivado
+vivado:
 	$(MAKE) -C $(FPGA_HOME) update_core_flist
 	$(MAKE) -C $(FPGA_HOME) kmh
 	vivado $(FPGA_PRJ)

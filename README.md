@@ -16,6 +16,7 @@ make fpga-rtl DUT=XiangShan
 
 Step 2: Build Host Executable Binary
 ```shell
+# Also available in reference/fpga-workload/fpga-host
 make fpga-host DUT=XiangShan
 ```
 
