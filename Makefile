@@ -16,13 +16,29 @@
 
 ## Environments.
 XS_PROJECT_ROOT = $(abspath .)
+
 # DUT should be XiangShan or NutShell
+DUT ?= XiangShan
 DUT_HOME = $(XS_PROJECT_ROOT)/$(DUT)
 DIFF_HOME = $(DUT_HOME)/difftest
+
 FPGA_HOME = $(XS_PROJECT_ROOT)/env-scripts/xs_kmh_fpga_diff
 FPGA_PRJ_HOME = $(FPGA_HOME)/xs_kmh
 FPGA_PRJ = $(FPGA_PRJ_HOME)/xs_kmh.xpr
+
+# Ready-to-use bitstream, workload, host
 FPGA_WORKLOAD_HOME = $(XS_PROJECT_ROOT)/reference/fpga-workload
+FPGA_BIT_HOME ?= $(XS_PROJECT_ROOT)/reference/fpga-bit
+WORKLOAD ?= microbench
+HOST ?= $(FPGA_WORKLOAD_HOME)/fpga-host
+
+# Set LOCAL_ENV = 1 to use local scripts with sudo permission
+LOCAL_ENV ?= 0
+ifeq ($(LOCAL_ENV), 1)
+	PCIE_SCRIPTS_DIR = /home/tools
+else
+	PCIE_SCRIPTS_DIR = ./fpga_scripts
+endif
 
 export NEMU_HOME=$(XS_PROJECT_ROOT)/NEMU
 export NOOP_HOME=$(DUT_HOME)
@@ -65,9 +81,9 @@ simv-build:
 	$(MAKE) -C $(DUT_HOME) simv VCS=verilator DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
 
 ## Run co-simulation for FPGA/Palladium/Verilator
-WORKLOAD ?= # linux or microbench
 fpga-run:
-	$(DIFF_HOME)/build/fpga-host --diff $(FPGA_WORKLOAD_HOME)/riscv64-nemu-interpreter-so -i $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).bin
+	vivado -mode tcl -source fpga_scripts/reset_cpu.tcl -tclargs $(FPGA_BIT_HOME)/xs_fpga_top_debug.ltx
+	$(HOST) --diff $(FPGA_WORKLOAD_HOME)/riscv64-nemu-interpreter-so -i $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).bin
 
 pldm-run:
 	$(MAKE) -C $(DUT_HOME) pldm-run PLDM_EXTRA_ARGS="+diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin"
@@ -81,8 +97,14 @@ vivado:
 	$(MAKE) -C $(FPGA_HOME) kmh
 	vivado $(FPGA_PRJ)
 
+write_bitstream:
+	sudo $(PCIE_SCRIPTS_DIR)/pcie-remove.sh
+	vivado -mode tcl -source fpga_scripts/write_bitstream.tcl -tclargs $(FPGA_BIT_HOME)
+	sudo $(PCIE_SCRIPTS_DIR)/pcie-rescan.sh
+
 write_ddr:
-	vivado -mode tcl -source jtag_write_ddr.tcl -tclargs $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).txt
+	vivado -mode tcl -source fpga_scripts/reset_ddr.tcl -tclargs $(FPGA_BIT_HOME)/xs_fpga_top_debug.ltx
+	vivado -mode tcl -source fpga_scripts/jtag_write_ddr.tcl -tclargs $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).txt
 
 clean-dut:
 	$(MAKE) -C $(DUT_HOME) clean

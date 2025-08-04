@@ -1,4 +1,9 @@
 
 out/
 .direnv/
+.Xil
 vivado*
+*/build*
+*/*/build*
+*.tar.gz
+nohup.out

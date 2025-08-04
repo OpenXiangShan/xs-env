@@ -1,3 +1,8 @@
+XDMA link /dev/xdma0_c2h_0
+Using simulated 8386560MB RAM
+The image is microbench.bin
+Using simulated 32768B flash
+The reference model is /home/fpga-v/youkunlin/xs-env/reference/fpga-workload/riscv64-nemu-interpreter-so
 fpga init
 start channel 0
 The first instruction of core 0 has commited. Difftest enabled.

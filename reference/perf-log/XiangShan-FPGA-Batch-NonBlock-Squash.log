@@ -1,32 +1,37 @@
+XDMA link /dev/xdma0_c2h_0
+Using simulated 8386560MB RAM
+The image is microbench.bin
+Using simulated 32768B flash
+The reference model is /home/fpga-v/youkunlin/xs-env/reference/fpga-workload/riscv64-nemu-interpreter-so
 fpga init
 start channel 0
 The first instruction of core 0 has commited. Difftest enabled.
 Core 0: HIT GOOD TRAP at pc = 0x80003856
-Core-0 instrCnt = 1731543183, cycleCnt = 1437159931, IPC = 1.204837
+Core-0 instrCnt = 1731543183, cycleCnt = 1437460832, IPC = 1.204585
 ==================== Difftest PerfCnt ====================
-Run time: 184 s 708 ms
-Simulation speed: 7780.71 KHz
+Run time: 108 s 873 ms
+Simulation speed: 13203.10 KHz
                      DPIC_FUNC      DPIC_CALLS      DPIC_CALLS/s       DPIC_BYTES       DPIC_BYTES/s
 >>> DiffState Func
-              v_difftest_Batch         3302768           17881/s      6605536000B        35762046B/s
-             Batch_InstrCommit        24401388          132107/s       732041640B         3963237B/s
-               Batch_TrapEvent         3302771           17881/s       115596985B          625836B/s
-         Batch_ArchIntRegState         3302770           17881/s       848811890B         4595425B/s
-          Batch_ArchFpRegState         3302770           17881/s       848811890B         4595425B/s
+              v_difftest_Batch         3301480           30324/s      6602960000B        60648278B/s
+             Batch_InstrCommit        24367590          223816/s       731027700B         6714499B/s
+               Batch_TrapEvent         3301485           30324/s       115551975B         1061346B/s
+         Batch_ArchIntRegState         3301484           30324/s       848481388B         7793313B/s
+          Batch_ArchFpRegState         3301484           30324/s       848481388B         7793313B/s
                Batch_ArchEvent               0               0/s               0B               0B/s
       Batch_CriticalErrorEvent               0               0/s               0B               0B/s
-                Batch_CSRState         3302770           17881/s       478901650B         2592749B/s
-               Batch_DebugMode         3302771           17881/s       112294214B          607955B/s
-         Batch_TriggerCSRState         3302770           17881/s        82569250B          447025B/s
-              Batch_FpCSRState         3302770           17881/s        29724930B          160929B/s
-               Batch_HCSRState         3302770           17881/s       452479490B         2449701B/s
+                Batch_CSRState         3301484           30324/s       478715180B         4397005B/s
+               Batch_DebugMode         3301485           30324/s       112250490B         1031022B/s
+         Batch_TriggerCSRState         3301484           30324/s        82537100B          758104B/s
+              Batch_FpCSRState         3301484           30324/s        29713356B          272917B/s
+               Batch_HCSRState         3301484           30324/s       452303308B         4154412B/s
 Batch_NonRegInterruptPendingEvent               0               0/s               0B               0B/s
   Batch_MhpmeventOverflowEvent               0               0/s               0B               0B/s
                Batch_LrScEvent               0               0/s               0B               0B/s
-              Batch_CommitData         4260847           23068/s        46869317B          253748B/s
-                 DIFFSTATE_SUM        55084397          298224/s      3748101256B        20292035B/s
+              Batch_CommitData         4269175           39212/s        46960925B          431336B/s
+                 DIFFSTATE_SUM        55048639          505622/s      3746022810B        34407270B/s
 >>> Other Difftest Func
-                difftest_nstep         3302765           17881/s         3302765B           17881B/s
+                difftest_nstep         3301475           30324/s         3301475B           30324B/s
              difftest_ram_read               0               0/s               0B               0B/s
             difftest_ram_write               0               0/s               0B               0B/s
                     flash_read               0               0/s               0B               0B/s
@@ -38,4 +43,3 @@ Batch_NonRegInterruptPendingEvent               0               0/s             
                     pte_helper               0               0/s               0B               0B/s
                     amo_helper               0               0/s               0B               0B/s
 difftest releases the fpga device and exits
-➜  build git:(fix_fpga_diff) ✗
