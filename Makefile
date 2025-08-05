@@ -55,7 +55,7 @@ endif
 	$(MAKE) -C $(DUT_HOME) verilog CONFIG=FpgaDiffMinimalConfig PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H" -j16
 	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DUT_HOME)/build/rtl/XSTop.sv --core --fpga
 	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) difftest_verilog PROFILE=$(DUT_HOME)/build/generated-src/difftest_profile.json NUM_CORES=1 CONFIG=ESBIF
-	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DUT_HOME)/build/rtl/GatewayEndpoint.sv
+	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DIFF_HOME)/build/rtl/GatewayEndpoint.sv
 	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
 	cp -r $(DIFF_HOME)/build $(DUT_HOME)
 
@@ -106,7 +106,7 @@ write_ddr:
 	vivado -mode tcl -source fpga_scripts/reset_ddr.tcl -tclargs $(FPGA_BIT_HOME)/xs_fpga_top_debug.ltx
 	vivado -mode tcl -source fpga_scripts/jtag_write_ddr.tcl -tclargs $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).txt
 
-clean-dut:
+clean-rtl:
 	$(MAKE) -C $(DUT_HOME) clean
 
 clean-vivado:

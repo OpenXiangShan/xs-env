@@ -28,7 +28,8 @@ make fpga-rtl DUT=XiangShan
 
 Step 2: Build Host Executable Binary
 ```shell
-# Also available in reference/fpga-workload/fpga-host
+# Pre-built host available: reference/fpga-workload/fpga-host
+# New host path: $(DUT)/difftest/build/fpga-host
 make fpga-host DUT=XiangShan
 ```
 
@@ -41,7 +42,7 @@ make vivado
 > Run Synthesis, Implementation, Generate Bitstream
 ```
 
-Step 4: Write Bitstream to FPGA.
+Step 4: Write bitstream and workload to FPGA.
 ```shell
 ## Step1: Write bitstream to FPGA
 # LOCAL_ENV: 1 to use local scripts with sudo permission
@@ -49,7 +50,6 @@ Step 4: Write Bitstream to FPGA.
 make write_bitstream LOCAL_ENV=... FPGA_BIT_HOME=...
 ## Step2: Write workload to FPGA DDR
 make write_ddr WORKLOAD=microbench
-## Step3: Reset FPGA and run
 ```
 
 Step 5: Run XiangShan Co-simulation
