@@ -11,15 +11,18 @@ To facilitate artifact evaluation, we provide a **ready-to-use** remote environm
 Get latest version from Github, and run `make init` to startup.
 ## 2. Experiment workflow
 ### Exp1. FPGA-based Cp-simulation Speed with XiangShan.
-The experiment demonstrates DiffTest-H's co-simulation speed on Xilinx VU19P FPGA.
+The experiment demonstrates DiffTest-H's co-simulation speed on Xilinx VU19P FPGA. We highly recommend reviewers to use the **Step 0 Quick Start**, which directly leverages our pre-built bitstream, host, and workloads for reliable results in minutes.
 
-Steps 0: Quick start with pre-built bitstream, host, workload
+#### Steps 0 (Recommended): Quick start with pre-built bitstream, host, workload
 ```shell
 make write_bitstream LOCAL_ENV=1
 make write_ddr
 make fpga-run
 ```
 Then we can get a performance report like [here](#3-evaluation-and-expected-results)
+
+#### Steps 1-5 (Optional, Advanced Users Only)
+For reviewers who want to fully rebuild the flow (time-consuming, >15 hours for Step 3), we also provide the following steps. Note these steps are note required for artifact evaluation, the provided pre-built artifacts already match the paper's experiments and results.
 
 Steps 1: Generate RTL from Chisel.
 ```shell
