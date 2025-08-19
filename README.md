@@ -31,18 +31,15 @@ make fpga-rtl DUT=XiangShan
 
 Step 2: Build Host Executable Binary
 ```shell
-# Pre-built host available: reference/fpga-workload/fpga-host
-# New host path: $(DUT)/difftest/build/fpga-host
+# Host path: $(DUT)/difftest/build/fpga-host
 make fpga-host DUT=XiangShan
 ```
 
 Step 3: Generate Bitstream via Vivado.
 ```shell
-## Option 1 (recommond): use pre-built bitstream
-> Path: reference/fpga-bit
-## Option 2 (need >15 hours): Re-compile with Vivado
-make vivado
-> Run Synthesis, Implementation, Generate Bitstream
+## Re-compile with Vivado
+make vivado     # Setup vivado project
+make bitstream  # Synthesis, Implementation, Generate Bitstream
 ```
 
 Step 4: Write bitstream and workload to FPGA.
@@ -50,7 +47,8 @@ Step 4: Write bitstream and workload to FPGA.
 ## Step1: Write bitstream to FPGA
 # LOCAL_ENV: 1 to use local scripts with sudo permission
 #            0 to add sudo permission manually
-make write_bitstream LOCAL_ENV=... FPGA_BIT_HOME=...
+# FPGA_BIT_HOME: Directory of bitstream
+make write_bitstream LOCAL_ENV=1 FPGA_BIT_HOME=...
 ## Step2: Write workload to FPGA DDR
 make write_ddr WORKLOAD=microbench
 ```
@@ -58,7 +56,7 @@ make write_ddr WORKLOAD=microbench
 Step 5: Run XiangShan Co-simulation
 ```shell
 # HOST: path of fpga-host, use pre-built if not specify
-make fpga-run HOST=... WORKLOAD=microbench
+make fpga-run HOST=./XiangShan/difftest/build/fpga-host WORKLOAD=microbench
 ```
 
 ### Exp2. (Optional) Palladium-based Optimization Breakdown with XiangShan/NutShell

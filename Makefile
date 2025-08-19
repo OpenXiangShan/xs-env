@@ -95,7 +95,10 @@ simv-run:
 vivado:
 	$(MAKE) -C $(FPGA_HOME) update_core_flist
 	$(MAKE) -C $(FPGA_HOME) kmh
-	vivado $(FPGA_PRJ)
+
+## Synthesis, Implementation and Generate Bitstream
+bitstream:
+	$(MAKE) -C $(FPGA_HOME) bitstream
 
 write_bitstream:
 	sudo $(PCIE_SCRIPTS_DIR)/pcie-remove.sh
