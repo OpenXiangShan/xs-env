@@ -1,37 +1,67 @@
 XDMA link /dev/xdma0_c2h_0
 Using simulated 8386560MB RAM
-The image is microbench.bin
+The image is reference/fpga-workload/microbench.bin
+SerailPort: start read from /dev/ttyUSB0
 Using simulated 32768B flash
-The reference model is /home/fpga-v/youkunlin/xs-env/reference/fpga-workload/riscv64-nemu-interpreter-so
+SerialPort: start write to /dev/ttyUSB0
+The reference model is reference/fpga-workload/riscv64-nemu-interpreter-so
 fpga init
 start channel 0
 The first instruction of core 0 has commited. Difftest enabled.
-Core 0: HIT GOOD TRAP at pc = 0x80003856
-Core-0 instrCnt = 1731543183, cycleCnt = 1437460832, IPC = 1.204585
-==================== Difftest PerfCnt ====================
-Run time: 108 s 873 ms
-Simulation speed: 13203.10 KHz
+mpty mainargs. Use "ref" by default
+======= Running MicroBench [input *ref*] =======
+[qsort] Quick sort: * Passed.
+  min time: 450811 ms [0]
+[queen] Queen placement: * Passed.
+  min time: 441678 ms [0]
+[bf] Brainf**k interpreter: * Passed.
+  min time: 3541963 ms [0]
+[fib] Fibonacci number: * Passed.
+  min time: 3496660 ms [0]
+[sieve] Eratosthenes sieve: * Passed.
+  min time: 8659036 ms [0]
+[15pz] A* 15-puzzle search: * Passed.
+  min time: 867365 ms [0]
+[dinic] Dinic's maxflow algorithm: * Passed.
+  min time: 2044213 ms [0]
+[lzip] Lzip compression: * Passed.
+  min time: 1058560 ms [0]
+[ssort] Suffix sort: * Passed.
+  min time: 1318661 ms [0]
+[md5] MD5 digest: * Passed.
+  min time: 3086159 Core 0: [32mHIT GOOD TRAP at pc = 0x0
+[0m[35mCore-0 instrCnt = 1732184700, cycleCnt = 1437256750, IPC = 1.205202
+[0mms [0]
+==================================================
+MicroBench PASS        0 Marks
+                   vs. 10 Marks (i7-7700K @ 4.20GHz)
+Total time: 28735993 ms
+Ex==================== Difftest PerfCnt ====================
+Run time: 190 s 188 ms
+Simulation speed: 7557.03 KHz
                      DPIC_FUNC      DPIC_CALLS      DPIC_CALLS/s       DPIC_BYTES       DPIC_BYTES/s
 >>> DiffState Func
-              v_difftest_Batch         3301480           30324/s      6602960000B        60648278B/s
-             Batch_InstrCommit        24367590          223816/s       731027700B         6714499B/s
-               Batch_TrapEvent         3301485           30324/s       115551975B         1061346B/s
-         Batch_ArchIntRegState         3301484           30324/s       848481388B         7793313B/s
-          Batch_ArchFpRegState         3301484           30324/s       848481388B         7793313B/s
+              v_difftest_Batch         3312864           17418/s      6625728000B        34837781B/s
+             Batch_InstrCommit        24363208          128100/s      1145070776B         6020730B/s
+               Batch_TrapEvent         3312866           17418/s       115950310B          609661B/s
+         Batch_ArchIntRegState         3312864           17418/s       851406048B         4476654B/s
+          Batch_ArchFpRegState         3312864           17418/s       851406048B         4476654B/s
                Batch_ArchEvent               0               0/s               0B               0B/s
       Batch_CriticalErrorEvent               0               0/s               0B               0B/s
-                Batch_CSRState         3301484           30324/s       478715180B         4397005B/s
-               Batch_DebugMode         3301485           30324/s       112250490B         1031022B/s
-         Batch_TriggerCSRState         3301484           30324/s        82537100B          758104B/s
-              Batch_FpCSRState         3301484           30324/s        29713356B          272917B/s
-               Batch_HCSRState         3301484           30324/s       452303308B         4154412B/s
-Batch_NonRegInterruptPendingEvent               0               0/s               0B               0B/s
+                Batch_CSRState         3312864           17418/s       480365280B         2525739B/s
+               Batch_DebugMode         3312864           17418/s       112637376B          592242B/s
+         Batch_TriggerCSRState         3312864           17418/s        82821600B          435472B/s
+              Batch_FpCSRState         3312864           17418/s        29815776B          156770B/s
+               Batch_HCSRState         3312864           17418/s       453862368B         2386388B/s
+Batch_NonRegInterruptPendingEvent               1               0/s              12B               0B/s
   Batch_MhpmeventOverflowEvent               0               0/s               0B               0B/s
+            Batch_SyncAIAEvent               0               0/s               0B               0B/s
+Batch_SyncCustomMflushpwrEvent               0               0/s               0B               0B/s
                Batch_LrScEvent               0               0/s               0B               0B/s
-              Batch_CommitData         4269175           39212/s        46960925B          431336B/s
-                 DIFFSTATE_SUM        55048639          505622/s      3746022810B        34407270B/s
+              Batch_CommitData         4241530           22301/s        46656830B          245319B/s
+                 DIFFSTATE_SUM        55107653          289753/s      4169992424B        21925633B/s
 >>> Other Difftest Func
-                difftest_nstep         3301475           30324/s         3301475B           30324B/s
+                difftest_nstep         3312862           17418/s         3312862B           17418B/s
              difftest_ram_read               0               0/s               0B               0B/s
             difftest_ram_write               0               0/s               0B               0B/s
                     flash_read               0               0/s               0B               0B/s
