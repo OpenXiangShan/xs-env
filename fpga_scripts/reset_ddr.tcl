@@ -24,10 +24,12 @@ puts [get_hw_probes -of_objects [get_hw_vios hw_vio_1]]
 set_property OUTPUT_VALUE 0 [get_hw_probes vio_sw4 -of_objects [get_hw_vios hw_vio_1]]
 commit_hw_vio [get_hw_probes {vio_sw4} -of_objects [get_hw_vios hw_vio_1]]
 puts [get_property OUTPUT_VALUE [get_hw_probes -of_objects [get_hw_vios hw_vio_1]]]
+after 500
 # vio_sw4 1
 set_property OUTPUT_VALUE 1 [get_hw_probes vio_sw4 -of_objects [get_hw_vios hw_vio_1]]
 commit_hw_vio [get_hw_probes {vio_sw4} -of_objects [get_hw_vios hw_vio_1]]
 puts [get_property OUTPUT_VALUE [get_hw_probes -of_objects [get_hw_vios hw_vio_1]]]
+after 500
 # vio_sw6 0
 set_property OUTPUT_VALUE 0 [get_hw_probes vio_sw6 -of_objects [get_hw_vios hw_vio_1]]
 commit_hw_vio [get_hw_probes {vio_sw6} -of_objects [get_hw_vios hw_vio_1]]
