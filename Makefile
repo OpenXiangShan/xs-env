@@ -35,9 +35,9 @@ HOST ?= $(FPGA_WORKLOAD_HOME)/fpga-host
 # Set LOCAL_ENV = 1 to use local scripts with sudo permission
 LOCAL_ENV ?= 0
 ifeq ($(LOCAL_ENV), 1)
-	PCIE_SCRIPTS_DIR = /home/tools
+PCIE_SCRIPTS_DIR = /home/tools
 else
-	PCIE_SCRIPTS_DIR = ./fpga_scripts
+PCIE_SCRIPTS_DIR = ./fpga_scripts
 endif
 
 export NEMU_HOME=$(XS_PROJECT_ROOT)/NEMU
@@ -71,7 +71,7 @@ endif
 
 ## Build for Palladium
 fpga-host:
-	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) fpga-host FPGA=1 DIFFTEST_PERFCNT=1
+	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) fpga-host FPGA=1 DIFFTEST_PERFCNT=1 RELEASE=1
 
 pldm-build:
 	$(MAKE) -C $(DUT_HOME) pldm-build DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
@@ -81,15 +81,20 @@ simv-build:
 	$(MAKE) -C $(DUT_HOME) simv VCS=verilator DIFFTEST_PERFCNT=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
 
 ## Run co-simulation for FPGA/Palladium/Verilator
+RUN_LOG ?= /dev/null
+
 fpga-run:
 	vivado -mode tcl -source fpga_scripts/reset_cpu.tcl -tclargs $(FPGA_BIT_HOME)/xs_fpga_top_debug.ltx
-	$(HOST) --diff $(FPGA_WORKLOAD_HOME)/riscv64-nemu-interpreter-so -i $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).bin
+	@mkdir -p $(dir $(RUN_LOG))
+	$(HOST) --diff $(FPGA_WORKLOAD_HOME)/riscv64-nemu-interpreter-so -i $(FPGA_WORKLOAD_HOME)/$(WORKLOAD).bin | tee $(RUN_LOG)
 
 pldm-run:
-	$(MAKE) -C $(DUT_HOME) pldm-run PLDM_EXTRA_ARGS="+diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin"
+	@mkdir -p $(dir $(RUN_LOG))
+	$(MAKE) -C $(DUT_HOME) pldm-run PLDM_EXTRA_ARGS="+diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin" | tee $(RUN_LOG)
 
 simv-run:
-	$(DUT_HOME)/build/simv +diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin +e=0
+	@mkdir -p $(dir $(RUN_LOG))
+	$(DUT_HOME)/build/simv +diff=$(DUT_HOME)/ready-to-run/riscv64-nemu-interpreter-so +workload=$(DUT_HOME)/ready-to-run/$(WORKLOAD).bin +e=0 | tee $(RUN_LOG)
 
 ## Setup Vivado project
 vivado:
