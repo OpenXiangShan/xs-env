@@ -11,15 +11,24 @@ Get latest version from Github, and run `make init` to startup.
 The experiment demonstrates DiffTest-H's co-simulation speed on Xilinx VU19P FPGA. We highly recommend reviewers to use the **Step 0 Quick Start**, which directly leverages our pre-built bitstream, host, and workloads for reliable results in minutes.
 
 #### Steps 0 (Recommended): Quick start with pre-built bitstream, host, workload
+
+**Takeway**: run `sh run-ref.sh` and reproduce the results in `results/reference.log`.
+
+The scripts contains the following commands:
+
 ```shell
 make write_bitstream LOCAL_ENV=1
 make write_ddr
-make fpga-run
+make fpga-run RUN_LOG=results/reference.log
 ```
-Then we can get a performance report like [here](#3-evaluation-and-expected-results)
+Then we can get a performance report like [here](#3-evaluation-and-expected-results).
 
-#### Steps 1-5 (Optional, Advanced Users Only)
-For reviewers who want to fully rebuild the flow (time-consuming, >15 hours for Step 3), we also provide the following steps. Note these steps are note required for artifact evaluation, the provided pre-built artifacts already match the paper's experiments and results.
+#### Steps 1-5 (Optional, Advanced Users Only): Fully rebuild the entire flow
+For reviewers who want to fully rebuild the flow (time-consuming, >15 hours for Step 3 vivado), we also provide the following steps. Note these steps are note required for artifact evaluation, the provided pre-built artifacts already match the paper's experiments and results.
+
+**Takeway**: run `sh rebuild-all.sh` and `sh run-all.sh`, and reproduce the results in `results/rebuild.log`.
+
+The scripts contains the following commands:
 
 Steps 1: Generate RTL from Chisel.
 ```shell
@@ -37,6 +46,7 @@ Step 3: Generate Bitstream via Vivado.
 ## Re-compile with Vivado
 make vivado     # Setup vivado project
 make bitstream  # Synthesis, Implementation, Generate Bitstream
+# Run `make open_vivado` to check current status of vivado.
 ```
 
 Step 4: Write bitstream and workload to FPGA.
@@ -53,7 +63,7 @@ make write_ddr WORKLOAD=microbench
 Step 5: Run XiangShan Co-simulation
 ```shell
 # HOST: path of fpga-host, use pre-built if not specify
-make fpga-run HOST=./XiangShan/difftest/build/fpga-host WORKLOAD=microbench
+make fpga-run HOST=./XiangShan/difftest/build/fpga-host WORKLOAD=microbench RUN_LOG=result/rebuild.log
 ```
 
 ### Exp2. (Optional) Palladium-based Optimization Breakdown with XiangShan/NutShell

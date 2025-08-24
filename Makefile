@@ -101,6 +101,8 @@ vivado:
 	$(MAKE) -C $(FPGA_HOME) update_core_flist
 	$(MAKE) -C $(FPGA_HOME) kmh
 
+open_vivado:
+	vivado $(FPGA_PRJ)
 ## Synthesis, Implementation and Generate Bitstream
 bitstream:
 	$(MAKE) -C $(FPGA_HOME) bitstream
@@ -120,4 +122,4 @@ clean-rtl:
 clean-vivado:
 	rm -rf $(FPGA_PRJ_HOME)
 
-clean-all: clean-dut clean-vivado
+clean-all: clean-rtl clean-vivado
