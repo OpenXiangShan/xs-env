@@ -32,7 +32,7 @@ apt install -y \
     zstd \
     libzstd-dev
 
-sh -c "curl -L https://github.com/com-lihaoyi/mill/releases/download/0.12.5/0.12.5 > /usr/local/bin/mill && chmod +x /usr/local/bin/mill"
+sh -c "curl -L https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/1.0.4/mill-dist-1.0.4-mill.sh > /usr/local/bin/mill && chmod +x /usr/local/bin/mill"
 
 # We need to use Verilator 4.204+, so we install Verilator manually
 source ./install-verilator.sh
