@@ -42,13 +42,13 @@
           };
         }))
         (verilator.overrideAttrs (finalAttrs: previousAttrs: {
-          version = "5.028";
+          version = "5.040";
           VERILATOR_SRC_VERSION = "v${finalAttrs.version}";
           src = fetchFromGitHub {
             owner = "verilator";
             repo = "verilator";
             rev = "v${finalAttrs.version}";
-            hash = "sha256-YgK60fAYG5575uiWmbCODqNZMbRfFdOVcJXz5h5TLuE=";
+            hash = "sha256-S+cDnKOTPjLw+sNmWL3+Ay6+UM8poMadkyPSGd3hgnc=";
           };
           doCheck = false;
         }))
