@@ -7,7 +7,6 @@ export DEBIAN_FRONTEND=noninteractive
 apt update
 apt install -y \
     proxychains4 \
-    shadowsocks-libev \
     vim \
     wget \
     git \
@@ -30,7 +29,11 @@ apt install -y \
     sqlite3 \
     libsqlite3-dev \
     zstd \
-    libzstd-dev
+    libzstd-dev \
+    python-is-python3 \
+    python3-protobuf \
+    python3-grpc-tools
+    
 
 sh -c "curl -L https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/1.0.4/mill-dist-1.0.4-mill.sh > /usr/local/bin/mill && chmod +x /usr/local/bin/mill"
 
