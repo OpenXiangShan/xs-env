@@ -22,7 +22,7 @@ DUT ?= XiangShan
 DUT_HOME = $(XS_PROJECT_ROOT)/$(DUT)
 DIFF_HOME = $(DUT_HOME)/difftest
 
-FPGA_HOME = $(XS_PROJECT_ROOT)/env-scripts/xs_kmh_fpga_diff
+FPGA_HOME = $(XS_PROJECT_ROOT)/env-scripts/fpga_diff
 FPGA_PRJ_HOME = $(FPGA_HOME)/xs_kmh
 FPGA_PRJ = $(FPGA_PRJ_HOME)/xs_kmh.xpr
 
@@ -52,13 +52,8 @@ fpga-rtl:
 ifneq ($(DUT), XiangShan)
 	$(error Currenly only support FPGA-Difftest with XiangShan)
 endif
-	$(MAKE) -C $(DUT_HOME) verilog CONFIG=FpgaDiffMinimalConfig PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H" -j16
-	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DUT_HOME)/build/rtl/XSTop.sv --core --fpga
-	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) difftest_verilog PROFILE=$(DUT_HOME)/build/generated-src/difftest_profile.json NUM_CORES=1 CONFIG=ESBIF
-	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DIFF_HOME)/build/rtl/GatewayEndpoint.sv
-	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
-	cp -r $(DIFF_HOME)/build $(DUT_HOME)
-
+	$(MAKE) -C $(DUT_HOME) verilog CONFIG=FpgaDiffDefaultConfig PLDM_ARGS="--difftest-config ESBIF --difftest-exclude Vec" PLDM=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
+    cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
 
 NUM_CORES ?= 1
 sim-rtl:
@@ -98,8 +93,9 @@ simv-run:
 
 ## Setup Vivado project
 vivado:
-	$(MAKE) -C $(FPGA_HOME) update_core_flist
-	$(MAKE) -C $(FPGA_HOME) kmh
+	$(MAKE) -C $(FPGA_HOME) update_core_flist CORE_DIR=$(DUT_HOME)/build
+	$(MAKE) -C $(FPGA_HOME) add_sys_option CORE_DIR=$(DUT_HOME)/build
+	$(MAKE) -C $(FPGA_HOME) vivado CPU=kmh
 
 open_vivado:
 	vivado $(FPGA_PRJ)
