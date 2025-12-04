@@ -33,7 +33,9 @@ apt install -y \
     python-is-python3 \
     python3-protobuf \
     python3-grpc-tools
-    
+
+# Install llvm-bolt if available
+apt install -y llvm-bolt || echo "Skipping llvm-bolt installation, not available in apt repos"
 
 sh -c "curl -L https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/1.0.4/mill-dist-1.0.4-mill.sh > /usr/local/bin/mill && chmod +x /usr/local/bin/mill"
 
