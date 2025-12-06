@@ -32,7 +32,8 @@ apt install -y \
     libzstd-dev \
     python-is-python3 \
     python3-protobuf \
-    python3-grpc-tools
+    python3-grpc-tools \
+    rsync
 
 # Install llvm-bolt if available
 apt install -y llvm-bolt || echo "Skipping llvm-bolt installation, not available in apt repos"
