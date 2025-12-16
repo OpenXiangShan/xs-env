@@ -31,6 +31,7 @@ FPGA_WORKLOAD_HOME = $(XS_PROJECT_ROOT)/reference/fpga-workload
 FPGA_BIT_HOME ?= $(XS_PROJECT_ROOT)/reference/fpga-bit
 WORKLOAD ?= microbench
 HOST ?= $(FPGA_WORKLOAD_HOME)/fpga-host
+ENABLE_CHI ?= 0
 
 # Set LOCAL_ENV = 1 to use local scripts with sudo permission
 LOCAL_ENV ?= 0
@@ -52,8 +53,17 @@ fpga-rtl:
 ifneq ($(DUT), XiangShan)
 	$(error Currenly only support FPGA-Difftest with XiangShan)
 endif
-	$(MAKE) -C $(DUT_HOME) verilog CONFIG=FpgaDiffDefaultConfig PLDM_ARGS="--difftest-config ESBIF --difftest-exclude Vec" PLDM=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0
-    cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
+ifeq ($(ENABLE_CHI), 1)
+	$(MAKE) -C $(DUT_HOME) verilog CONFIG=KunminghuV2Config  PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H" -j16
+	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DUT_HOME)/build/rtl/XSTop.sv --core --fpga
+	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) difftest_verilog PROFILE=$(DUT_HOME)/build/generated-src/difftest_profile.json NUM_CORES=1 CONFIG=ESBIF
+	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DIFF_HOME)/build/rtl/GatewayEndpoint.sv
+	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
+	cp -r $(DIFF_HOME)/build $(DUT_HOME)
+else
+	$(MAKE) -C $(DUT_HOME) verilog DEBUG_ARGS="--difftest-config ESBIF --difftest-exclude Vec" FPGA=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0 CONFIG=FpgaDiffDefaultConfig
+	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
+endif
 
 NUM_CORES ?= 1
 sim-rtl:
