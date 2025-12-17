@@ -54,7 +54,7 @@ ifneq ($(DUT), XiangShan)
 	$(error Currenly only support FPGA-Difftest with XiangShan)
 endif
 ifeq ($(ENABLE_CHI), 1)
-	$(MAKE) -C $(DUT_HOME) verilog CONFIG=KunminghuV2Config  PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H" -j16
+	$(MAKE) -C $(DUT_HOME) verilog CONFIG=XSNoCTopConfig  PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H" -j16
 	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DUT_HOME)/build/rtl/XSTop.sv --core --fpga
 	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) difftest_verilog PROFILE=$(DUT_HOME)/build/generated-src/difftest_profile.json NUM_CORES=1 CONFIG=ESBIF
 	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DIFF_HOME)/build/rtl/GatewayEndpoint.sv
