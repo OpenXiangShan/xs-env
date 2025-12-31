@@ -2,7 +2,7 @@
   description = "Nix devshells for XiangShan";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
   };
 
   outputs = {nixpkgs, ...}: let
@@ -42,14 +42,24 @@
           };
         }))
         (verilator.overrideAttrs (finalAttrs: previousAttrs: {
-          version = "5.040";
+          version = "5.042";
           VERILATOR_SRC_VERSION = "v${finalAttrs.version}";
           src = fetchFromGitHub {
             owner = "verilator";
             repo = "verilator";
             rev = "v${finalAttrs.version}";
-            hash = "sha256-S+cDnKOTPjLw+sNmWL3+Ay6+UM8poMadkyPSGd3hgnc=";
+            hash = "sha256-+hfqOt429Kv4rZXEMz4LxNgBULAt/ewWY7mnQt2zpVU=";
           };
+          # drop nixos upstream patches (previousAttrs.patches)
+          # as 2aa260a03b67d3fe86bc64b8a59183f8dc21e117 already exists in 5.042
+          patches = [
+            (fetchpatch {
+              # FIXME: apply this patch temporarily for better performance on XiangShan-chisel6/7, drop it after verilator mainline releases it
+              # https://github.com/verilator/verilator/pull/6822: Optimize mux with UInt To OneHot
+              url = "https://github.com/verilator/verilator/commit/bd38775ad2c1e4fffa4d56d4ef4f835ece216b39.patch";
+              hash = "sha256-VWpxXi2swrOq+3IOKE4Ek5laVuXUdkoswlZGnnLgIOQ=";
+            })
+          ];
           doCheck = false;
         }))
 
