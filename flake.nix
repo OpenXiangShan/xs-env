@@ -27,6 +27,7 @@
         gcc # host toolchain
         pkgsCross.riscv64.buildPackages.gcc # riscv64-unknown-elf-xxx toolchain
         llvm # for pgo
+        llvmPackages.bolt # for pgo
         clang
         gnumake # make
         dtc # device tree compiler
@@ -42,14 +43,17 @@
           };
         }))
         (verilator.overrideAttrs (finalAttrs: previousAttrs: {
-          version = "5.040";
+          version = "5.044";
           VERILATOR_SRC_VERSION = "v${finalAttrs.version}";
           src = fetchFromGitHub {
             owner = "verilator";
             repo = "verilator";
             rev = "v${finalAttrs.version}";
-            hash = "sha256-S+cDnKOTPjLw+sNmWL3+Ay6+UM8poMadkyPSGd3hgnc=";
+            hash = "sha256-z3jYNzhnZ+OocDAbmsRBWHNNPXLLvExKK1TLDi9JzPQ=";
           };
+          # drop patch https://github.com/NixOS/nixpkgs/commit/06be23d66287c004cb8ef933a9ff6589276ab104
+          # since it's already included in 5.044
+          patches = [];
           doCheck = false;
         }))
 
@@ -70,6 +74,7 @@
         echo "- $(mill --version | head -n 1)"
         echo "- $(gcc --version | head -n 1)"
         echo "- $(riscv64-unknown-linux-gnu-gcc --version | head -n 1)"
+        echo "- $(clang --version | head -n 1)"
         echo "- $(java -version 2>&1 | head -n 1)"
         echo "You can press Ctrl + D to exit devshell."
         export LD_LIBRARY_PATH="${pkgs.zlib}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH"
