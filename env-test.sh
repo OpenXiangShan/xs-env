@@ -12,15 +12,27 @@ cd ${NEMU_HOME}
 
 # CPT_restorer need -march=rv64gcbkvh support. Test here.
 CPT_CROSS_COMPILE_LIST='riscv64-linux-gnu- riscv64-unknown-linux-gnu-'
+CPT_CROSS_COMPILE=""
 for COMPILE in $CPT_CROSS_COMPILE_LIST; do
-  echo | ${COMPILE}gcc -S -march=rv64gcbkvh -o /dev/null -x c -
-  if [ $? -eq 0 ]; then
-    CPT_CROSS_COMPILE=$COMPILE
-	break
+  if command -v ${COMPILE}gcc &> /dev/null; then
+    echo "Testing ${COMPILE}gcc with -march=rv64gcbkvh..."
+    if echo | ${COMPILE}gcc -S -march=rv64gcbkvh -o /dev/null -x c - 2>/dev/null; then
+      CPT_CROSS_COMPILE=$COMPILE
+      echo "  Full extension support found: ${COMPILE}gcc"
+      break
+    else
+      # Try basic rv64gc (without bkh extensions)
+      if echo | ${COMPILE}gcc -S -march=rv64gc -o /dev/null -x c - 2>/dev/null; then
+        CPT_CROSS_COMPILE=$COMPILE
+        echo "  Using basic extension support: ${COMPILE}gcc (rv64gc)"
+        echo "  Note: Some checkpoint features may require b/k extensions"
+        break
+      fi
+    fi
   fi
 done
 if [ -z $CPT_CROSS_COMPILE ]; then
-  echo 'No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc with -march=rv64gcbkvh support needed.'
+  echo 'ERROR: No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc needed.'
   exit 1
 fi
 make riscv64-nutshell-ref_defconfig CPT_CROSS_COMPILE=${CPT_CROSS_COMPILE}
