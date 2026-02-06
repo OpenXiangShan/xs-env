@@ -1,0 +1,81 @@
+# XiangShan Conda Environment - Base
+# 参考 Chipyard chipyard-base.yaml
+
+channels:
+    - conda-forge
+    - ucb-bar
+    - litex-hub
+    - nodefaults
+
+platforms:
+    - linux-64
+
+dependencies:
+    # ============================================
+    # 编译器工具链
+    # ============================================
+    - gcc=13.2
+    - gxx=13.2
+    - binutils
+    - sysroot_linux-64=2.17
+
+    # ============================================
+    # 构建工具
+    # ============================================
+    - autoconf
+    - automake
+    - coreutils
+    - jq
+    - pip
+    - make
+    - git
+    - cmake
+    - pkg-config
+    - m4
+    - perl
+    - libtool
+    - sed
+    - which
+    - findutils
+    - grep
+    - tar
+    - gzip
+    - bzip2
+    - xz
+    - unzip
+    - patch
+    - file
+    - bash
+    - vim
+    - curl
+    - wget
+    - time
+
+    # ============================================
+    # Scala/Chisel 构建工具
+    # ============================================
+    - openjdk=20
+    - sbt
+
+    # ============================================
+    # 仿真工具
+    # ============================================
+    - verilator==5.022
+
+    # ============================================
+    # 常用库
+    # ============================================
+    - dtc
+    - zlib
+    - ncurses
+    - readline
+    - sqlite3
+    - libffi
+    - expat
+    - openssl
+    - ca-certificates
+
+    # ============================================
+    # conda-lock (用于生成锁文件)
+    # ============================================
+    - conda-lock=2.5.7

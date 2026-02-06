@@ -1,0 +1,16 @@
+# XiangShan RISC-V Toolchain
+# 参考 Chipyard riscv-tools.yaml
+
+channels:
+    - ucb-bar
+    - conda-forge
+    - litex-hub
+    - nodefaults
+
+platforms:
+    - linux-64
+
+dependencies:
+    # RISC-V 工具链 (来自 ucb-bar channel)
+    # 包含: riscv64-unknown-linux-gnu-gcc, riscv64-unknown-elf-gcc 等
+    - riscv-tools==1.0.6
