@@ -1,108 +1,37 @@
-# XiangShan EDA 环境 conda 配置
-# 用于在 xs-workspace/xs-env 目录下构建和仿真
+# XiangShan Conda Environment Specification
+# This file defines all dependencies needed to build and simulate XiangShan processor.
+# Use conda-lock to generate an exact lock file for reproducible environments.
+
+name: xs-env
 
 channels:
-    - conda-forge
-    - ucb-bar
-    - nodefaults
-
-platforms:
-    - linux-64
+  - conda-forge
+  - ucb-bar
 
 dependencies:
-    # ============================================
-    # 基础编译工具链
-    # ============================================
-    - gcc=13.2
-    - gxx=13.2
-    - gfortran=13.2
-    - clang=18
-    - clang-tools=18
-    - llvm=18
-    - binutils
+  # Core compiler toolchain
+  - gcc >=13.2,<14
+  - gxx >=13.2,<14
+  - binutils
 
-    # ============================================
-    # Scala/Chisel 构建工具
-    # ============================================
-    - openjdk=20
-    - sbt
+  # Simulation and verification tools
+  - verilator >=5.022,<6
 
-    # ============================================
-    # Mill 构建系统 (Scala build tool)
-    # ============================================
-    - mill
+  # RISC-V toolchain (from ucb-bar channel)
+  - riscv-tools >=1.0.6
 
-    # ============================================
-    # Verilator (用于仿真)
-    # 使用 conda-forge 版本，版本较新
-    # ============================================
-    - verilator
+  # Java and Scala build tools (for Chisel)
+  - openjdk >=20,<21
+  - sbt
 
-    # ============================================
-    # FIRRTL/Chisel 相关
-    # ============================================
-    - firtool
+  # System libraries
+  - zlib
+  - ncurses
+  - make
+  - cmake
+  - flex
+  - bison
 
-    # ============================================
-    # 系统基础工具
-    # ============================================
-    - git
-    - git-lfs
-    - make
-    - cmake
-    - autoconf
-    - automake
-    - libtool
-    - pkg-config
-    - m4
-    - perl
-    - python >=3.10
-    - coreutils
-    - diffutils
-    - sed
-    - which
-    - findutils
-    - grep
-    - tar
-    - gzip
-    - bzip2
-    - xz
-    - unzip
-    - patch
-    - file
-    - bash
-    - vim
-    - curl
-    - wget
-    - time
-
-    # ============================================
-    # RISC-V 工具链 (从 ucb-bar channel)
-    # ============================================
-    - riscv-tools
-
-    # ============================================
-    # 常用库
-    # ============================================
-    - zlib
-    - ncurses
-    - readline
-    - sqlite3
-    - libffi
-    - expat
-    - gmp
-    - mpfr
-    - mpc
-    - openssl
-    - ca-certificates
-
-    # ============================================
-    # Python 依赖 (用于 Chisel 测试等)
-    # ============================================
-    - pip
-    - numpy
-
-    # ============================================
-    # 仿真和验证工具
-    # ============================================
-    - graphviz
+  # Python dependencies (for various scripts)
+  - python >=3.10,<4
+  - pyyaml
