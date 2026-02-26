@@ -3,9 +3,13 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    gsim = {
+      url = "github:OpenXiangShan/gsim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = {nixpkgs, ...}: let
+  outputs = { nixpkgs, gsim, ... }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs { inherit system; };
   in {
@@ -56,6 +60,7 @@
           patches = [];
           doCheck = false;
         }))
+        gsim.packages.${system}.default
 
         # === debug ===
         gtkwave
