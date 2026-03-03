@@ -32,6 +32,7 @@ FPGA_BIT_HOME ?= $(XS_PROJECT_ROOT)/reference/fpga-bit
 WORKLOAD ?= microbench
 HOST ?= $(FPGA_WORKLOAD_HOME)/fpga-host
 ENABLE_CHI ?= 0
+CHI_DIR ?=
 
 # Set LOCAL_ENV = 1 to use local scripts with sudo permission
 LOCAL_ENV ?= 0
@@ -39,6 +40,12 @@ ifeq ($(LOCAL_ENV), 1)
 PCIE_SCRIPTS_DIR = /home/tools
 else
 PCIE_SCRIPTS_DIR = ./fpga_scripts
+endif
+
+ifeq ($(ENABLE_CHI), 1)
+CORE_CONFIG ?= XSNoCDiffTopConfig
+else
+CORE_CONFIG ?= FpgaDiffDefaultConfig
 endif
 
 export NEMU_HOME=$(XS_PROJECT_ROOT)/NEMU
@@ -53,16 +60,10 @@ fpga-rtl:
 ifneq ($(DUT), XiangShan)
 	$(error Currenly only support FPGA-Difftest with XiangShan)
 endif
+	$(MAKE) -C $(DUT_HOME) verilog DEBUG_ARGS="--difftest-config ESBIFDU --difftest-exclude Vec" FPGA=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0 CONFIG=$(CORE_CONFIG) -j$(expr $(nproc) / 2)
+	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
 ifeq ($(ENABLE_CHI), 1)
-	$(MAKE) -C $(DUT_HOME) verilog CONFIG=XSNoCTopConfig  PLDM=1 FPGA_DIFF=1 PLDM_ARGS="--difftest-config H" -j16
-	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DUT_HOME)/build/rtl/XSTop.sv --core --fpga
-	NOOP_HOME=$(DIFF_HOME) $(MAKE) -C $(DIFF_HOME) difftest_verilog PROFILE=$(DUT_HOME)/build/generated-src/difftest_profile.json NUM_CORES=1 CONFIG=ESBIF
-	python $(DIFF_HOME)/scripts/st_tools/interface.py $(DIFF_HOME)/build/rtl/GatewayEndpoint.sv
-	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
-	cp -r $(DIFF_HOME)/build $(DUT_HOME)
-else
-	$(MAKE) -C $(DUT_HOME) verilog DEBUG_ARGS="--difftest-config ESBIF --difftest-exclude Vec" FPGA=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0 CONFIG=FpgaDiffDefaultConfig
-	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
+	sed -i 's/SimTop\.soc/soc/g' $(DUT_HOME)/build/rtl/SimTop.sv
 endif
 
 NUM_CORES ?= 1
@@ -103,8 +104,10 @@ simv-run:
 
 ## Setup Vivado project
 vivado:
+ifeq ($(ENABLE_CHI), 1)
+	$(MAKE) -C $(FPGA_HOME) update_chi_flist CHI_DIR=$(CHI_DIR)
+endif
 	$(MAKE) -C $(FPGA_HOME) update_core_flist CORE_DIR=$(DUT_HOME)/build
-	$(MAKE) -C $(FPGA_HOME) add_sys_option CORE_DIR=$(DUT_HOME)/build
 	$(MAKE) -C $(FPGA_HOME) vivado CPU=kmh
 
 open_vivado:
