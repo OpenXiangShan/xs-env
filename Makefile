@@ -61,7 +61,7 @@ ifneq ($(DUT), XiangShan)
 	$(error Currenly only support FPGA-Difftest with XiangShan)
 endif
 	$(MAKE) -C $(DUT_HOME) verilog DEBUG_ARGS="--difftest-config ESBIFDU --difftest-exclude Vec" FPGA=1 WITH_CHISELDB=0 WITH_CONSTANTIN=0 CONFIG=$(CORE_CONFIG) -j$(expr $(nproc) / 2)
-	cp -r $(DIFF_HOME)/src/test/vsrc/fpga $(DUT_HOME)/build/
+	cp -r $(DIFF_HOME)/src/test/vsrc/common/DifftestClockGate.v $(DUT_HOME)/build/
 ifeq ($(ENABLE_CHI), 1)
 	sed -i 's/SimTop\.soc/soc/g' $(DUT_HOME)/build/rtl/SimTop.sv
 endif
