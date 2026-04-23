@@ -75,7 +75,8 @@
       shellHook = ''
         echo "=== Welcome to XiangShan devshell! ==="
         echo "Version info:"
-        echo "- $(verilator --version)"
+        echo "- $(verilator --version | head -n 1)"
+        echo "- $(gsim --version | head -n 1)"
         echo "- $(mill --version | head -n 1)"
         echo "- $(gcc --version | head -n 1)"
         echo "- $(riscv64-unknown-linux-gnu-gcc --version | head -n 1)"
