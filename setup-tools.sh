@@ -6,17 +6,16 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt update
 apt install -y \
-    proxychains4 \
     vim \
     wget \
     git \
-    tmux \
     make \
     g++ \
     time \
     curl \
     libreadline6-dev \
     libsdl2-dev \
+    libgmp-dev \
     g++-riscv64-linux-gnu \
     zlib1g-dev \
     device-tree-compiler \
@@ -30,7 +29,15 @@ apt install -y \
     python-is-python3 \
     python3-protobuf \
     python3-grpc-tools \
-    rsync
+    numactl
+
+# NOTE: uncomment the following lines to install optional tools that we use in our cluster
+# apt install -y \
+#     proxychains4 \
+#     htop \
+#     zsh \
+#     tmux \
+#     rsync
 
 # GSIM requires clang 19+
 if apt list "clang*" | grep clang-19; then
