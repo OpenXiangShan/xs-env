@@ -32,12 +32,15 @@ apt install -y \
     numactl
 
 # NOTE: uncomment the following lines to install optional tools that we use in our cluster
-# apt install -y \
-#     proxychains4 \
-#     htop \
-#     zsh \
-#     tmux \
-#     rsync
+WITH_OPTIONAL_TOOLS=${WITH_OPTIONAL_TOOLS:-false}
+if [ "$WITH_OPTIONAL_TOOLS" = true ]; then
+    apt install -y \
+        proxychains4 \
+        htop \
+        zsh \
+        tmux \
+        rsync
+fi
 
 # GSIM requires clang 19+
 if apt list "clang*" | grep clang-19; then
