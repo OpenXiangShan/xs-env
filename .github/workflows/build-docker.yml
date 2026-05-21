@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         version: [20.04, 22.04, 24.04]
+        full: [true, false]
 
     steps:
       - uses: actions/checkout@v4
@@ -29,9 +30,9 @@ jobs:
           images: |
             ghcr.io/${{ github.repository_owner }}/xs-env
           tags: |
-            ${{ matrix.version == '24.04' && 'latest' || '' }}
-            ubuntu-${{ matrix.version }}
-            ubuntu-${{ matrix.version }}-${{ env.DATE }}
+            ${{ matrix.version == '24.04' && 'latest' || '' }}${{ matrix.full && '-full' || '' }}
+            ubuntu-${{ matrix.version }}${{ matrix.full && '-full' || '' }}
+            ubuntu-${{ matrix.version }}-${{ env.DATE }}${{ matrix.full && '-full' || '' }}
           labels: |
             maintainer=${{ github.repository_owner }}
 
@@ -52,6 +53,7 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
             BASE_IMAGE=ubuntu:${{ matrix.version }}
+            WITH_OPTIONAL_TOOLS=${{ matrix.full }}
 
   build-centos7:
     runs-on: ubuntu-latest
