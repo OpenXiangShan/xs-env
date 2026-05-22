@@ -19,7 +19,7 @@ jobs:
         full: [true, false]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get current date
         id: date
@@ -64,7 +64,7 @@ jobs:
       packages: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get current date
         id: date
