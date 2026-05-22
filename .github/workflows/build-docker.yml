@@ -26,7 +26,7 @@ jobs:
         run: |
           echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - uses: docker/metadata-action@v5
+      - uses: docker/metadata-action@v6
         id: metadata
         with:
           images: |
@@ -71,7 +71,7 @@ jobs:
         run: |
           echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
-      - uses: docker/metadata-action@v5
+      - uses: docker/metadata-action@v6
         id: metadata
         with:
           images: |
