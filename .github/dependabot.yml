@@ -6,6 +6,10 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "ci"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
 
   - package-ecosystem: "nix"
     directory: "/"
@@ -13,3 +17,10 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "feat(nix)"
+    groups:
+      nix-upstream:
+        exclude-patterns:
+          - "gsim"
+      nix-gsim:
+        patterns:
+          - "gsim"
