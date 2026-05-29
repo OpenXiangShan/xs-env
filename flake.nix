@@ -2,7 +2,7 @@
   description = "Nix devshells for XiangShan";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     gsim = {
       url = "github:OpenXiangShan/gsim";
       inputs.nixpkgs.follows = "nixpkgs";
