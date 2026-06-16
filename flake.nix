@@ -49,16 +49,12 @@
         # compile verilator with clang instead of gcc
         ((verilator.override { stdenv = clangStdenv; }).overrideAttrs (finalAttrs: previousAttrs: {
           version = "5.048";
-          VERILATOR_SRC_VERSION = "v${finalAttrs.version}";
           src = fetchFromGitHub {
             owner = "verilator";
             repo = "verilator";
             rev = "v${finalAttrs.version}";
             hash = "sha256-xvqqgbW7L07+NBYzGN2KLhwir58ByShxo4VVPI3pgZk=";
           };
-          # drop patch https://github.com/NixOS/nixpkgs/commit/06be23d66287c004cb8ef933a9ff6589276ab104
-          # since it's already included in 5.044
-          patches = [];
           # use jemalloc by default
           buildInputs = previousAttrs.buildInputs ++ [
             jemalloc
