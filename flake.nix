@@ -64,7 +64,12 @@
         gsim.packages.${system}.default
 
         # === debug ===
-        gtkwave
+        (gtkwave.overrideAttrs (finalAttrs: previousAttrs: {
+          # disable judy, it will cause a "abort: buffer overflow detected" error while opening xiangshan .fst waveforms
+          configureFlags = builtins.filter (
+            flag: flag != "--enable-judy"
+          ) previousAttrs.configureFlags;
+        }))
 
         # === lib ===
         readline
