@@ -46,7 +46,8 @@
             hash = "sha256-6hu6AeIg9M4guzMyR9JUor+bhlVMEMPX1+FmQewKdtg=";
           };
         }))
-        (verilator.overrideAttrs (finalAttrs: previousAttrs: {
+        # compile verilator with clang instead of gcc
+        ((verilator.override { stdenv = clangStdenv; }).overrideAttrs (finalAttrs: previousAttrs: {
           version = "5.048";
           VERILATOR_SRC_VERSION = "v${finalAttrs.version}";
           src = fetchFromGitHub {
