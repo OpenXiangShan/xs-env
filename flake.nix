@@ -40,10 +40,10 @@
         bison
         # override mill & verilator to use our version
         (mill.overrideAttrs (finalAttrs: previousAttrs: {
-          version = "0.12.15";
+          version = "0.12.17";
           src = fetchurl {
             url = "https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/${finalAttrs.version}/mill-dist-${finalAttrs.version}.exe";
-            hash = "sha256-6hu6AeIg9M4guzMyR9JUor+bhlVMEMPX1+FmQewKdtg=";
+            hash = "sha256-3GF4viq2IPogziWwVlOPOWNJS1KszdjFFtfDIe5gNqs=";
           };
         }))
         # compile verilator with clang instead of gcc
