@@ -16,4 +16,7 @@ RUN apt-get update && apt-get install sudo -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/verilator
 
+ENV PATH="/opt/graalvm-jdk-21/bin:${PATH}"
+ENV JAVA_HOME="/opt/graalvm-jdk-21"
+
 CMD [ "/bin/bash" ]
