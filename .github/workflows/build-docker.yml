@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
+concurrency:
+  group: build-docker-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-ubuntu:
     runs-on: ubuntu-latest

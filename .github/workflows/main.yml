@@ -25,12 +25,17 @@ jobs:
 
       - name: Setup XiangShan environment
         run: |
-            git config --global url."https://github.com/".insteadOf git@github.com:
-            git config --global url."https://".insteadOf git://
-            sudo -s ./setup-tools.sh
-            source ./setup.sh
-      
+          git config --global url."https://github.com/".insteadOf git@github.com:
+          git config --global url."https://".insteadOf git://
+          sudo -s ./setup-tools.sh
+          source ./setup.sh
+          if [ -d /opt/graalvm-jdk-21 ]; then
+            echo "Overriding CI java environment to use GraalVM JDK 21"
+            echo "PATH=/opt/graalvm-jdk-21/bin:${PATH}" >> $GITHUB_ENV
+            echo "JAVA_HOME=/opt/graalvm-jdk-21" >> $GITHUB_ENV
+          fi
+
       - name: Sim NutShell using Verilator
         run: |
-            cd $GITHUB_WORKSPACE
-            source ./env-test.sh
+          cd $GITHUB_WORKSPACE
+          source ./env-test.sh

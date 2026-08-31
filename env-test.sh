@@ -10,6 +10,12 @@ export NOOP_HOME=$(pwd)/NutShell
 
 cd ${NEMU_HOME}
 
+# Print version info for verification
+echo "$(which gcc): $(gcc --version | head -n 1)"
+echo "$(which clang): $(clang --version | head -n 1)"
+echo "$(which java): $(java --version | head -n 1)"
+echo "$(which verilator): $(verilator --version | head -n 1)"
+
 # CPT_restorer need -march=rv64gcbkvh support. Test here.
 CPT_CROSS_COMPILE_LIST='riscv64-linux-gnu- riscv64-unknown-linux-gnu-'
 for COMPILE in $CPT_CROSS_COMPILE_LIST; do
@@ -31,7 +37,7 @@ cd ${NOOP_HOME}
 make init
 make clean
 # test if mill & Chisel has been installed correctlly
-make verilog 
+make verilog
 # test if verilator has been installed correctlly
 make emu
 # test verilator simulation
