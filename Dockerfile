@@ -19,4 +19,7 @@ RUN apt-get update && apt-get install sudo -y \
 ENV PATH="/opt/graalvm-jdk-21/bin:${PATH}"
 ENV JAVA_HOME="/opt/graalvm-jdk-21"
 
+ENV LC_ALL="C.UTF-8"
+ENV LANG="C.UTF-8"
+
 CMD [ "/bin/bash" ]
