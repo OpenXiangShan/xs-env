@@ -44,21 +44,51 @@ if [ "$WITH_OPTIONAL_TOOLS" = true ]; then
         rsync
 fi
 
-# GSIM requires clang 19+
-if apt list "clang*" | grep clang-19; then
-    apt install -y clang-19
-    apt install -y bolt-19 || echo "Skipping bolt-19 installation, not available in apt repos"
-    for bin in $(ls /usr/bin/*-19); do
-        base=$(basename $bin)
-        alt=${base%-19}
-        update-alternatives --install /usr/bin/$alt $alt /usr/bin/$base 100
-        update-alternatives --set $alt /usr/bin/$base
+# GSIM requires clang 19+, but 24.04 or older are using clang 18 or older by default
+LLVM_VERSION=19 # do not change this
+LLVM_PRIORITY=$((LLVM_VERSION * 10))
+# decide what to install based on Ubuntu version
+UBUNTU_VERSION=$(sed -n 's/^VERSION_ID="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' /etc/os-release)
+UBUNTU_VERSION=${UBUNTU_VERSION:-0}
+CLANG_CANDIDATE=$(apt-cache policy "clang-${LLVM_VERSION}" | sed -n 's/^[[:space:]]*Candidate:[[:space:]]*//p')
+if dpkg --compare-versions "$UBUNTU_VERSION" ge 26.04; then
+    echo "Ubuntu 26.04 or newer detected, using default clang and llvm-bolt from apt repos..."
+    apt install -y clang
+    apt install -y llvm-bolt || echo "Warning: llvm-bolt not available in apt repos, skipping installation. This may cause PGO to fail to run."
+elif [ -n "$CLANG_CANDIDATE" ] && [ "$CLANG_CANDIDATE" != "(none)" ]; then
+    echo "Ubuntu version older than 26.04 detected, using clang-${LLVM_VERSION} and bolt-${LLVM_VERSION}..."
+    apt install -y "clang-${LLVM_VERSION}"
+    apt install -y "bolt-${LLVM_VERSION}" || echo "Warning: bolt-${LLVM_VERSION} not available in apt repos, skipping installation. This may cause PGO to fail to run."
+
+    for bin in /usr/bin/*-"${LLVM_VERSION}"; do
+        # skip non-executable files
+        if [ ! -f "$bin" ] || [ ! -x "$bin" ]; then
+            continue
+        fi
+        # skip files not in /usr/lib/llvm-${LLVM_VERSION}/
+        case "$(readlink -f -- "$bin")" in
+            "/usr/lib/llvm-${LLVM_VERSION}/"*) ;;
+            *) continue ;;
+        esac
+
+        name=$(basename "$bin")
+        name=${name%-${LLVM_VERSION}} # remove the version suffix
+        target="/usr/local/bin/${name}" # put in /usr/local/bin instead of /usr/bin to avoid conflicts with apt-installed default clang/llvm binaries
+
+        if [ -e "$target" ] && ! update-alternatives --query "$name" >/dev/null 2>&1; then
+            echo "Warning: $target already exists and is not managed by update-alternatives, skipping."
+            echo "Hint: you may need to add the following lines to your ~/.bashrc or ~/.zshrc to use ${name} ${LLVM_VERSION}:"
+            echo 'export PATH="/usr/lib/llvm-'${LLVM_VERSION}'/bin:${PATH}"'
+            continue
+        fi
+
+        update-alternatives --install "$target" "$name" "$bin" "$LLVM_PRIORITY"
     done
 else
-    echo "Warning: clang-19 is not available, falling back to default clang."
-    echo "This may be because you are not using the Ubuntu version we recommend."
+    echo "Warning: Old Ubuntu version detected and clang-${LLVM_VERSION} is not available, falling back to default clang."
+    echo "This may cause GSIM etc. fail to compile, please consider using our recommended Ubuntu version or Docker image."
     apt install -y clang
-    apt install -y llvm-bolt || echo "Skipping llvm-bolt installation, not available in apt repos"
+    apt install -y llvm-bolt || echo "Warning: llvm-bolt not available in apt repos, skipping installation. This may cause PGO to fail to run."
 fi
 
 # grallvm has better performace and is enabled by default
