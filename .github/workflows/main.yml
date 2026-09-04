@@ -39,3 +39,16 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           source ./env-test.sh
+
+  setup-nix-env:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Check if nix devshell works
+        run: |
+          cd $GITHUB_WORKSPACE
+          source ./setup.sh
+          nix develop --command bash -c "source ./env-test.sh"

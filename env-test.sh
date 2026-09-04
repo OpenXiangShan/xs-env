@@ -16,17 +16,17 @@ echo "$(which clang): $(clang --version | head -n 1)"
 echo "$(which java): $(java --version | head -n 1)"
 echo "$(which verilator): $(verilator --version | head -n 1)"
 
-# CPT_restorer need -march=rv64gcbkvh support. Test here.
+# CPT_restorer need -march=rv64gcbvh_zk support. Test here.
 CPT_CROSS_COMPILE_LIST='riscv64-linux-gnu- riscv64-unknown-linux-gnu-'
 for COMPILE in $CPT_CROSS_COMPILE_LIST; do
-  echo | ${COMPILE}gcc -S -march=rv64gcbkvh -o /dev/null -x c -
+  echo | ${COMPILE}gcc -S -march=rv64gcbvh_zk -o /dev/null -x c -
   if [ $? -eq 0 ]; then
     CPT_CROSS_COMPILE=$COMPILE
 	break
   fi
 done
 if [ -z $CPT_CROSS_COMPILE ]; then
-  echo 'No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc with -march=rv64gcbkvh support needed.'
+  echo 'No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc with -march=rv64gcbvh_zk support needed.'
   exit 1
 fi
 make riscv64-nutshell-ref_defconfig CPT_CROSS_COMPILE=${CPT_CROSS_COMPILE}
