@@ -48,17 +48,28 @@
         }))
         # compile verilator with clang instead of gcc
         ((verilator.override { stdenv = clangStdenv; }).overrideAttrs (finalAttrs: previousAttrs: {
-          version = "5.048";
+          version = "5.052";
           src = fetchFromGitHub {
             owner = "verilator";
             repo = "verilator";
             rev = "v${finalAttrs.version}";
-            hash = "sha256-xvqqgbW7L07+NBYzGN2KLhwir58ByShxo4VVPI3pgZk=";
+            hash = "sha256-3xeodLkal/crtcB091lthUe/7/wC+sjAYRqNyl7/kv0=";
           };
           # use jemalloc by default
           buildInputs = previousAttrs.buildInputs ++ [
             jemalloc
           ];
+          # FIXME: remove the following postPatch override after the fix is in some stable nixpkgs release
+          # https://github.com/NixOS/nixpkgs/commit/ca62b9d68eb889f791e578eb657cff190d0da9fe
+          postPatch = ''
+            patchShebangs bin/* src/* nodist/* docs/bin/* examples/xml_py/* \
+            test_regress/{driver.py,t/*.{pl,pf}} \
+            test_regress/t/t_a1_first_cc.py \
+            test_regress/t/t_a2_first_sc.py \
+            ci/* ci/docker/run/* ci/docker/run/hooks/* ci/docker/buildenv/build.sh
+            # verilator --gdbbt uses /bin/sh to test if gdb works.
+            substituteInPlace bin/verilator --replace-fail "/bin/sh" "${bash}/bin/sh"
+          '';
           doCheck = false;
         }))
         gsim.packages.${system}.default
