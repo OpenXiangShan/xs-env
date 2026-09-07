@@ -15,7 +15,7 @@ apt-get install -y git help2man perl python3 make autoconf g++ flex bison
 apt-get install -y libgoogle-perftools-dev libjemalloc-dev numactl perl-doc
 apt-get install -y libfl2 || true  # Ubuntu only (ignore if gives error)
 apt-get install -y libfl-dev || true  # Ubuntu only (ignore if gives error)
-apt-get install -y zlibc zlib1g zlib1g-dev || true  # Ubuntu only (ignore if gives error)
+apt-get install -y zlibc zlib1g zlib1g-dev liblz4 liblz4-dev || true  # Ubuntu only (ignore if gives error)
 
 # setup-tools.sh installs the pinned LLVM release before invoking this script.
 # do not use apt clang, veriator 5.050+ requires clang 18+, which is not available in Ubuntu 20.04/22.04 apt repos.
@@ -30,7 +30,7 @@ git clone https://github.com/verilator/verilator
 unset VERILATOR_ROOT  # For bash
 cd verilator
 
-git checkout v5.048
+git checkout v5.052
 
 autoconf        # Create ./configure script
 # Configure and create Makefile
