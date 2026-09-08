@@ -1,5 +1,7 @@
 # This script will check if XiangShan develop environment has been setup correctly
 
+set -euo pipefail
+
 # Setup XiangShan environment variables
 source env.sh
 # OPTIONAL: export them to .bashrc
@@ -16,17 +18,18 @@ echo "$(which clang): $(clang --version | head -n 1)"
 echo "$(which java): $(java --version | head -n 1)"
 echo "$(which verilator): $(verilator --version | head -n 1)"
 
-# CPT_restorer need -march=rv64gcbkvh support. Test here.
+# CPT_restorer need -march=rv64gcbvh_zk support. Test here.
 CPT_CROSS_COMPILE_LIST='riscv64-linux-gnu- riscv64-unknown-linux-gnu-'
+CPT_CROSS_COMPILE=
 for COMPILE in $CPT_CROSS_COMPILE_LIST; do
-  echo | ${COMPILE}gcc -S -march=rv64gcbkvh -o /dev/null -x c -
-  if [ $? -eq 0 ]; then
+  if command -v "${COMPILE}gcc" >/dev/null 2>&1 &&
+    echo | "${COMPILE}gcc" -S -march=rv64gcbvh_zk -o /dev/null -x c -; then
     CPT_CROSS_COMPILE=$COMPILE
-	break
+    break
   fi
 done
-if [ -z $CPT_CROSS_COMPILE ]; then
-  echo 'No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc with -march=rv64gcbkvh support needed.'
+if [ -z "${CPT_CROSS_COMPILE:-}" ]; then
+  echo 'No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc with -march=rv64gcbvh_zk support needed.'
   exit 1
 fi
 make riscv64-nutshell-ref_defconfig CPT_CROSS_COMPILE=${CPT_CROSS_COMPILE}
