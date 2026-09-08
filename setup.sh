@@ -7,7 +7,7 @@ git submodule update --init --recursive DRAMsim3 NEMU NutShell nexus-am
 git submodule update --init XiangShan && make -C XiangShan init;
 
 # Setup XiangShan environment variables
-source env.sh
+source ./env.sh
 # OPTIONAL: export them to .bashrc
 
 echo XS_PROJECT_ROOT: ${XS_PROJECT_ROOT}
