@@ -9,18 +9,16 @@ LLVM_VERSION=19 # do not change this unless tested
 # so we install a fixed LLVM version from apt.llvm.org instead.
 echo "Installing LLVM ${LLVM_VERSION} toolchain..."
 
-LLVM_CODENAME="$(sed -n -e 's/^VERSION_CODENAME=//p' -e 's/^UBUNTU_CODENAME=//p' /etc/os-release \
-    | head -n 1 | tr -d '"')"
+LLVM_CODENAME="$(sed -n -e 's/^VERSION_CODENAME=//p' -e 's/^UBUNTU_CODENAME=//p' /etc/os-release | head -n 1 | tr -d '"')"
 if [ -z "${LLVM_CODENAME}" ]; then
     echo "Unable to determine Ubuntu codename" >&2
     exit 1
 fi
+LLVM_SUITE="llvm-toolchain-${LLVM_CODENAME}-${LLVM_VERSION}"
 
 install -d -m 0755 /etc/apt/keyrings
-curl -fL --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key \
-    -o /etc/apt/keyrings/llvm.asc
-printf 'deb [signed-by=/etc/apt/keyrings/llvm.asc] https://apt.llvm.org/%s/ llvm-toolchain-%s-19 main\n' \
-    "${LLVM_CODENAME}" "${LLVM_CODENAME}" \
+curl -fL --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o /etc/apt/keyrings/llvm.asc
+printf 'deb [signed-by=/etc/apt/keyrings/llvm.asc] https://apt.llvm.org/%s/ %s main\n' "${LLVM_CODENAME}" "${LLVM_SUITE}" \
     > /etc/apt/sources.list.d/llvm-19.list
 
 apt-get update
@@ -28,6 +26,7 @@ apt-get update
 # bolt: for pgo
 # llvm: for llvm-profdata (also for pgo)
 apt-get install -y --no-install-recommends \
+    -t "${LLVM_SUITE}" \
     clang-${LLVM_VERSION} \
     bolt-${LLVM_VERSION} \
     llvm-${LLVM_VERSION}
