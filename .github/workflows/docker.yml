@@ -24,6 +24,7 @@ jobs:
           - 20.04
           - 22.04
           - 24.04
+          - 26.04
         suffix:
           - ''
           - '-slim'
@@ -43,7 +44,7 @@ jobs:
           images: |
             ghcr.io/${{ github.repository_owner }}/xs-env
           tags: |
-            type=raw,value=latest${{ matrix.suffix }},enable=${{ matrix.version == '24.04' }}
+            type=raw,value=latest${{ matrix.suffix }},enable=${{ matrix.version == '26.04' }}
             ubuntu-${{ matrix.version }}${{ matrix.suffix }}
             ubuntu-${{ matrix.version }}-${{ env.DATE }}${{ matrix.suffix }}
           labels: |
