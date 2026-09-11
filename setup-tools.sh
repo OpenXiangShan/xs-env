@@ -3,97 +3,83 @@
 
 set -euo pipefail
 
+SCRIPT_PATH="${BASH_SOURCE[0]:-$0}"
+SCRIPT_DIR="$(dirname "$(realpath "$SCRIPT_PATH")")"
+
 # make apt non-interactive to avoid tzdata prompt
 export DEBIAN_FRONTEND=noninteractive
 
-apt update
-apt install -y \
-    vim \
-    wget \
-    git \
-    make \
-    g++ \
-    time \
-    curl \
-    libreadline6-dev \
-    libsdl2-dev \
-    libgmp-dev \
-    g++-riscv64-linux-gnu \
-    zlib1g-dev \
-    device-tree-compiler \
-    flex \
-    autoconf \
-    bison \
-    sqlite3 \
-    libsqlite3-dev \
-    zstd \
-    libzstd-dev \
-    python-is-python3 \
-    python3-protobuf \
-    python3-grpc-tools \
-    python3-psutil \
-    numactl
+# Default values, can be overridden by command line options below
+TARGET=default
 
-WITH_OPTIONAL_TOOLS=${WITH_OPTIONAL_TOOLS:-false}
-if [ "$WITH_OPTIONAL_TOOLS" = true ]; then
-    apt install -y \
-        proxychains4 \
-        htop \
-        zsh \
-        tmux \
-        rsync
-fi
+print_usage() {
+    cat <<EOF
+Usage: $0 [OPTIONS]
+  --target TARGET        install only TARGET (all, base, optional, llvm, jdk, mill, verilator)
+  -h, --help             show this help message
+EOF
+}
 
-# GSIM requires clang 19+
-if apt list "clang*" | grep clang-19; then
-    apt install -y clang-19
-    apt install -y bolt-19 || echo "Skipping bolt-19 installation, not available in apt repos"
-    for bin in $(ls /usr/bin/*-19); do
-        base=$(basename $bin)
-        alt=${base%-19}
-        update-alternatives --install /usr/bin/$alt $alt /usr/bin/$base 100
-        update-alternatives --set $alt /usr/bin/$base
-    done
-else
-    echo "Warning: clang-19 is not available, falling back to default clang."
-    echo "This may be because you are not using the Ubuntu version we recommend."
-    apt install -y clang
-    apt install -y llvm-bolt || echo "Skipping llvm-bolt installation, not available in apt repos"
-fi
-
-# grallvm has better performace and is enabled by default
-WITH_GRALLVMJDK=${WITH_GRALLVMJDK:-true}
-WITH_OPENJDK=${WITH_OPENJDK:-false}
-JDK_VERSION=21 # do not change this unless tested, XiangShan does not compile with JDK 25 yet
-if [ "${WITH_GRALLVMJDK}" = true ]; then
-    echo "Installing GraalVM JDK ${JDK_VERSION}..."
-
-    case "$(uname -m)" in
-        x86_64) ARCH="linux-x64" ;;
-        aarch64) ARCH="linux-aarch64" ;;
-        *) echo "Unsupported architecture for GraalVM JDK: $(uname -m)"; exit 1 ;;
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --target)
+            if [ $# -lt 2 ]; then
+                echo "Missing value for --target" >&2
+                print_usage
+                exit 1
+            fi
+            TARGET="$2"
+            shift
+            ;;
+        -h|--help)
+            print_usage;
+            exit 0 ;;
+        *)
+            echo "Unknown option: $1";
+            print_usage;
+            exit 1 ;;
     esac
+    shift
+done
 
-    curl -LO https://download.oracle.com/graalvm/${JDK_VERSION}/latest/graalvm-jdk-${JDK_VERSION}_${ARCH}_bin.tar.gz
-    mkdir -p /opt/graalvm-jdk-${JDK_VERSION}
-    tar -xzf graalvm-jdk-${JDK_VERSION}_${ARCH}_bin.tar.gz -C /opt/graalvm-jdk-${JDK_VERSION} --strip-components=1
-    rm graalvm-jdk-${JDK_VERSION}_${ARCH}_bin.tar.gz
+run_target() {
+    case "$1" in
+        base)
+            source "${SCRIPT_DIR}/install-scripts/base.sh"
+            ;;
+        optional)
+            source "${SCRIPT_DIR}/install-scripts/optional.sh"
+            ;;
+        llvm)
+            source "${SCRIPT_DIR}/install-scripts/llvm.sh"
+            ;;
+        jdk)
+            source "${SCRIPT_DIR}/install-scripts/jdk.sh"
+            ;;
+        mill)
+            source "${SCRIPT_DIR}/install-scripts/mill.sh"
+            ;;
+        verilator)
+            source "${SCRIPT_DIR}/install-scripts/verilator.sh"
+            ;;
+        all)
+            run_target default
+            run_target optional
+            ;;
+        default)
+            # without optional tools
+            run_target base
+            run_target llvm
+            run_target jdk
+            run_target mill
+            run_target verilator
+            ;;
+        *)
+            echo "Unknown target: $1" >&2
+            print_usage
+            exit 1
+            ;;
+    esac
+}
 
-    echo "Hint: please add the following lines to your ~/.bashrc or ~/.zshrc to use GraalVM JDK ${JDK_VERSION}:"
-    echo 'export PATH="/opt/graalvm-jdk-'${JDK_VERSION}'/bin:${PATH}"'
-    echo 'export JAVA_HOME="/opt/graalvm-jdk-'${JDK_VERSION}'"'
-
-    export PATH="/opt/graalvm-jdk-${JDK_VERSION}/bin:${PATH}"
-    export JAVA_HOME="/opt/graalvm-jdk-${JDK_VERSION}"
-fi
-# if WITH_GRALLVMJDK is false, fall-back to openjdk,
-# or WITH_OPENJDK is explicitly set to true, install openjdk as well
-if [ "${WITH_GRALLVMJDK}" != true ] || [ "${WITH_OPENJDK}" = true ]; then
-    echo "Installing OpenJDK ${JDK_VERSION}..."
-    apt install -y openjdk-${JDK_VERSION}-jre
-fi
-
-sh -c "curl -L https://repo1.maven.org/maven2/com/lihaoyi/mill-dist/1.0.4/mill-dist-1.0.4-mill.sh > /usr/local/bin/mill && chmod +x /usr/local/bin/mill"
-
-# We need to use Verilator 4.204+, so we install Verilator manually
-source ./install-verilator.sh
+run_target "$TARGET"

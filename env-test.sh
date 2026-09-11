@@ -3,14 +3,12 @@
 set -euo pipefail
 
 # Setup XiangShan environment variables
-source env.sh
+source ./env.sh
 # OPTIONAL: export them to .bashrc
 
 # NutShell uses similiar develop environment, we use it to test
 # if develop environment has been setup correctly
 export NOOP_HOME=$(pwd)/NutShell
-
-cd ${NEMU_HOME}
 
 # Print version info for verification
 echo "$(which gcc): $(gcc --version | head -n 1)"
@@ -18,21 +16,9 @@ echo "$(which clang): $(clang --version | head -n 1)"
 echo "$(which java): $(java --version | head -n 1)"
 echo "$(which verilator): $(verilator --version | head -n 1)"
 
-# CPT_restorer need -march=rv64gcbvh_zk support. Test here.
-CPT_CROSS_COMPILE_LIST='riscv64-linux-gnu- riscv64-unknown-linux-gnu-'
-CPT_CROSS_COMPILE=
-for COMPILE in $CPT_CROSS_COMPILE_LIST; do
-  if command -v "${COMPILE}gcc" >/dev/null 2>&1 &&
-    echo | "${COMPILE}gcc" -S -march=rv64gcbvh_zk -o /dev/null -x c -; then
-    CPT_CROSS_COMPILE=$COMPILE
-    break
-  fi
-done
-if [ -z "${CPT_CROSS_COMPILE:-}" ]; then
-  echo 'No supported RISC-V compiler found! riscv64[-unknown]-linux-gnu-gcc with -march=rv64gcbvh_zk support needed.'
-  exit 1
-fi
-make riscv64-nutshell-ref_defconfig CPT_CROSS_COMPILE=${CPT_CROSS_COMPILE}
+# test NEMU compile
+cd ${NEMU_HOME}
+make riscv64-nutshell-ref_defconfig
 make
 
 # Compile processor project
