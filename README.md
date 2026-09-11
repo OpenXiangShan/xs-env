@@ -16,12 +16,12 @@ sudo -s ./setup-tools.sh # use apt to install dependencies, you may modify it to
 source setup.sh # prepare tools, test develop env using a small project
 ```
 
-该脚本会默认从 apt.llvm.org 安装 LLVM 19 工具链到 `/usr/lib/llvm-19`，并将 GraalVM JDK 21 安装到 `/opt/graalvm-jdk-21`。LLVM 命令默认带 `-19` 后缀（例如 `clang-19`）。如需使用不带版本后缀的命令，请在 profile（例如 `~/.bashrc`）中加入以下配置：
+该脚本会从 apt.llvm.org 安装 LLVM 工具链到 `/usr/lib/llvm-VERSION`（Ubuntu 26.04 使用 LLVM 21，其余版本使用 LLVM 19），并创建 `/usr/local/llvm` 链接指向对应版本。GraalVM JDK 21 安装到 `/opt/graalvm-jdk-21`。LLVM 命令默认带版本后缀（例如 `clang-21`）。如需使用不带版本后缀的命令，请在 profile（例如 `~/.bashrc`）中加入以下配置：
 
-This script will install the LLVM 19 toolchain from apt.llvm.org under `/usr/lib/llvm-19` and GraalVM JDK 21 under `/opt/graalvm-jdk-21`. LLVM commands use a `-19` suffix by default (for example, `clang-19`). To use commands without the version suffix, add the following lines to your profile (e.g. `~/.bashrc`) after running the script:
+This script installs the LLVM toolchain from apt.llvm.org under `/usr/lib/llvm-VERSION` (LLVM 21 on Ubuntu 26.04 and LLVM 19 on older releases), then creates `/usr/local/llvm` as a link to the selected version. GraalVM JDK 21 is installed under `/opt/graalvm-jdk-21`. LLVM commands use a version suffix by default (for example, `clang-21`). To use commands without the version suffix, add the following lines to your profile (e.g. `~/.bashrc`) after running the script:
 
 ```sh
-echo 'export PATH="/usr/lib/llvm-19/bin:${PATH}"' >> ~/.bashrc
+echo 'export PATH="/usr/local/llvm/bin:${PATH}"' >> ~/.bashrc
 echo 'export PATH="/opt/graalvm-jdk-21/bin:${PATH}"' >> ~/.bashrc
 echo 'export JAVA_HOME="/opt/graalvm-jdk-21"' >> ~/.bashrc
 ```
