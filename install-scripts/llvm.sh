@@ -30,8 +30,6 @@ apt-get install -y --no-install-recommends \
     clang-${LLVM_VERSION} \
     bolt-${LLVM_VERSION} \
     llvm-${LLVM_VERSION}
-apt-get clean
-rm -rf /var/lib/apt/lists/*
 
 echo "Hint: By default, LLVM tools are available with the -${LLVM_VERSION} suffix, such as clang-${LLVM_VERSION} and llvm-profdata-${LLVM_VERSION}."
 echo "Hint: To use LLVM tools without the -${LLVM_VERSION} suffix, add the following line to your ~/.bashrc or ~/.zshrc:"

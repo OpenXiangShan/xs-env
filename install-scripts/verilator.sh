@@ -16,8 +16,6 @@ apt-get install -y libgoogle-perftools-dev libjemalloc-dev numactl perl-doc
 apt-get install -y libfl2 || true  # Ubuntu only (ignore if gives error)
 apt-get install -y libfl-dev || true  # Ubuntu only (ignore if gives error)
 apt-get install -y zlibc zlib1g zlib1g-dev || true  # Ubuntu only (ignore if gives error)
-apt-get clean
-rm -rf /var/lib/apt/lists/*
 
 # setup-tools.sh installs the pinned LLVM release before invoking this script.
 # do not use apt clang, veriator 5.050+ requires clang 18+, which is not available in Ubuntu 20.04/22.04 apt repos.

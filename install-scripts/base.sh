@@ -33,5 +33,3 @@ apt-get install -y \
     python3-grpc-tools \
     python3-psutil \
     numactl
-apt-get clean
-rm -rf /var/lib/apt/lists/*

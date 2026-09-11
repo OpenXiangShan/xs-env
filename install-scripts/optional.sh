@@ -12,5 +12,3 @@ apt-get install -y \
     tmux \
     rsync \
     wget
-apt-get clean
-rm -rf /var/lib/apt/lists/*
