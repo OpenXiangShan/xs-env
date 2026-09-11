@@ -47,9 +47,6 @@ run_target() {
         base)
             source "${SCRIPT_DIR}/install-scripts/base.sh"
             ;;
-        optional)
-            source "${SCRIPT_DIR}/install-scripts/optional.sh"
-            ;;
         llvm)
             source "${SCRIPT_DIR}/install-scripts/llvm.sh"
             ;;
@@ -62,6 +59,12 @@ run_target() {
         verilator)
             source "${SCRIPT_DIR}/install-scripts/verilator.sh"
             ;;
+        gsim)
+            source "${SCRIPT_DIR}/install-scripts/gsim.sh"
+            ;;
+        optional)
+            source "${SCRIPT_DIR}/install-scripts/optional.sh"
+            ;;
         all)
             run_target default
             run_target optional
@@ -73,6 +76,7 @@ run_target() {
             run_target jdk
             run_target mill
             run_target verilator
+            run_target gsim
             ;;
         *)
             echo "Unknown target: $1" >&2

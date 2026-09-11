@@ -15,6 +15,7 @@ echo "$(which gcc): $(gcc --version | head -n 1)"
 echo "$(which clang): $(clang --version | head -n 1)"
 echo "$(which java): $(java --version | head -n 1)"
 echo "$(which verilator): $(verilator --version | head -n 1)"
+echo "$(which gsim): $(gsim --version | head -n 1)"
 
 # test NEMU compile
 cd ${NEMU_HOME}

@@ -43,6 +43,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     cp /tmp/verilator/ci/docker/run/verilator-wrap.sh /usr/local/bin/ && \
     rm -rf /tmp/verilator
 
+COPY install-scripts/gsim.sh /tmp/install-scripts/gsim.sh
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    bash /tmp/setup-tools.sh --target gsim
+
 COPY install-scripts/optional.sh /tmp/install-scripts/optional.sh
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
