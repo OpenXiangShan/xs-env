@@ -16,21 +16,22 @@ sudo -s ./setup-tools.sh # use apt to install dependencies, you may modify it to
 source setup.sh # prepare tools, test develop env using a small project
 ```
 
-该脚本会默认使用 GraalVM JDK 21，请在运行上述脚本后将环境变量配置到 profile（例如 `~/.bashrc`）中：
+该脚本会默认从 apt.llvm.org 安装 LLVM 19 工具链到 `/usr/lib/llvm-19`，并将 GraalVM JDK 21 安装到 `/opt/graalvm-jdk-21`。LLVM 命令默认带 `-19` 后缀（例如 `clang-19`）。如需使用不带版本后缀的命令，请在 profile（例如 `~/.bashrc`）中加入以下配置：
 
-This script will use GraalVM JDK 21 by default. Please add the following lines to your profile (e.g., `~/.bashrc`) after running the above script:
+This script will install the LLVM 19 toolchain from apt.llvm.org under `/usr/lib/llvm-19` and GraalVM JDK 21 under `/opt/graalvm-jdk-21`. LLVM commands use a `-19` suffix by default (for example, `clang-19`). To use commands without the version suffix, add the following lines to your profile (e.g. `~/.bashrc`) after running the script:
 
 ```sh
+echo 'export PATH="/usr/lib/llvm-19/bin:${PATH}"' >> ~/.bashrc
 echo 'export PATH="/opt/graalvm-jdk-21/bin:${PATH}"' >> ~/.bashrc
 echo 'export JAVA_HOME="/opt/graalvm-jdk-21"' >> ~/.bashrc
 ```
 
-如需使用 OpenJDK 21，可以在运行 setup-tools.sh 前设置环境变量 `WITH_GRALLVMJDK=false` 来禁用 GraalVM JDK 的安装：
+使用 `--help` 参数查看脚本的更多选项：
 
-If you want to use OpenJDK 21, you can disable GraalVM JDK installation by setting the environment variable `WITH_GRALLVMJDK=false` before running setup-tools.sh:
+Use `--help` to see more options of the script:
 
 ```sh
-sudo -s WITH_GRALLVMJDK=false ./setup-tools.sh
+./setup-tools.sh --help
 ```
 
 由于香山 `master` 分支更新频繁，此仓库中的 submodule 默认追踪香山主线分支上的一个稳定提交，**并不是香山及其他工具的最新版本**。要更新各子仓库到最新版本，可以运行:
