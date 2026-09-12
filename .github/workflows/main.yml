@@ -1,26 +1,34 @@
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
+  changes:
+    name: Changes Detection
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    outputs:
+      check: ${{ steps.filter.outputs.check }}
+      nix: ${{ steps.filter.outputs.nix }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: .github/filters.yaml
+
   setup-develop-env:
-    # The type of runner that the job will run on
+    needs: changes
+    if: ${{ needs.changes.outputs.check == 'true' }}
     runs-on: ubuntu-24.04
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v7
 
       - name: Setup XiangShan environment
@@ -34,6 +42,10 @@ jobs:
             echo "PATH=/opt/graalvm-jdk-21/bin:${PATH}" >> $GITHUB_ENV
             echo "JAVA_HOME=/opt/graalvm-jdk-21" >> $GITHUB_ENV
           fi
+          if [ -d /usr/lib/llvm-19 ]; then
+            echo "Overriding CI clang environment to use LLVM 19"
+            echo "PATH=/usr/lib/llvm-19/bin:${PATH}" >> $GITHUB_ENV
+          fi
 
       - name: Sim NutShell using Verilator
         run: |
@@ -41,6 +53,8 @@ jobs:
           source ./env-test.sh
 
   setup-nix-env:
+    needs: changes
+    if: ${{ needs.changes.outputs.nix == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
