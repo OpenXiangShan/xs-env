@@ -11,7 +11,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  changes:
+    name: Changes Detection
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    outputs:
+      ubuntu: ${{ steps.filter.outputs.ubuntu }}
+      centos: ${{ steps.filter.outputs.centos }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: .github/filters.yaml
+
   build-ubuntu:
+    needs: changes
+    if: ${{ needs.changes.outputs.ubuntu == 'true' }}
     name: Build Ubuntu ${{ matrix.version }}${{ matrix.suffix }} Image
     runs-on: ubuntu-latest
     permissions:
@@ -80,6 +98,8 @@ jobs:
               bash -c "cd /workspace && git config --global --add safe.directory '*' && source ./env-test.sh"
 
   build-centos7:
+    needs: changes
+    if: ${{ needs.changes.outputs.centos == 'true' }}
     name: Build CentOS 7 Image
     runs-on: ubuntu-latest
     permissions:
