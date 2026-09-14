@@ -1,0 +1,28 @@
+check:
+  - ".github/filters.yaml"
+  - ".github/workflows/main.yml"
+  - "env.sh"
+  - "env-test.sh"
+  - "setup-tools.sh"
+  - "install-scripts/**"
+
+nix:
+  - ".github/filters.yaml"
+  - ".github/workflows/main.yml"
+  - "env-test.sh"
+  - "flake.nix"
+  - "flake.lock"
+
+ubuntu:
+  - ".github/filters.yaml"
+  - ".github/workflows/docker.yml"
+  - "setup-tools.sh"
+  - "install-scripts/**"
+  - "Dockerfile"
+
+centos:
+  - ".github/filters.yaml"
+  - ".github/workflows/docker.yml"
+  - "setup-tools.sh"
+  - "install-scripts/**"
+  - "centos.Dockerfile"
