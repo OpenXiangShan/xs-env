@@ -14,10 +14,8 @@ apt-get install -y \
     time \
     curl \
     ca-certificates \
-    xz-utils \
     libreadline6-dev \
     libsdl2-dev \
-    libgmp-dev \
     g++-riscv64-linux-gnu \
     zlib1g-dev \
     device-tree-compiler \
@@ -28,8 +26,10 @@ apt-get install -y \
     libsqlite3-dev \
     zstd \
     libzstd-dev \
+    python3 \
     python-is-python3 \
     python3-protobuf \
     python3-grpc-tools \
     python3-psutil \
+    python3-yaml \
     numactl
