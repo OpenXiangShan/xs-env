@@ -27,6 +27,7 @@ apt-get install -y \
     zstd \
     libzstd-dev \
     python3 \
+    python3-pip \
     python-is-python3 \
     python3-protobuf \
     python3-grpc-tools \
