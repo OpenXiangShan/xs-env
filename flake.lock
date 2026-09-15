@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788762712,
-        "narHash": "sha256-U9f/fGTR/DOsfJMO5R69P/QNNZWfHcmT4ETRTWY2mDE=",
+        "lastModified": 1788939005,
+        "narHash": "sha256-Zbeqw3P9O5THMv3ilpcj8erkbLg8nEBTLQJpmsd+5aA=",
         "owner": "OpenXiangShan",
         "repo": "gsim",
-        "rev": "a578960f2f9af1aa9e6fcc7f5504ab4268820cf7",
+        "rev": "a70548a9b47283c1fd82ce80e92334efdcb433e1",
         "type": "github"
       },
       "original": {
