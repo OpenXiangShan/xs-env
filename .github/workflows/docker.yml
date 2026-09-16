@@ -92,7 +92,7 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           cache-from: type=gha,scope=ubuntu${{ matrix.tag }}
-          cache-to: type=gha,mode=max,scope=ubuntu${{ matrix.tag }},ignore-error=true
+          cache-to: ${{ github.ref == 'refs/heads/master' && format('type=gha,mode=max,scope=ubuntu{0},ignore-error=true', matrix.tag) || '' }}
           build-args: |
             BASE_IMAGE=ubuntu:${{ env.VERSION }}
             SLIM=${{ env.SUFFIX == '-slim' }}
@@ -149,4 +149,4 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           file: ./centos.Dockerfile
           cache-from: type=gha,scope=centos7
-          cache-to: type=gha,mode=max,scope=centos7,ignore-error=true
+          cache-to: ${{ github.ref == 'refs/heads/master' && format('type=gha,mode=max,scope=centos7,ignore-error=true') || '' }}
