@@ -22,7 +22,7 @@ COPY install-scripts/llvm.sh /tmp/install-scripts/llvm.sh
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     bash /tmp/setup-tools.sh --target llvm
-ENV PATH="/usr/lib/llvm-19/bin:${PATH}"
+ENV PATH="/usr/local/llvm/bin:${PATH}"
 
 COPY install-scripts/jdk.sh /tmp/install-scripts/jdk.sh
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
