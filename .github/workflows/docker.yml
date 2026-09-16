@@ -30,7 +30,7 @@ jobs:
   build-ubuntu:
     needs: changes
     if: ${{ needs.changes.outputs.ubuntu == 'true' }}
-    name: Build Ubuntu ${{ matrix.version }}${{ matrix.suffix }} Image
+    name: Build Ubuntu ${{ matrix.tag }} Image
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,23 +38,29 @@ jobs:
 
     strategy:
       matrix:
-        version:
-          - 20.04
-          - 22.04
+        tag:
+          - 20.04-slim
+          - 22.04-slim
           - 24.04
+          - 24.04-slim
           - 26.04
-        suffix:
-          - ''
-          - '-slim'
+          - 26.04-slim
       fail-fast: false
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Get current date
-        id: date
+      - name: Get environment
         run: |
           echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
+          TAG="${{ matrix.tag }}"
+          if [[ "${TAG}" == *-* ]]; then
+            echo "VERSION=${TAG%%-*}" >> $GITHUB_ENV
+            echo "SUFFIX=-${TAG#*-}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${TAG}" >> $GITHUB_ENV
+            echo "SUFFIX=" >> $GITHUB_ENV
+          fi
 
       - uses: docker/metadata-action@v6
         id: metadata
@@ -62,10 +68,10 @@ jobs:
           images: |
             ghcr.io/${{ github.repository_owner }}/xs-env
           tags: |
-            type=raw,value=latest${{ matrix.suffix }},enable=${{ matrix.version == '26.04' }}
-            type=raw,value=stable${{ matrix.suffix }},enable=${{ matrix.version == '24.04' }}
-            ubuntu-${{ matrix.version }}${{ matrix.suffix }}
-            ubuntu-${{ matrix.version }}-${{ env.DATE }}${{ matrix.suffix }}
+            type=raw,value=latest${{ env.SUFFIX }},enable=${{ env.VERSION == '26.04' }}
+            type=raw,value=stable${{ env.SUFFIX }},enable=${{ env.VERSION == '24.04' }}
+            ubuntu-${{ matrix.tag }}
+            ubuntu-${{ matrix.tag }}-${{ env.DATE }}
           labels: |
             maintainer=${{ github.repository_owner }}
 
@@ -81,15 +87,15 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: ${{ github.event_name == 'push' }}
-          load: ${{ github.event_name == 'pull_request' }}
+          push: ${{ github.ref == 'refs/heads/master' }}
+          load: true # for env test
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          cache-from: type=gha,scope=ubuntu${{ matrix.version }}${{ matrix.suffix }}
-          cache-to: type=gha,mode=max,scope=ubuntu${{ matrix.version }}${{ matrix.suffix }},ignore-error=true
+          cache-from: type=gha,scope=ubuntu${{ matrix.tag }}
+          cache-to: type=gha,mode=max,scope=ubuntu${{ matrix.tag }},ignore-error=true
           build-args: |
-            BASE_IMAGE=ubuntu:${{ matrix.version }}
-            SLIM=${{ matrix.suffix == '-slim' }}
+            BASE_IMAGE=ubuntu:${{ env.VERSION }}
+            SLIM=${{ env.SUFFIX == '-slim' }}
 
       - name: Run env test
         run: |
@@ -111,8 +117,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Get current date
-        id: date
+      - name: Get environment
         run: |
           echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
@@ -139,7 +144,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: ${{ github.event_name == 'push' }}
+          push: ${{ github.ref == 'refs/heads/master' }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           file: ./centos.Dockerfile
