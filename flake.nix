@@ -88,6 +88,7 @@
         zlib
         zstd
         sqlite
+        lz4
       ];
       shellHook = ''
         echo "=== Welcome to XiangShan devshell! ==="
