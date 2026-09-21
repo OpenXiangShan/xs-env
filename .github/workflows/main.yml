@@ -42,9 +42,9 @@ jobs:
             echo "PATH=/opt/graalvm-jdk-21/bin:${PATH}" >> $GITHUB_ENV
             echo "JAVA_HOME=/opt/graalvm-jdk-21" >> $GITHUB_ENV
           fi
-          if [ -d /usr/lib/llvm-19 ]; then
-            echo "Overriding CI clang environment to use LLVM 19"
-            echo "PATH=/usr/lib/llvm-19/bin:${PATH}" >> $GITHUB_ENV
+          if [ -d /usr/local/llvm ]; then
+            echo "Overriding CI clang environment to use LLVM from /usr/local/llvm"
+            echo "PATH=/usr/local/llvm/bin:${PATH}" >> $GITHUB_ENV
           fi
 
       - name: Sim NutShell using Verilator
