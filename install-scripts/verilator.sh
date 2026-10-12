@@ -11,11 +11,25 @@ export DEBIAN_FRONTEND=noninteractive
 #   2. it introduces too much IO overhead
 
 apt-get update
-apt-get install -y git help2man perl python3 make autoconf g++ flex bison
-apt-get install -y libgoogle-perftools-dev libjemalloc-dev numactl perl-doc
-apt-get install -y zlib1g zlib1g-dev liblz4-dev
-apt-get install -y libfl2
-apt-get install -y libfl-dev
+apt-get install -y --no-install-recommends \
+    git \
+    help2man \
+    perl \
+    python3 \
+    make \
+    autoconf \
+    g++ \
+    flex \
+    bison \
+    libgoogle-perftools-dev \
+    libjemalloc-dev \
+    numactl \
+    perl-doc \
+    libfl2 \
+    libfl-dev \
+    zlib1g \
+    zlib1g-dev \
+    liblz4-dev
 
 # setup-tools.sh installs the pinned LLVM release before invoking this script.
 # do not use apt clang, veriator 5.050+ requires clang 18+, which is not available in Ubuntu 20.04/22.04 apt repos.

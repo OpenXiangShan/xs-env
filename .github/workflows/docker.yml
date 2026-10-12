@@ -49,6 +49,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          submodules: true # for XiangShan and NutShell's .mill-version
 
       - name: Get environment
         run: |

@@ -2,13 +2,17 @@
 
 set -euo pipefail
 
+export DEBIAN_FRONTEND=noninteractive
+
 LLVM_VERSION=19 # not a must, but better keep consistent with llvm.sh
 
 echo "Installing deps for gsim..."
 apt-get update
-apt-get install -y \
+apt-get install -y --no-install-recommends \
     libgmp-dev
 
+export HTTP_PROXY=http://172.38.11.182:20170
+export HTTPS_PROXY=http://172.38.11.182:20170
 GSIM_LATEST_VERSION=$(curl -s --retry 3 https://api.github.com/repos/OpenXiangShan/gsim/releases/latest | grep "tag_name" | cut -d '"' -f 4)
 
 if [ -z "${GSIM_LATEST_VERSION}" ]; then
