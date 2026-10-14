@@ -5,7 +5,7 @@ set -euo pipefail
 LLVM_VERSION=19 # not a must, but better keep consistent with llvm.sh
 
 # Pin gsim version to provide a stable docker image release
-GSIM_VERSION="master-2026-10-13-91c79cd"
+GSIM_VERSION="master-2026-09-22-210689a"
 
 echo "Installing deps for gsim..."
 apt-get update
