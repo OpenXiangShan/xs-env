@@ -1,0 +1,62 @@
+# We use dependabot to update the nix flake.lock regularly, but they can't update commit hash in a bash script automatically, so
+# this workflow is used to sync pinned gsim version from nix flake.lock to docker install-scripts/gsim.sh
+# Also triggered with modifications to install-scripts/gsim.sh, so that
+# we can check if the workflow works properly and prevent accidental changes to the pinned gsim version in the script.
+name: Sync gsim version
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'install-scripts/gsim.sh'
+      - 'flake.lock'
+
+concurrency:
+  group: sync-gsim-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write # to create change-request comments on PRs
+
+jobs:
+  sync-gsim:
+    name: Sync gsim version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Sync gsim version
+        id: sync-gsim
+        run: |
+          # Extract the pinned gsim version from flake.lock
+          GSIM_HASH=$(jq -r '.nodes.gsim.locked.rev' flake.lock)
+          GSIM_TIMESTAMP=$(jq -r '.nodes.gsim.locked.lastModified' flake.lock)
+          GSIM_DATE=$(date -d "@${GSIM_TIMESTAMP}" +%Y-%m-%d)
+
+          GSIM_VERSION="master-${GSIM_DATE}-${GSIM_HASH:0:7}"
+
+          echo "Pinned gsim version in flake.lock: ${GSIM_VERSION} (hash: ${GSIM_HASH}, timestamp: ${GSIM_TIMESTAMP})"
+
+          # Ensure tag exists in the GitHub repository
+          if ! curl -s --retry 3 --fail "https://api.github.com/repos/OpenXiangShan/gsim/releases/tags/${GSIM_VERSION}" >/dev/null; then
+            echo "Error: Tag ${GSIM_VERSION} does not exist in the GitHub repository."
+            exit 1
+          fi
+
+          # Update the install-scripts/gsim.sh with the new version
+          sed -i "s/^GSIM_VERSION=.*/GSIM_VERSION=\"${GSIM_VERSION}\"/" install-scripts/gsim.sh
+
+          # Suggest PR changes if there are any changes
+          if git diff --quiet; then
+            echo "No changes."
+            echo "change=false" >> $GITHUB_OUTPUT
+          else
+            echo "change=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Suggest changes
+        if: steps.sync-gsim.outputs.change == 'true'
+        uses: parkerbxyz/suggest-changes@v3
+        with:
+          comment: "Sync pinned gsim version from flake.lock to install-scripts/gsim.sh"
+          event: "REQUEST_CHANGES"
