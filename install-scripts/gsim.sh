@@ -2,30 +2,33 @@
 
 set -euo pipefail
 
-LLVM_VERSION=19 # not a must, but better keep consistent with llvm.sh
+export DEBIAN_FRONTEND=noninteractive
 
 # Pin gsim version to provide a stable docker image release
-GSIM_VERSION="master-2026-10-13-91c79cd"
+GSIM_VERSION="master-2026-10-30-45a73d6"
+WORKDIR="$(mktemp -d)"
+INSTALLDIR="/usr/local/share/gsim"
 
 echo "Installing deps for gsim..."
 apt-get update
 apt-get install -y \
-    libgmp-dev
+    libgmp-dev \
+    zlib1g-dev
 
-ARCH="$(uname -m)"
-case "${ARCH}" in
-    x86_64) GSIM_ARCH="X64" ;;
-    aarch64) GSIM_ARCH="ARM64" ;;
-    *) echo "Unsupported architecture for gsim: ${ARCH}"; exit 1 ;;
-esac
+echo "Compiling gsim ${GSIM_VERSION}..."
+git clone https://github.com/OpenXiangShan/gsim ${WORKDIR}
+cd ${WORKDIR}
+git checkout ${GSIM_VERSION}
+make GSIM_INCLUDE_PATH=${INSTALLDIR}/include build-gsim -j$(nproc)
 
-GSIM_FILE=$(curl -s --retry 3 https://api.github.com/repos/OpenXiangShan/gsim/releases/tags/${GSIM_VERSION} | grep "name" | grep "gsim-clang${LLVM_VERSION}\.[0-9]\+\.[0-9]\+-${GSIM_ARCH}" | cut -d '"' -f 4)
+echo "Installing gsim ${GSIM_VERSION}..."
+rm -rf /usr/local/share/gsim /usr/local/bin/gsim
+mkdir -p /usr/local/share/gsim/bin /usr/local/share/gsim/include /usr/local/bin
+cp -f build/gsim/gsim /usr/local/share/gsim/bin/gsim
+cp -f include/gsimFst.h /usr/local/share/gsim/include/gsimFst.h
+ln -s /usr/local/share/gsim/bin/gsim /usr/local/bin/gsim
+gsim --version
 
-if [ -z "${GSIM_FILE}" ]; then
-    echo "Failed to get the gsim file name for ${GSIM_ARCH} from GitHub API"
-    exit 1
-fi
-
-echo "Installing gsim ${GSIM_VERSION} for ${GSIM_ARCH}..."
-curl -fL --retry 3 "https://github.com/OpenXiangShan/gsim/releases/download/${GSIM_VERSION}/${GSIM_FILE}" -o /usr/local/bin/gsim
-chmod +x /usr/local/bin/gsim
+# cleanup
+cd
+rm -rf ${WORKDIR}
