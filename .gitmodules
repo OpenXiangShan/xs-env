@@ -15,3 +15,6 @@
 [submodule "DRAMsim3"]
 	path = DRAMsim3
 	url = https://github.com/OpenXiangShan/DRAMsim3.git
+[submodule "MCSim"]
+	path = MCSim
+	url = https://github.com/OpenXiangShan/MCSim.git
