@@ -6,10 +6,20 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
+VERILATOR_VERSION="v5.052"
+WORKDIR="$(mktemp -d)"
+# INSTALLDIR is /usr/local/share/verilator by default
+INSTALL_DOCKER_WRAPPER=${INSTALL_DOCKER_WRAPPER:-"false"}
+
+function cleanup {
+    rm -rf ${WORKDIR}
+}
+trap cleanup EXIT
+
 # NOTE: ccache is intentionally removed from the dependencies list, since:
 #   1. it does not help XiangShan's build performance in most cases, as slight change in chisel result in significant change in cpp code
 #   2. it introduces too much IO overhead
-
+echo "Installing deps for verilator..."
 apt-get update
 apt-get install -y git help2man perl python3 make autoconf g++ flex bison
 apt-get install -y libgoogle-perftools-dev libjemalloc-dev numactl perl-doc
@@ -24,18 +34,23 @@ if ! command -v clang >/dev/null 2>&1; then
     exit 1
 fi
 
-git clone https://github.com/verilator/verilator
-
-# Every time you need to build:
-unset VERILATOR_ROOT  # For bash
-cd verilator
-
+echo "Cloning verilator ${VERILATOR_VERSION}..."
+git clone https://github.com/verilator/verilator ${WORKDIR}
+cd ${WORKDIR}
 git checkout v5.052
 
-autoconf        # Create ./configure script
-# Configure and create Makefile
-./configure CC=clang CXX=clang++ LINK=clang++ # We use clang as default compiler
-make -j$(nproc)        # Build Verilator itself
+echo "Compiling verilator ${VERILATOR_VERSION}..."
+unset VERILATOR_ROOT
+autoconf
+./configure CC=clang CXX=clang++ LINK=clang++
+make -j$(nproc)
+
+echo "Installing verilator ${VERILATOR_VERSION}..."
 make install
+
+if [ "${INSTALL_DOCKER_WRAPPER}" = "true" ]; then
+    echo "Installing verilator docker wrapper..."
+    cp -f ${WORKDIR}/ci/docker/run/verilator-wrap.sh /usr/local/bin/verilator-wrap.sh
+fi
 
 verilator --version
