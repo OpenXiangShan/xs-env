@@ -90,6 +90,13 @@
         sqlite
         lz4
       ];
+
+      LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath (with pkgs; [
+        zlib
+        lz4
+        stdenv.cc.cc.lib
+      ]);
+
       shellHook = ''
         echo "=== Welcome to XiangShan devshell! ==="
         echo "Version info:"
@@ -101,7 +108,6 @@
         echo "- $(clang --version | head -n 1)"
         echo "- $(java -version 2>&1 | head -n 1)"
         echo "You can press Ctrl + D to exit devshell."
-        export LD_LIBRARY_PATH="${pkgs.zlib}/lib:${pkgs.stdenv.cc.cc.lib}/lib:$LD_LIBRARY_PATH"
         source $(pwd)/env.sh
       '';
     };
