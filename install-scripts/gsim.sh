@@ -5,7 +5,7 @@ set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
 
 # Pin gsim version to provide a stable docker image release
-GSIM_VERSION="master-2026-10-30-45a73d6"
+GSIM_VERSION="master-2026-11-12-20a8054"
 WORKDIR="$(mktemp -d)"
 INSTALLDIR="/usr/local/share/gsim"
 
