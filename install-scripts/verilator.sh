@@ -6,7 +6,7 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-VERILATOR_VERSION="v5.052"
+VERILATOR_VERSION="v5.054"
 WORKDIR="$(mktemp -d)"
 # INSTALLDIR is /usr/local/share/verilator by default
 INSTALL_DOCKER_WRAPPER=${INSTALL_DOCKER_WRAPPER:-"false"}
@@ -37,7 +37,7 @@ fi
 echo "Cloning verilator ${VERILATOR_VERSION}..."
 git clone https://github.com/verilator/verilator ${WORKDIR}
 cd ${WORKDIR}
-git checkout v5.052
+git checkout "${VERILATOR_VERSION}"
 
 echo "Compiling verilator ${VERILATOR_VERSION}..."
 unset VERILATOR_ROOT

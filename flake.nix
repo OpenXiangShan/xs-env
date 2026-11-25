@@ -48,12 +48,12 @@
         }))
         # compile verilator with clang instead of gcc
         ((verilator.override { stdenv = clangStdenv; }).overrideAttrs (finalAttrs: previousAttrs: {
-          version = "5.052";
+          version = "5.054";
           src = fetchFromGitHub {
             owner = "verilator";
             repo = "verilator";
             rev = "v${finalAttrs.version}";
-            hash = "sha256-3xeodLkal/crtcB091lthUe/7/wC+sjAYRqNyl7/kv0=";
+            hash = "sha256-YCCcFA7Mq7SjK6yHldT0rpS1FwXc5C8mgzcJD/imbEw=";
           };
           # use jemalloc by default
           buildInputs = previousAttrs.buildInputs ++ [
